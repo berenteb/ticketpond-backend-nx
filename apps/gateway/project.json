@@ -1,7 +1,7 @@
 {
-  "name": "customer",
+  "name": "gateway",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/customer/src",
+  "sourceRoot": "apps/gateway/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -11,10 +11,10 @@
       "options": {
         "target": "node",
         "compiler": "tsc",
-        "outputPath": "dist/apps/customer",
-        "main": "apps/customer/src/main.ts",
-        "tsConfig": "apps/customer/tsconfig.json",
-        "webpackConfig": "apps/customer/webpack.config.js"
+        "outputPath": "dist/apps/gateway",
+        "main": "apps/gateway/src/main.ts",
+        "tsConfig": "apps/gateway/tsconfig.json",
+        "webpackConfig": "apps/gateway/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -26,14 +26,14 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "customer:build"
+        "buildTarget": "gateway:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "customer:build:development"
+          "buildTarget": "gateway:build:development"
         },
         "production": {
-          "buildTarget": "customer:build:production"
+          "buildTarget": "gateway:build:production"
         }
       }
     }
