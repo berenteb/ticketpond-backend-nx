@@ -9,8 +9,10 @@
     "url": "https://berente.net"
   },
   "scripts": {
-    "start": "nx run-many --target=serve --maxParallel=100",
-    "build": "nx run-many --target=build"
+    "start": "nx run-many --target=serve --all",
+    "build": "nx run-many --target=build --all",
+    "test": "nx run-many --target=test --all",
+    "lint": "nx run-many --target=lint --all"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.2",
