@@ -1,0 +1,24 @@
+{
+  "name": "customer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/customer/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "customer:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "customer:build:development"
+        },
+        "production": {
+          "buildTarget": "customer:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
