@@ -1,0 +1,24 @@
+{
+  "name": "ticketpond-backend-nx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ticketpond-backend-nx/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "ticketpond-backend-nx:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "ticketpond-backend-nx:build:development"
+        },
+        "production": {
+          "buildTarget": "ticketpond-backend-nx:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
