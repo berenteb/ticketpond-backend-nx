@@ -2,20 +2,20 @@ import { Test } from '@nestjs/testing';
 
 import { CustomerService } from './customer.service';
 
-describe(CustomerService.name, () => {
-  let service: CustomerService;
+let service: CustomerService;
 
-  beforeAll(async () => {
-    const app = await Test.createTestingModule({
-      providers: [CustomerService],
-    }).compile();
+beforeAll(async () => {
+  const app = await Test.createTestingModule({
+    providers: [CustomerService],
+  }).compile();
 
-    service = app.get<CustomerService>(CustomerService);
-  });
+  service = app.get<CustomerService>(CustomerService);
+});
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
-      expect(service.getData()).toEqual({ message: 'Hello API' });
+describe('getData', () => {
+  it('should return welcome message', () => {
+    expect(service.getData()).toEqual({
+      message: `Hello ${CustomerService.name}`,
     });
   });
 });
