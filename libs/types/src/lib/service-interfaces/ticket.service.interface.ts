@@ -1,9 +1,9 @@
-import { DeepTicketDto } from '../dtos/deep-ticket.dto';
 import {
   CreateTicketDto,
+  DeepTicketDto,
   TicketDto,
   UpdateTicketDto,
-} from '../dtos/ticket.dto';
+} from '../dtos';
 import { IsOwnProperty } from './common.interface';
 
 export abstract class TicketServiceInterface implements IsOwnProperty {

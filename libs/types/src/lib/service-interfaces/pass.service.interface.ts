@@ -1,4 +1,4 @@
-import { DeepOrderDto } from '../dtos/order.dto';
+import { DeepOrderDto } from '../dtos';
 
 export abstract class PassServiceInterface {
   abstract generatePasses(order: DeepOrderDto): Promise<void>;

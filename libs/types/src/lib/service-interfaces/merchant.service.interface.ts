@@ -1,8 +1,4 @@
-import {
-  CreateMerchantDto,
-  MerchantDto,
-  UpdateMerchantDto,
-} from '../dtos/merchant.dto';
+import { CreateMerchantDto, MerchantDto, UpdateMerchantDto } from '../dtos';
 
 export abstract class MerchantServiceInterface {
   abstract getMerchants(): Promise<MerchantDto[]>;

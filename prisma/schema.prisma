@@ -12,7 +12,7 @@ datasource db {
 
 model Customer {
   id                 String               @id @default(uuid())
-  internalId         String               @unique @default(uuid())
+  authId             String               @unique @default(uuid())
   firstName          String
   lastName           String
   email              String

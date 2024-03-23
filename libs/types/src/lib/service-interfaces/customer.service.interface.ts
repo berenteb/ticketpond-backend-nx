@@ -1,28 +1,25 @@
-import {
-  CreateCustomerDto,
-  CustomerDto,
-  UpdateCustomerDto,
-} from '../dtos/customer.dto';
+import { CreateCustomerDto, CustomerDto, UpdateCustomerDto } from '../dtos';
 
 export abstract class CustomerServiceInterface {
   abstract getCustomers(): Promise<CustomerDto[]>;
 
   abstract getCustomerById(id: string): Promise<CustomerDto>;
-  abstract getCustomerByInternalId(internalId: string): Promise<CustomerDto>;
+  abstract getCustomerByAuthId(authId: string): Promise<CustomerDto>;
 
   abstract createCustomer(
     customer: CreateCustomerDto,
-    id?: string,
+    authId?: string,
   ): Promise<CustomerDto>;
 
   abstract updateCustomer(
     id: string,
     customer: UpdateCustomerDto,
   ): Promise<CustomerDto>;
-  abstract updateCustomerByInternalId(
-    internalId: string,
+
+  abstract updateCustomerByAuthId(
+    authId: string,
     customer: UpdateCustomerDto,
   ): Promise<CustomerDto>;
 
-  abstract deleteCustomer(internalId: string): Promise<void>;
+  abstract deleteCustomer(id: string): Promise<void>;
 }

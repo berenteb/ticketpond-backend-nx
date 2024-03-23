@@ -7,9 +7,10 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
+
 import { PhoneRegex, PhoneRegexMessage, WithoutId } from '../common.types';
 
-export class CreateCustomerDto implements WithoutId<Customer> {
+export class CreateCustomerDto implements Omit<WithoutId<Customer>, 'authId'> {
   @ApiProperty({ example: 'John' })
   @IsString()
   @IsNotEmpty()
@@ -77,7 +78,7 @@ export class CustomerDto implements Customer {
   id: string;
 
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  internalId: string;
+  authId: string;
 
   @ApiProperty({ example: 'John' })
   firstName: string;

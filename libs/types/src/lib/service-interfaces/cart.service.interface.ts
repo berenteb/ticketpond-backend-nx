@@ -1,5 +1,4 @@
-import { CartDto } from '../dtos/cart.dto';
-import { OrderDto } from '../dtos/order.dto';
+import { CartDto, OrderDto } from '../dtos';
 
 export abstract class CartServiceInterface {
   abstract getCartById(id: string): Promise<CartDto>;

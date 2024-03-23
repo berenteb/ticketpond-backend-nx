@@ -1,10 +1,10 @@
-import { DeepExperienceDto } from '../dtos/deep-experience.dto';
 import {
   CreateExperienceDto,
+  DeepExperienceDto,
   ExperienceDto,
   UpdateExperienceDto,
-} from '../dtos/experience.dto';
-import { ValidationResponseDto } from '../dtos/validate.dto';
+  ValidationResponseDto,
+} from '../dtos';
 import { IsOwnProperty } from './common.interface';
 
 export abstract class ExperienceServiceInterface implements IsOwnProperty {

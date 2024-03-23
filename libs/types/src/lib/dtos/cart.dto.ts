@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Cart, CartItem } from '@prisma/client';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
 import { DeepTicketDto } from './deep-ticket.dto';
 
 export class CartItemDto implements CartItem {

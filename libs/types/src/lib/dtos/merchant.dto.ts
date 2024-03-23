@@ -7,6 +7,7 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
+
 import { PhoneRegex, PhoneRegexMessage, WithoutId } from '../common.types';
 
 export class CreateMerchantDto implements WithoutId<Merchant> {

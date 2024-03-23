@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+
 import { WithoutId } from '../common.types';
 
 export class CreateTicketDto implements WithoutId<Ticket> {

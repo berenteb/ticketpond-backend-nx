@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
 import { CustomerDto } from './customer.dto';
 import { DeepOrderItemDto } from './order.dto';
 

@@ -1,0 +1,8 @@
+{
+  "name": "message-patterns",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-patterns/src",
+  "projectType": "library",
+  "targets": {},
+  "tags": []
+}

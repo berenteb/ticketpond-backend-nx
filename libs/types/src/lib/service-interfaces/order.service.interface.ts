@@ -1,10 +1,10 @@
-import { CartDto } from '../dtos/cart.dto';
 import {
+  CartDto,
   DeepOrderDto,
   DeepOrderWithCustomerDto,
   OrderDto,
   OrderWithCustomerDto,
-} from '../dtos/order.dto';
+} from '../dtos';
 import { IsOwnProperty } from './common.interface';
 
 export abstract class OrderServiceInterface implements IsOwnProperty {

@@ -1,5 +1,4 @@
-import { OrderDto } from '../dtos/order.dto';
-import { PaymentDto } from '../dtos/payment.dto';
+import { OrderDto, PaymentDto } from '../dtos';
 
 export abstract class PaymentServiceInterface {
   abstract createIntent(order: OrderDto): Promise<PaymentDto>;
