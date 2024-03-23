@@ -16,5 +16,9 @@ export abstract class MerchantServiceInterface {
     id: string,
     merchant: UpdateMerchantDto,
   ): Promise<MerchantDto>;
+  abstract updateMerchantByUserId(
+    userId: string,
+    merchant: UpdateMerchantDto,
+  ): Promise<MerchantDto>;
   abstract deleteMerchant(id: string): Promise<void>;
 }

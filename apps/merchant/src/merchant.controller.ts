@@ -3,15 +3,15 @@ import { MessagePattern } from '@nestjs/microservices';
 import {
   CreateMerchantDto,
   MerchantDto,
+  MerchantServiceInterface,
   UpdateMerchantDto,
 } from '@ticketpond-backend-nx/types';
 
 import { MerchantPattern } from '../../../libs/message-patterns/src/lib/merchant.patterns';
-import { MerchantService } from './merchant.service';
 
 @Controller()
 export class MerchantController {
-  constructor(private readonly merchantService: MerchantService) {}
+  constructor(private readonly merchantService: MerchantServiceInterface) {}
 
   @MessagePattern(MerchantPattern.LIST_MERCHANTS)
   async listMerchants(): Promise<MerchantDto[]> {
