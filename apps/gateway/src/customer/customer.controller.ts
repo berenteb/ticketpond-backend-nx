@@ -12,11 +12,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
-import {
-  CreateCustomerDto,
-  CustomerDto,
-  ReqWithUser,
-} from '@ticketpond-backend-nx/types';
+import type { ReqWithUser } from '@ticketpond-backend-nx/types';
+import { CreateCustomerDto, CustomerDto } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 import { ServiceNames } from '../utils/service-names';
@@ -29,6 +26,7 @@ export class CustomerController {
     @Inject(ServiceNames.CUSTOMER_SERVICE)
     private readonly customerService: ClientProxy,
   ) {}
+
   @Get('me')
   @ApiOkResponse({ type: CustomerDto })
   async getMe(@Req() req: ReqWithUser): Promise<CustomerDto> {

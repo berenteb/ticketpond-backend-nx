@@ -6,10 +6,10 @@ export type JwtUser = {
   exp: number;
   azp: string;
   scope: string;
-  permissions: Permissions[];
+  permissions: PermissionLevel[];
 };
 
-export enum Permissions {
+export enum PermissionLevel {
   ADMIN = 'admin:all',
   MERCHANT = 'merchant:all',
 }

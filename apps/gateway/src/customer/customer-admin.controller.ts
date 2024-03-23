@@ -12,18 +12,20 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { PermissionGuard } from '@ticketpond-backend-nx/authz';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateCustomerDto,
   CustomerDto,
+  PermissionLevel,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 import { ServiceNames } from '../utils/service-names';
 
-// @UseGuards(PermissionGuard(Permissions.ADMIN))
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(PermissionGuard(PermissionLevel.ADMIN))
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('customer-admin')
 @Controller('customer')
 export class CustomerAdminController {
@@ -43,7 +45,6 @@ export class CustomerAdminController {
     );
   }
 
-  // @UseGuards(PermissionGuard(Permissions.ADMIN))
   @Get(':id')
   @ApiOkResponse({ type: CustomerDto })
   @ApiNotFoundResponse()

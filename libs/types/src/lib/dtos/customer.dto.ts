@@ -8,7 +8,8 @@ import {
   Matches,
 } from 'class-validator';
 
-import { PhoneRegex, PhoneRegexMessage, WithoutId } from '../common.types';
+import { WithoutId } from '../common.types';
+import { PhoneRegex, PhoneRegexMessage } from '../regex';
 
 export class CreateCustomerDto implements Omit<WithoutId<Customer>, 'authId'> {
   @ApiProperty({ example: 'John' })

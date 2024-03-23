@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthzModule } from '@ticketpond-backend-nx/authz';
 
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
@@ -8,7 +9,7 @@ import { createClientProxy } from './utils/create-client-proxy';
 import { ServiceNames } from './utils/service-names';
 
 @Module({
-  imports: [],
+  imports: [AuthzModule],
   controllers: [GatewayController, CustomerAdminController, CustomerController],
   providers: [
     ConfigService,
