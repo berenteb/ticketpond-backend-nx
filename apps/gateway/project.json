@@ -48,7 +48,7 @@
     },
     "docker-build": {
       "dependsOn": ["build"],
-      "command": "docker build -f apps/gateway/Dockerfile . -t gateway"
+      "command": "docker build -f apps/gateway/Dockerfile . -t ticketpond-gateway"
     }
   },
   "tags": []
