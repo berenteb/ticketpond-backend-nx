@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
 import {
   CreateMerchantDto,
@@ -24,6 +24,7 @@ import { firstValueFrom } from 'rxjs';
 import { MerchantPattern } from '../../../../libs/message-patterns/src/lib/merchant.patterns';
 import { ServiceNames } from '../utils/service-names';
 
+@ApiTags('merchant-admin')
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
 @Controller('admin/merchant')

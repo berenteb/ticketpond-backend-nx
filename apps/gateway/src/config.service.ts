@@ -9,6 +9,8 @@ type ServiceConfig = {
 
 export type ClientProxyOptions = {
   customerService: ServiceConfig;
+  merchantService: ServiceConfig;
+  experienceService: ServiceConfig;
 };
 
 export class ConfigService {
@@ -24,6 +26,14 @@ export class ConfigService {
       customerService: {
         host: env.get('CUSTOMER_SERVICE_HOST').required().asString(),
         port: env.get('CUSTOMER_SERVICE_PORT').required().asPortNumber(),
+      },
+      merchantService: {
+        host: env.get('MERCHANT_SERVICE_HOST').required().asString(),
+        port: env.get('MERCHANT_SERVICE_PORT').required().asPortNumber(),
+      },
+      experienceService: {
+        host: env.get('EXPERIENCE_SERVICE_HOST').required().asString(),
+        port: env.get('EXPERIENCE_SERVICE_PORT').required().asPortNumber(),
       },
       frontendUrl: env.get('FRONTEND_URL').required().asString(),
     };

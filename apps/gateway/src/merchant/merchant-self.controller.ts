@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
 import {
   MerchantDto,
@@ -22,6 +22,7 @@ import { firstValueFrom } from 'rxjs';
 import { MerchantPattern } from '../../../../libs/message-patterns/src/lib/merchant.patterns';
 import { ServiceNames } from '../utils/service-names';
 
+@ApiTags('merchant-self')
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
 @UseGuards(AuthGuard('jwt'))
 @Controller('merchant-admin/me')

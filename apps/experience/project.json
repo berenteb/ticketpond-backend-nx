@@ -1,0 +1,52 @@
+{
+  "name": "experience",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/experience/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/experience/jest.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/experience",
+        "main": "apps/experience/src/main.ts",
+        "tsConfig": "apps/experience/tsconfig.json",
+        "webpackConfig": "apps/experience/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "experience:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "experience:build:development"
+        },
+        "production": {
+          "buildTarget": "experience:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}
