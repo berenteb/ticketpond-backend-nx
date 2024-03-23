@@ -3,14 +3,13 @@ import { MessagePattern } from '@nestjs/microservices';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateCustomerDto,
+  CustomerServiceInterface,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
 
-import { CustomerService } from './customer.service';
-
 @Controller()
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(private readonly customerService: CustomerServiceInterface) {}
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER)
   async getCustomer(id: string) {

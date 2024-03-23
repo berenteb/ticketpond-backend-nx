@@ -5,7 +5,7 @@ export const CustomerMock: Customer = {
   email: 'test-customer-email',
   firstName: 'test-customer-first-name',
   id: 'test-customer-id',
-  internalId: 'test-customer-internal-id',
+  authId: 'test-customer-auth-id',
   lastName: 'test-customer-last-name',
   phone: 'test-customer-phone-number',
 };
