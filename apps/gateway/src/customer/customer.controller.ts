@@ -14,9 +14,8 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import type { ReqWithUser } from '@ticketpond-backend-nx/types';
 import { CreateCustomerDto, CustomerDto } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ServiceNames } from '../utils/service-names';
 
 @ApiTags('customer')
 @UseGuards(AuthGuard('jwt'))

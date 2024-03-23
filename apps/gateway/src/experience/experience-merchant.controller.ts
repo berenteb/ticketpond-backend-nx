@@ -15,6 +15,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
+import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
+import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateExperienceDto,
   DeepExperienceDto,
@@ -26,11 +28,8 @@ import {
   ValidationRequestDto,
   ValidationResponseDto,
 } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ExperiencePatterns } from '../../../../libs/message-patterns/src/lib/experience.patterns';
-import { MerchantPattern } from '../../../../libs/message-patterns/src/lib/merchant.patterns';
-import { ServiceNames } from '../utils/service-names';
 
 @ApiTags('experience-merchant')
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))

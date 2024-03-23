@@ -1,14 +1,17 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
-import { JwtUser, PermissionLevel } from '@ticketpond-backend-nx/types';
+import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
+import {
+  JwtUser,
+  PermissionLevel,
+  ServiceNames,
+} from '@ticketpond-backend-nx/types';
 import * as dotenv from 'dotenv';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { firstValueFrom } from 'rxjs';
 
-import { ServiceNames } from '../../../../apps/gateway/src/utils/service-names';
-import { MerchantPattern } from '../../../message-patterns/src/lib/merchant.patterns';
 import { AUTH0_AUDIENCE, AUTH0_ISSUER_URL } from './config';
 
 dotenv.config();

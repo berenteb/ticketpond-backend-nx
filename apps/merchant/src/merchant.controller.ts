@@ -1,13 +1,12 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
+import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateMerchantDto,
   MerchantDto,
   MerchantServiceInterface,
   UpdateMerchantDto,
 } from '@ticketpond-backend-nx/types';
-
-import { MerchantPattern } from '../../../libs/message-patterns/src/lib/merchant.patterns';
 
 @Controller()
 export class MerchantController {

@@ -1,11 +1,10 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
 import { DeepExperienceDto, ExperienceDto } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ExperiencePatterns } from '../../../../libs/message-patterns/src/lib/experience.patterns';
-import { ServiceNames } from '../utils/service-names';
 
 @ApiTags('experience')
 @Controller('experience')

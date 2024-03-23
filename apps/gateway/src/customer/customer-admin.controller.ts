@@ -20,9 +20,8 @@ import {
   PermissionLevel,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ServiceNames } from '../utils/service-names';
 
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))

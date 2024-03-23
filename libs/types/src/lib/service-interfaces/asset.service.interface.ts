@@ -1,4 +1,4 @@
 export abstract class AssetServiceInterface {
-  abstract uploadFile(file: any): Promise<string>;
+  abstract uploadFile(file: unknown): Promise<string>;
   abstract deleteFile(fileName: string): Promise<void>;
 }

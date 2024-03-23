@@ -12,15 +12,14 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateMerchantDto,
   MerchantDto,
   type ReqWithUser,
 } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { MerchantPattern } from '../../../../libs/message-patterns/src/lib/merchant.patterns';
-import { ServiceNames } from '../utils/service-names';
 
 @ApiTags('merchant')
 @Controller('merchant')

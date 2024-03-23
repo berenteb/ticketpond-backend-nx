@@ -1,5 +1,4 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 

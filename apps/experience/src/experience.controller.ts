@@ -1,5 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
+import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateExperienceDto,
   DeepExperienceDto,
@@ -8,8 +9,6 @@ import {
   UpdateExperienceDto,
   ValidationResponseDto,
 } from '@ticketpond-backend-nx/types';
-
-import { ExperiencePatterns } from '../../../libs/message-patterns/src/lib/experience.patterns';
 
 @Controller()
 export class ExperienceController {

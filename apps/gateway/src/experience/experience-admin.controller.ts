@@ -12,16 +12,15 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
+import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   DeepExperienceDto,
   ExperienceDto,
   PermissionLevel,
   UpdateExperienceDto,
 } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ExperiencePatterns } from '../../../../libs/message-patterns/src/lib/experience.patterns';
-import { ServiceNames } from '../utils/service-names';
 
 @ApiTags('experience-admin')
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))

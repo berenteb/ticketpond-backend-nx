@@ -1,4 +1,4 @@
-import { Customer, Merchant } from '@prisma/client';
+import { Merchant } from '@prisma/client';
 
 export const MerchantMock: Merchant = {
   address: 'merchant address',

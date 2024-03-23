@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthzModule } from '@ticketpond-backend-nx/authz';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
@@ -12,7 +13,6 @@ import { MerchantController } from './merchant/merchant.controller';
 import { MerchantAdminController } from './merchant/merchant-admin.controller';
 import { MerchantSelfController } from './merchant/merchant-self.controller';
 import { createClientProxy } from './utils/create-client-proxy';
-import { ServiceNames } from './utils/service-names';
 
 @Module({
   imports: [
