@@ -17,6 +17,13 @@
     ],
     "sharedGlobals": []
   },
+  "targetDefaults": {
+    "build": {
+      "options": {
+        "generatePackageJson": true
+      }
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/webpack/plugin",

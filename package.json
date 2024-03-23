@@ -11,6 +11,7 @@
   "scripts": {
     "start": "nx run-many --target=serve --all --max-parallel=100",
     "build": "nx run-many --target=build --all",
+    "build:docker": "nx run-many --target=docker-build --all",
     "test": "nx run-many --target=test --all",
     "lint": "nx run-many --target=lint --all"
   },
@@ -33,7 +34,8 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "prisma": "^5.11.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.1.1",
@@ -63,7 +65,6 @@
     "jest-environment-node": "^29.7.0",
     "nx": "18.0.6",
     "prettier": "^3.2.5",
-    "prisma": "5.11.0",
     "ts-jest": "^29.1.2",
     "ts-node": "10.9.2",
     "typescript": "~5.3.3",

@@ -24,8 +24,7 @@
       },
       "configurations": {
         "development": {},
-        "production": {
-        }
+        "production": {}
       }
     },
     "serve": {
@@ -46,6 +45,10 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/customer/Dockerfile . -t customer"
     }
   },
   "tags": []
