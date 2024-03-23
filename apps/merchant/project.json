@@ -1,0 +1,52 @@
+{
+  "name": "merchant",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/merchant/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/merchant/jest.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/merchant",
+        "main": "apps/merchant/src/main.ts",
+        "tsConfig": "apps/merchant/tsconfig.json",
+        "webpackConfig": "apps/merchant/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "merchant:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "merchant:build:development"
+        },
+        "production": {
+          "buildTarget": "merchant:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}

@@ -1,17 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
-import { JwtUser } from '@ticketpond-backend-nx/types';
+import { JwtUser, PermissionLevel } from '@ticketpond-backend-nx/types';
 import * as dotenv from 'dotenv';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { firstValueFrom } from 'rxjs';
 
+import { ServiceNames } from '../../../../apps/gateway/src/utils/service-names';
+import { MerchantPattern } from '../../../message-patterns/src/lib/merchant.patterns';
 import { AUTH0_AUDIENCE, AUTH0_ISSUER_URL } from './config';
 
 dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  private readonly logger = new Logger(JwtStrategy.name);
+  constructor(
+    @Inject(ServiceNames.MERCHANT_SERVICE)
+    private readonly merchantService: ClientProxy,
+  ) {
     super({
       secretOrKeyProvider: passportJwtSecret({
         cache: true,
@@ -28,13 +36,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtUser): Promise<JwtUser> {
-    // const merchantForUser = await this.merchantService.getMerchantByUserId(
-    //   payload.sub,
-    // );
-    // if (merchantForUser) {
-    //   Logger.debug('User is a merchant', JwtStrategy.name);
-    //   payload.permissions.push(PermissionLevel.MERCHANT);
-    // }
+    const merchantForUser = await firstValueFrom(
+      this.merchantService.send<boolean>(
+        MerchantPattern.GET_MERCHANT_BY_USER_ID,
+        payload.sub,
+      ),
+    );
+    if (merchantForUser) {
+      this.logger.debug('User is a merchant');
+      payload.permissions.push(PermissionLevel.MERCHANT);
+    }
     return payload;
   }
 }
