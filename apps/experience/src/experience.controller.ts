@@ -4,16 +4,16 @@ import {
   CreateExperienceDto,
   DeepExperienceDto,
   ExperienceDto,
+  ExperienceServiceInterface,
   UpdateExperienceDto,
   ValidationResponseDto,
 } from '@ticketpond-backend-nx/types';
 
 import { ExperiencePatterns } from '../../../libs/message-patterns/src/lib/experience.patterns';
-import { ExperienceService } from './experience.service';
 
 @Controller()
 export class ExperienceController {
-  constructor(private readonly experienceService: ExperienceService) {}
+  constructor(private readonly experienceService: ExperienceServiceInterface) {}
 
   @MessagePattern(ExperiencePatterns.LIST_EXPERIENCES)
   async listExperiences(): Promise<ExperienceDto[]> {
