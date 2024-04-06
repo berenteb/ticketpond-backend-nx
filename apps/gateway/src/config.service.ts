@@ -13,6 +13,7 @@ export type ClientProxyOptions = {
   merchantService: ServiceConfig;
   experienceService: ServiceConfig;
   ticketService: ServiceConfig;
+  orderService: ServiceConfig;
 };
 
 export class ConfigService {
@@ -41,6 +42,11 @@ export class ConfigService {
         host: env.get('TICKET_SERVICE_HOST').required().asString(),
         port: env.get('TICKET_SERVICE_PORT').required().asPortNumber(),
       },
+      orderService: {
+        host: env.get('ORDER_SERVICE_HOST').required().asString(),
+        port: env.get('ORDER_SERVICE_PORT').required().asPortNumber(),
+      },
+
       frontendUrl: env.get('FRONTEND_URL').required().asString(),
     };
   }

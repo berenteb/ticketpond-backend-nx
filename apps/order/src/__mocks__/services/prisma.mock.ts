@@ -6,7 +6,6 @@ const createDelegateMock = () => {
     findFirst: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    deleteMany: jest.fn(),
   };
 };
 

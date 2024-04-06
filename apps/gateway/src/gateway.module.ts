@@ -12,6 +12,9 @@ import { GatewayController } from './gateway.controller';
 import { MerchantController } from './merchant/merchant.controller';
 import { MerchantAdminController } from './merchant/merchant-admin.controller';
 import { MerchantSelfController } from './merchant/merchant-self.controller';
+import { OrderController } from './order/order.controller';
+import { OrderAdminController } from './order/order-admin.controller';
+import { OrderMerchantController } from './order/order-merchant.controller';
 import { TicketController } from './ticket/ticket.controller';
 import { TicketAdminController } from './ticket/ticket-admin.controller';
 import { TicketMerchantController } from './ticket/ticket-merchant.controller';
@@ -37,6 +40,9 @@ import { createClientProxy } from './utils/create-client-proxy';
     TicketController,
     TicketAdminController,
     TicketMerchantController,
+    OrderController,
+    OrderAdminController,
+    OrderMerchantController,
   ],
   providers: [
     ConfigService,
@@ -44,6 +50,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     createClientProxy(ServiceNames.MERCHANT_SERVICE, 'merchantService'),
     createClientProxy(ServiceNames.EXPERIENCE_SERVICE, 'experienceService'),
     createClientProxy(ServiceNames.TICKET_SERVICE, 'ticketService'),
+    createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
   ],
 })
 export class GatewayModule {}
