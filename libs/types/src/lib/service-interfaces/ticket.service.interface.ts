@@ -12,6 +12,10 @@ export abstract class TicketServiceInterface implements IsOwnProperty {
   abstract getTicketById(id: string): Promise<DeepTicketDto>;
   abstract getTicketsForExperience(experienceId: string): Promise<TicketDto[]>;
   abstract isOwnProperty(itemId: string, ownerId: string): Promise<boolean>;
+  abstract isOwnExperience(
+    experienceId: string,
+    ownerId: string,
+  ): Promise<boolean>;
 
   abstract createTicket(ticket: CreateTicketDto): Promise<TicketDto>;
 

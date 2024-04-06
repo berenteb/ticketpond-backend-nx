@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as env from 'env-var';
+
 dotenv.config();
 
 type ServiceConfig = {
@@ -11,6 +12,7 @@ export type ClientProxyOptions = {
   customerService: ServiceConfig;
   merchantService: ServiceConfig;
   experienceService: ServiceConfig;
+  ticketService: ServiceConfig;
 };
 
 export class ConfigService {
@@ -34,6 +36,10 @@ export class ConfigService {
       experienceService: {
         host: env.get('EXPERIENCE_SERVICE_HOST').required().asString(),
         port: env.get('EXPERIENCE_SERVICE_PORT').required().asPortNumber(),
+      },
+      ticketService: {
+        host: env.get('TICKET_SERVICE_HOST').required().asString(),
+        port: env.get('TICKET_SERVICE_PORT').required().asPortNumber(),
       },
       frontendUrl: env.get('FRONTEND_URL').required().asString(),
     };

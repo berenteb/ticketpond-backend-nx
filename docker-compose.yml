@@ -1,0 +1,59 @@
+name: ticketpond-dev
+services:
+  database:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ticketpond
+    volumes:
+      - db:/var/lib/postgresql/data
+  gateway:
+    image: ticketpond-gateway:latest
+    ports:
+      - '3001:3001'
+    environment:
+      HOST: gateway
+      PORT: 3001
+      CUSTOMER_SERVICE_HOST: customer
+      CUSTOMER_SERVICE_PORT: 3002
+      MERCHANT_SERVICE_HOST: merchant
+      MERCHANT_SERVICE_PORT: 3003
+      EXPERIENCE_SERVICE_HOST: experience
+      EXPERIENCE_SERVICE_PORT: 3004
+      FRONTEND_URL: "http://localhost:3000"
+      AUTH0_ISSUER_URL: "https://dev-1dcvkxsedo8i0jk0.us.auth0.com/"
+      AUTH0_AUDIENCE: "https://localhost:3001"
+      DATABASE_URL: postgres://postgres:password@database:5432/ticketpond
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+    depends_on:
+      - database
+  customer:
+    image: ticketpond-customer:latest
+    environment:
+      HOST: customer
+      PORT: 3002
+      DATABASE_URL: postgres://postgres:password@database:5432/ticketpond
+    depends_on:
+      - database
+  merchant:
+    image: ticketpond-merchant:latest
+    environment:
+      HOST: merchant
+      PORT: 3003
+      DATABASE_URL: postgres://postgres:password@database:5432/ticketpond
+    depends_on:
+      - database
+  experience:
+    image: ticketpond-experience:latest
+    environment:
+      HOST: experience
+      PORT: 3004
+      DATABASE_URL: postgres://postgres:password@database:5432/ticketpond
+    depends_on:
+      - database
+volumes:
+  db:
