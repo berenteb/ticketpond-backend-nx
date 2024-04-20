@@ -1,21 +1,31 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { Customer } from '@prisma/client';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
   CreateCustomerDto,
   CustomerDto,
   CustomerServiceInterface,
+  ServiceNames,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
 
 @Injectable()
-export class CustomerService extends CustomerServiceInterface {
+export class CustomerService
+  extends CustomerServiceInterface
+  implements OnModuleInit
+{
   private readonly logger = new Logger(CustomerService.name);
   constructor(
     private readonly prismaService: PrismaService,
-    // private readonly notificationService: NotificationServiceInterface,
+    @Inject(ServiceNames.NOTIFICATION_SERVICE)
+    private readonly notificationService: ClientProxy,
   ) {
     super();
+  }
+
+  async onModuleInit() {
+    await this.notificationService.connect();
   }
 
   async createCustomer(
@@ -26,7 +36,7 @@ export class CustomerService extends CustomerServiceInterface {
       data: { ...customer, authId },
     });
     this.logger.debug(`Created customer with id ${created.id}`);
-    // this.notificationService.sendWelcome(created);
+    await this.sendWelcomeEmail(created);
     return created;
   }
 
@@ -85,5 +95,9 @@ export class CustomerService extends CustomerServiceInterface {
     });
     this.logger.debug(`Updated customer with authId ${authId}`);
     return updatedCustomer;
+  }
+
+  private async sendWelcomeEmail(customer: Customer): Promise<void> {
+    this.notificationService.emit('sendWelcome', customer);
   }
 }

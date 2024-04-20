@@ -7,8 +7,7 @@ import {
   CustomerServiceInterface,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
-
-import { ServiceResponse } from '../../../libs/types/src/lib/service-response';
+import { ServiceResponse } from '@ticketpond-backend-nx/types';
 
 @Controller()
 export class CustomerController {
