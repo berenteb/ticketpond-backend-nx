@@ -26,7 +26,7 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('customer-admin')
-@Controller('customer')
+@Controller('admin/customer')
 export class CustomerAdminController {
   constructor(
     @Inject(ServiceNames.CUSTOMER_SERVICE)

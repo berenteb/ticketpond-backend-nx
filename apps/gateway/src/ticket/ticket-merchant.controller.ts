@@ -6,6 +6,7 @@ import {
   Inject,
   Param,
   Patch,
+  Post,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -19,6 +20,7 @@ import {
   TicketPatterns,
 } from '@ticketpond-backend-nx/message-patterns';
 import {
+  CreateTicketDto,
   DeepTicketDto,
   MerchantDto,
   PermissionLevel,
@@ -81,6 +83,24 @@ export class TicketMerchantController {
       this.ticketService.send<TicketDto[]>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
+      ),
+    );
+  }
+
+  @Post()
+  @ApiOkResponse({ type: TicketDto })
+  async createTicket(
+    @Body() ticket: CreateTicketDto,
+    @Req() req: ReqWithUser,
+  ): Promise<TicketDto> {
+    const merchant = await this.getMerchantIdByUserId(req.user.sub);
+    return firstValueFrom(
+      this.ticketService.send<TicketDto>(
+        TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
+        {
+          ticket,
+          merchantId: merchant.id,
+        },
       ),
     );
   }

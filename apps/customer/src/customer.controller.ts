@@ -3,9 +3,12 @@ import { MessagePattern } from '@nestjs/microservices';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateCustomerDto,
+  CustomerDto,
   CustomerServiceInterface,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
+
+import { ServiceResponse } from '../../../libs/types/src/lib/service-response';
 
 @Controller()
 export class CustomerController {
@@ -17,8 +20,24 @@ export class CustomerController {
   }
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID)
-  async getCustomerByAuthId(authId: string) {
-    return await this.customerService.getCustomerByAuthId(authId);
+  async getCustomerByAuthId(
+    authId: string,
+  ): Promise<ServiceResponse<CustomerDto>> {
+    const customer = await this.customerService.getCustomerByAuthId(authId);
+    if (!customer) {
+      return {
+        success: false,
+        error: {
+          status: 404,
+          message: `Customer with authId ${authId} not found`,
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: customer,
+    };
   }
 
   @MessagePattern(CustomerMessagePattern.CREATE_CUSTOMER)

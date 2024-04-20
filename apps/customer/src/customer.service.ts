@@ -35,12 +35,12 @@ export class CustomerService extends CustomerServiceInterface {
     this.logger.debug(`Deleted customer with id ${id}`);
   }
 
-  async getCustomerById(id: string): Promise<Customer> {
+  async getCustomerById(id: string): Promise<Customer | null> {
     const customer = await this.prismaService.customer.findUnique({
       where: { id },
     });
     if (!customer) {
-      throw new NotFoundException(`Customer with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found customer with id ${id}`);
     return customer;
@@ -51,7 +51,7 @@ export class CustomerService extends CustomerServiceInterface {
       where: { authId },
     });
     if (!customer) {
-      throw new NotFoundException(`Customer with authId ${authId} not found`);
+      return null;
     }
     this.logger.debug(`Found customer with authId ${authId}`);
     return customer;

@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Param, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   DeepOrderDto,
@@ -11,6 +11,7 @@ import {
 } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
+@ApiTags('order')
 @UseGuards(AuthGuard('jwt'))
 @Controller('order')
 export class OrderController {

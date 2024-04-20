@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({})
 export class AuthzModule {
   static forRoot(providers: Provider[]): DynamicModule {
+    console.log(providers);
     return {
       imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       providers: [JwtStrategy, PrismaService, ...providers],
