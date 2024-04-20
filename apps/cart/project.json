@@ -1,0 +1,55 @@
+{
+  "name": "cart",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/cart/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/cart/jest.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/cart",
+        "main": "apps/cart/src/main.ts",
+        "tsConfig": "apps/cart/tsconfig.json",
+        "webpackConfig": "apps/cart/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "cart:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "cart:build:development"
+        },
+        "production": {
+          "buildTarget": "cart:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/cart/Dockerfile . -t ticketpond-cart"
+    }
+  },
+  "tags": []
+}

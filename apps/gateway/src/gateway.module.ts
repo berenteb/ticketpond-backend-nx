@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthzModule } from '@ticketpond-backend-nx/authz';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 
+import { CartController } from './cart/cart.controller';
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
 import { CustomerAdminController } from './customer/customer-admin.controller';
@@ -29,8 +30,8 @@ import { createClientProxy } from './utils/create-client-proxy';
   ],
   controllers: [
     GatewayController,
-    CustomerAdminController,
     CustomerController,
+    CustomerAdminController,
     MerchantController,
     MerchantSelfController,
     MerchantAdminController,
@@ -43,6 +44,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     OrderController,
     OrderAdminController,
     OrderMerchantController,
+    CartController,
   ],
   providers: [
     ConfigService,
@@ -51,6 +53,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     createClientProxy(ServiceNames.EXPERIENCE_SERVICE, 'experienceService'),
     createClientProxy(ServiceNames.TICKET_SERVICE, 'ticketService'),
     createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
+    createClientProxy(ServiceNames.CART_SERVICE, 'cartService'),
   ],
 })
 export class GatewayModule {}

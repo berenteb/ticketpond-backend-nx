@@ -3,8 +3,8 @@ import { CreateCustomerDto, CustomerDto, UpdateCustomerDto } from '../dtos';
 export abstract class CustomerServiceInterface {
   abstract getCustomers(): Promise<CustomerDto[]>;
 
-  abstract getCustomerById(id: string): Promise<CustomerDto>;
-  abstract getCustomerByAuthId(authId: string): Promise<CustomerDto>;
+  abstract getCustomerById(id: string): Promise<CustomerDto | null>;
+  abstract getCustomerByAuthId(authId: string): Promise<CustomerDto | null>;
 
   abstract createCustomer(
     customer: CreateCustomerDto,
