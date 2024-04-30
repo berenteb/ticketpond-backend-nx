@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { PaymentController } from './payment.controller';
-import { PaymentService } from './payment.service';
+import { PassController } from './pass.controller';
+import { PassService } from './pass.service';
 
-describe('PassController', () => {
+describe('AppController', () => {
   let app: TestingModule;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      controllers: [PaymentController],
-      providers: [PaymentService],
+      controllers: [PassController],
+      providers: [PassService],
     }).compile();
   });
 
   describe('getData', () => {
     it('should return "Hello API"', () => {
-      const appController = app.get<PaymentController>(PaymentController);
+      const appController = app.get<PassController>(PassController);
       expect(appController.getData()).toEqual({ message: 'Hello API' });
     });
   });

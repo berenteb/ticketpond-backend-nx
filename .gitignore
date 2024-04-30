@@ -41,3 +41,8 @@ Thumbs.db
 .nx/cache
 
 .env
+
+google.json
+signerCert.pem
+signerKey.pem
+wwdr.pem

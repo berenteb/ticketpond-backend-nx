@@ -1,0 +1,55 @@
+{
+  "name": "pass",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/pass/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/pass/jest.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/pass",
+        "main": "apps/pass/src/main.ts",
+        "tsConfig": "apps/pass/tsconfig.json",
+        "webpackConfig": "apps/pass/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "pass:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "pass:build:development"
+        },
+        "production": {
+          "buildTarget": "pass:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/pass/Dockerfile . -t ticketpond-pass"
+    }
+  },
+  "tags": []
+}
