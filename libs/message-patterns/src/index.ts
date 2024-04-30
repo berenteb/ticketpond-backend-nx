@@ -4,4 +4,5 @@ export * from './lib/experience.patterns';
 export * from './lib/merchant.patterns';
 export * from './lib/notification.patterns';
 export * from './lib/order.patterns';
+export * from './lib/payment.patterns';
 export * from './lib/ticket.patterns';
