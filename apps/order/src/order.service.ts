@@ -36,10 +36,15 @@ export class OrderService implements OrderServiceInterface {
 
   async getOrderByIdForCustomer(
     id: string,
-    customerId: string,
+    customerAuthId: string,
   ): Promise<DeepOrderDto> {
     const order = await this.prisma.order.findFirst({
-      where: { id, customerId },
+      where: {
+        id,
+        customer: {
+          authId: customerAuthId,
+        },
+      },
       include: {
         items: { include: { ticket: { include: { experience: true } } } },
       },
@@ -62,13 +67,17 @@ export class OrderService implements OrderServiceInterface {
     return orders;
   }
 
-  async getOrdersForCustomer(customerId: string): Promise<OrderDto[]> {
+  async getOrdersForCustomer(customerAuthId: string): Promise<OrderDto[]> {
     const order = await this.prisma.order.findMany({
-      where: { customerId },
+      where: {
+        customer: {
+          authId: customerAuthId,
+        },
+      },
       include: { items: true },
     });
     this.logger.debug(
-      `Found ${order.length} orders for customer with id ${customerId}`,
+      `Found ${order.length} orders for customer with id ${customerAuthId}`,
     );
     return order;
   }
@@ -142,7 +151,7 @@ export class OrderService implements OrderServiceInterface {
 
   async isOwnProperty(itemId: string, ownerId: string): Promise<boolean> {
     const order = await this.prisma.order.findFirst({
-      where: { id: itemId, customerId: ownerId },
+      where: { id: itemId, customer: { authId: ownerId } },
     });
     return !!order;
   }

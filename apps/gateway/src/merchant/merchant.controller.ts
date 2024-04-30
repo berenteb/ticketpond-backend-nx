@@ -57,7 +57,7 @@ export class MerchantController {
         MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT,
         {
           merchantId: createdMerchant.id,
-          customerId: userId,
+          customerAuthId: userId,
         },
       ),
     );

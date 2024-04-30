@@ -18,7 +18,7 @@ import {
 import {
   OrderDto,
   PaymentDto,
-  ReqWithUser,
+  type ReqWithUser,
   ServiceNames,
 } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
@@ -53,13 +53,13 @@ export class PaymentController {
     this.sendWebhookEvent(req.headers['stripe-signature'], req.rawBody);
   }
 
-  private getOrderForCustomer(id: string, customerId: string) {
+  private getOrderForCustomer(id: string, customerAuthId: string) {
     return firstValueFrom(
       this.orderService.send<OrderDto | undefined>(
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,
-          customerId,
+          customerAuthId,
         },
       ),
     );

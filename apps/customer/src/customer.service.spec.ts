@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
-import { NotificationServiceInterface } from '@ticketpond-backend-nx/types';
+import { ServiceNames } from '@ticketpond-backend-nx/types';
 
 import { CustomerMock } from './__mocks__/entities/customer.mock';
 import { NotificationServiceMock } from './__mocks__/services/notificationService.mock';
@@ -15,7 +15,7 @@ beforeEach(async () => {
       CustomerService,
       { provide: PrismaService, useValue: PrismaMock },
       {
-        provide: NotificationServiceInterface,
+        provide: ServiceNames.NOTIFICATION_SERVICE,
         useValue: NotificationServiceMock,
       },
     ],

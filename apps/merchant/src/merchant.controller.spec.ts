@@ -34,7 +34,9 @@ it('should get merchant by id', async () => {
 it('should get merchant by user id', async () => {
   const merchant = await controller.getMerchantByUserId('1');
   expect(merchant).toEqual(MerchantMock);
-  expect(MerchantServiceMock.getMerchantByUserId).toHaveBeenCalledWith('1');
+  expect(MerchantServiceMock.getMerchantByCustomerAuthId).toHaveBeenCalledWith(
+    '1',
+  );
 });
 
 it('should create merchant', async () => {
@@ -46,7 +48,7 @@ it('should create merchant', async () => {
 it('should assign customer to merchant', async () => {
   await controller.assignCustomerToMerchant({
     merchantId: '1',
-    customerId: '2',
+    customerAuthId: '2',
   });
   expect(MerchantServiceMock.assignCustomerToMerchant).toHaveBeenCalledWith(
     '1',
@@ -72,10 +74,9 @@ it('should update merchant by user id', async () => {
     merchant: MerchantMock,
   });
   expect(merchant).toEqual(MerchantMock);
-  expect(MerchantServiceMock.updateMerchantByUserId).toHaveBeenCalledWith(
-    '1',
-    MerchantMock,
-  );
+  expect(
+    MerchantServiceMock.updateMerchantByCustomerAuthId,
+  ).toHaveBeenCalledWith('1', MerchantMock);
 });
 
 it('should delete merchant', async () => {

@@ -16,13 +16,16 @@ export class MerchantService implements MerchantServiceInterface {
 
   async assignCustomerToMerchant(
     merchantId: string,
-    customerId: string,
+    customerAuthId: string,
   ): Promise<void> {
     await this.prisma.merchantOnCustomer.create({
-      data: { customerId, merchantId },
+      data: {
+        merchant: { connect: { id: merchantId } },
+        customer: { connect: { authId: customerAuthId } },
+      },
     });
     this.logger.debug(
-      `Assigned customer ${customerId} to merchant ${merchantId}`,
+      `Assigned customer ${customerAuthId} to merchant ${merchantId}`,
     );
   }
 
@@ -69,28 +72,38 @@ export class MerchantService implements MerchantServiceInterface {
     this.logger.debug(`Deleted merchant with id ${id}`);
   }
 
-  async getMerchantByUserId(id: string): Promise<MerchantDto | undefined> {
+  async getMerchantByCustomerAuthId(
+    customerAuthId: string,
+  ): Promise<MerchantDto | undefined> {
     const merchant = await this.prisma.merchant.findFirst({
-      where: { MerchantOnCustomer: { some: { customerId: id } } },
+      where: {
+        MerchantOnCustomer: { some: { customer: { authId: customerAuthId } } },
+      },
     });
     if (!merchant) {
-      this.logger.debug(`No merchant found for user ${id}`);
+      this.logger.debug(`No merchant found for user ${customerAuthId}`);
     } else {
-      this.logger.debug(`Found merchant for user ${id}`);
+      this.logger.debug(`Found merchant for user ${customerAuthId}`);
     }
     return merchant;
   }
 
-  async updateMerchantByUserId(userId: string, merchant: UpdateMerchantDto) {
-    const merchantForUser = await this.getMerchantByUserId(userId);
+  async updateMerchantByCustomerAuthId(
+    customerAuthId: string,
+    merchant: UpdateMerchantDto,
+  ) {
+    const merchantForUser =
+      await this.getMerchantByCustomerAuthId(customerAuthId);
     if (!merchantForUser) {
-      throw new NotFoundException(`Merchant for user ${userId} not found`);
+      throw new NotFoundException(
+        `Merchant for user ${customerAuthId} not found`,
+      );
     }
     const updated = await this.prisma.merchant.update({
       where: { id: merchantForUser.id },
       data: merchant,
     });
-    this.logger.debug(`Updated merchant for user ${userId}`);
+    this.logger.debug(`Updated merchant for user ${customerAuthId}`);
     return updated;
   }
 }

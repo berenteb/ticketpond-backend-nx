@@ -32,7 +32,10 @@ it('should get customer by id', async () => {
 
 it('should get customer by auth id', async () => {
   const result = await controller.getCustomerByAuthId(CustomerMock.authId);
-  expect(result).toEqual(CustomerMock);
+  expect(result).toEqual({
+    success: true,
+    data: CustomerMock,
+  });
   expect(CustomerServiceMock.getCustomerByAuthId).toHaveBeenCalledWith(
     CustomerMock.authId,
   );

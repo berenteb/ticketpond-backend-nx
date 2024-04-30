@@ -13,3 +13,9 @@ beforeEach(async () => {
 
   controller = module.get<NotificationController>(NotificationController);
 });
+
+describe('NotificationController', () => {
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});

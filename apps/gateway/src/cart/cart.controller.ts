@@ -23,9 +23,8 @@ import {
   type ReqWithUser,
   ServiceNames,
 } from '@ticketpond-backend-nx/types';
+import { ServiceResponse } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
-
-import { ServiceResponse } from '../../../../libs/types/src/lib/service-response';
 
 @ApiTags('cart')
 @UseGuards(AuthGuard('jwt'))

@@ -26,9 +26,12 @@ export class OrderController {
   @MessagePattern(OrderPatterns.GET_ORDER_FOR_CUSTOMER)
   async getOrderForCustomer(data: {
     id: string;
-    customerId: string;
+    customerAuthId: string;
   }): Promise<DeepOrderDto> {
-    return this.orderService.getOrderByIdForCustomer(data.id, data.customerId);
+    return this.orderService.getOrderByIdForCustomer(
+      data.id,
+      data.customerAuthId,
+    );
   }
 
   @MessagePattern(OrderPatterns.LIST_ORDERS)
@@ -37,8 +40,8 @@ export class OrderController {
   }
 
   @MessagePattern(OrderPatterns.LIST_ORDERS_FOR_CUSTOMER)
-  async getOrdersForCustomer(customerId: string): Promise<OrderDto[]> {
-    return this.orderService.getOrdersForCustomer(customerId);
+  async getOrdersForCustomer(customerAuthId: string): Promise<OrderDto[]> {
+    return this.orderService.getOrdersForCustomer(customerAuthId);
   }
 
   @MessagePattern(OrderPatterns.DELETE_ORDER)

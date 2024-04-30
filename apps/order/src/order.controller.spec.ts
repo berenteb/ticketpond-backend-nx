@@ -26,7 +26,7 @@ it('should get order by id', async () => {
 it('should get order for customer', async () => {
   const order = await controller.getOrderForCustomer({
     id: '1',
-    customerId: '2',
+    customerAuthId: '2',
   });
   expect(order).toEqual(OrderMock);
   expect(OrderServiceMock.getOrderByIdForCustomer).toHaveBeenCalledWith(

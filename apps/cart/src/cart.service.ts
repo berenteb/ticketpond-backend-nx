@@ -88,11 +88,11 @@ export class CartService implements CartServiceInterface {
   }
 
   async removeItemFromCartForCustomer(
-    customerId: string,
+    customerAuthId: string,
     ticketId: string,
     quantity: number,
   ): Promise<CartDto> {
-    const cart = await this.getCartForCustomer(customerId);
+    const cart = await this.getCartForCustomer(customerAuthId);
     return this.removeItemFromCart(cart.id, ticketId, quantity);
   }
 

@@ -14,12 +14,12 @@ export abstract class OrderServiceInterface implements IsOwnProperty {
   ): Promise<DeepOrderWithCustomerDto>;
   abstract getOrderByIdForCustomer(
     id: string,
-    customerId: string,
+    customerAuthId: string,
   ): Promise<DeepOrderDto>;
   abstract getOrdersForMerchant(
     merchantId: string,
   ): Promise<OrderWithCustomerDto[]>;
-  abstract getOrdersForCustomer(userId: string): Promise<OrderDto[]>;
+  abstract getOrdersForCustomer(customerAuthId: string): Promise<OrderDto[]>;
   abstract getOrderById(id: string): Promise<DeepOrderDto>;
   abstract isOwnProperty(itemId: string, ownerId: string): Promise<boolean>;
   abstract isConnectedToMerchant(

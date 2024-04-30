@@ -87,16 +87,29 @@ it('should assign a customer to a merchant', async () => {
   await service.assignCustomerToMerchant('merchant-id', 'customer-id');
 
   expect(PrismaMock.merchantOnCustomer.create).toHaveBeenCalledWith({
-    data: { customerId: 'customer-id', merchantId: 'merchant-id' },
+    data: {
+      customer: {
+        connect: {
+          authId: 'customer-id',
+        },
+      },
+      merchant: {
+        connect: {
+          id: 'merchant-id',
+        },
+      },
+    },
   });
 });
 
 it('should get a merchant by user id', async () => {
   PrismaMock.merchant.findFirst.mockResolvedValue(MerchantMock);
-  const merchant = await service.getMerchantByUserId('user-id');
+  const merchant = await service.getMerchantByCustomerAuthId('user-id');
 
   expect(merchant).toEqual(MerchantMock);
   expect(PrismaMock.merchant.findFirst).toHaveBeenCalledWith({
-    where: { MerchantOnCustomer: { some: { customerId: 'user-id' } } },
+    where: {
+      MerchantOnCustomer: { some: { customer: { authId: 'user-id' } } },
+    },
   });
 });

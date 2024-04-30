@@ -24,7 +24,7 @@ export class MerchantController {
 
   @MessagePattern(MerchantPattern.GET_MERCHANT_BY_USER_ID)
   async getMerchantByUserId(userId: string): Promise<MerchantDto> {
-    return this.merchantService.getMerchantByUserId(userId);
+    return this.merchantService.getMerchantByCustomerAuthId(userId);
   }
 
   @MessagePattern(MerchantPattern.CREATE_MERCHANT)
@@ -35,11 +35,11 @@ export class MerchantController {
   @MessagePattern(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT)
   async assignCustomerToMerchant(data: {
     merchantId: string;
-    customerId: string;
+    customerAuthId: string;
   }): Promise<void> {
     return this.merchantService.assignCustomerToMerchant(
       data.merchantId,
-      data.customerId,
+      data.customerAuthId,
     );
   }
 
@@ -56,7 +56,7 @@ export class MerchantController {
     userId: string;
     merchant: UpdateMerchantDto;
   }): Promise<MerchantDto> {
-    return this.merchantService.updateMerchantByUserId(
+    return this.merchantService.updateMerchantByCustomerAuthId(
       data.userId,
       data.merchant,
     );
