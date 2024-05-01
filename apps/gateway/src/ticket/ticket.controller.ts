@@ -1,5 +1,5 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Controller, Get, Inject, OnModuleInit, Param } from '@nestjs/common';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TicketPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
@@ -11,11 +11,19 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('ticket')
 @Controller('ticket')
-export class TicketController {
+export class TicketController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.TICKET_SERVICE)
-    private readonly ticketService: ClientProxy,
+    private readonly ticketService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.ticketService.subscribeToResponseOf(TicketPatterns.GET_TICKET);
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
+    );
+    await this.ticketService.connect();
+  }
 
   @Get(':id')
   @ApiOkResponse({ type: DeepTicketDto })

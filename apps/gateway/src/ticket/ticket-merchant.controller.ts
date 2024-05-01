@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Patch,
   Post,
@@ -11,7 +12,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -35,13 +36,35 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('ticket-merchant')
 @Controller('merchant-admin/ticket')
-export class TicketMerchantController {
+export class TicketMerchantController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.TICKET_SERVICE)
-    private readonly ticketService: ClientProxy,
+    private readonly ticketService: ClientKafka,
     @Inject(ServiceNames.MERCHANT_SERVICE)
     private readonly merchantService: ClientProxy,
   ) {}
+
+  async onModuleInit() {
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID,
+    );
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.GET_TICKET_BY_MERCHANT_ID,
+    );
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
+    );
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
+    );
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID,
+    );
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID,
+    );
+    await this.ticketService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [DeepTicketDto] })

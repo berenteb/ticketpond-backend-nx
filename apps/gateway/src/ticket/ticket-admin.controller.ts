@@ -4,11 +4,12 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -26,11 +27,22 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('ticket-admin')
 @Controller('admin/ticket')
-export class TicketAdminController {
+export class TicketAdminController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.TICKET_SERVICE)
-    private readonly ticketService: ClientProxy,
+    private readonly ticketService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.ticketService.subscribeToResponseOf(TicketPatterns.LIST_TICKETS);
+    this.ticketService.subscribeToResponseOf(TicketPatterns.GET_TICKET);
+    this.ticketService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
+    );
+    this.ticketService.subscribeToResponseOf(TicketPatterns.UPDATE_TICKET);
+    this.ticketService.subscribeToResponseOf(TicketPatterns.DELETE_TICKET);
+    await this.ticketService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [DeepTicketDto] })

@@ -1,5 +1,5 @@
 import { Controller, UnauthorizedException } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { TicketPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateTicketDto,
@@ -19,20 +19,21 @@ export class TicketController {
   }
 
   @MessagePattern(TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID)
-  async getTicketsForMerchant(merchantId: string): Promise<TicketDto[]> {
+  async getTicketsForMerchant(
+    @Payload() merchantId: string,
+  ): Promise<TicketDto[]> {
     return await this.ticketService.getTicketsForMerchant(merchantId);
   }
 
   @MessagePattern(TicketPatterns.GET_TICKET)
-  async getTicketById(id: string): Promise<DeepTicketDto> {
+  async getTicketById(@Payload() id: string): Promise<DeepTicketDto> {
     return await this.ticketService.getTicketById(id);
   }
 
   @MessagePattern(TicketPatterns.GET_TICKET_BY_MERCHANT_ID)
-  async getTicketByMerchantId(data: {
-    id: string;
-    merchantId: string;
-  }): Promise<DeepTicketDto> {
+  async getTicketByMerchantId(
+    @Payload() data: { id: string; merchantId: string },
+  ): Promise<DeepTicketDto> {
     if (!(await this.ticketService.isOwnProperty(data.id, data.merchantId))) {
       throw new UnauthorizedException();
     }
@@ -40,20 +41,21 @@ export class TicketController {
   }
 
   @MessagePattern(TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE)
-  async getTicketsForExperience(experienceId: string): Promise<TicketDto[]> {
+  async getTicketsForExperience(
+    @Payload() experienceId: string,
+  ): Promise<TicketDto[]> {
     return await this.ticketService.getTicketsForExperience(experienceId);
   }
 
   @MessagePattern(TicketPatterns.CREATE_TICKET)
-  async createTicket(ticket: CreateTicketDto): Promise<TicketDto> {
+  async createTicket(@Payload() ticket: CreateTicketDto): Promise<TicketDto> {
     return await this.ticketService.createTicket(ticket);
   }
 
   @MessagePattern(TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID)
-  async createTicketByMerchantId(data: {
-    ticket: CreateTicketDto;
-    merchantId: string;
-  }): Promise<TicketDto> {
+  async createTicketByMerchantId(
+    @Payload() data: { ticket: CreateTicketDto; merchantId: string },
+  ): Promise<TicketDto> {
     if (
       !(await this.ticketService.isOwnExperience(
         data.ticket.experienceId,
@@ -66,19 +68,21 @@ export class TicketController {
   }
 
   @MessagePattern(TicketPatterns.UPDATE_TICKET)
-  async updateTicket(data: {
-    id: string;
-    ticket: UpdateTicketDto;
-  }): Promise<TicketDto> {
+  async updateTicket(
+    @Payload() data: { id: string; ticket: UpdateTicketDto },
+  ): Promise<TicketDto> {
     return await this.ticketService.updateTicket(data.id, data.ticket);
   }
 
   @MessagePattern(TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID)
-  async updateTicketByMerchantId(data: {
-    id: string;
-    ticket: UpdateTicketDto;
-    merchantId: string;
-  }): Promise<TicketDto> {
+  async updateTicketByMerchantId(
+    @Payload()
+    data: {
+      id: string;
+      ticket: UpdateTicketDto;
+      merchantId: string;
+    },
+  ): Promise<TicketDto> {
     if (!(await this.ticketService.isOwnProperty(data.id, data.merchantId))) {
       throw new UnauthorizedException();
     }
@@ -86,15 +90,14 @@ export class TicketController {
   }
 
   @MessagePattern(TicketPatterns.DELETE_TICKET)
-  async deleteTicket(id: string): Promise<void> {
+  async deleteTicket(@Payload() id: string): Promise<void> {
     return await this.ticketService.deleteTicket(id);
   }
 
   @MessagePattern(TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID)
-  async deleteTicketByMerchantId(data: {
-    id: string;
-    merchantId: string;
-  }): Promise<void> {
+  async deleteTicketByMerchantId(
+    @Payload() data: { id: string; merchantId: string },
+  ): Promise<void> {
     if (!(await this.ticketService.isOwnProperty(data.id, data.merchantId))) {
       throw new UnauthorizedException();
     }
