@@ -3,11 +3,12 @@ import {
   ForbiddenException,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -29,13 +30,27 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
 @UseGuards(AuthGuard('jwt'))
 @Controller('merchant-admin/order')
-export class OrderMerchantController {
+export class OrderMerchantController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
     @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientProxy,
+    private readonly merchantService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.LIST_ORDERS_FOR_MERCHANT,
+    );
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
+    );
+    this.merchantService.subscribeToResponseOf(
+      MerchantPattern.GET_MERCHANT_BY_USER_ID,
+    );
+    await this.orderService.connect();
+    await this.merchantService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [OrderWithCustomerDto] })

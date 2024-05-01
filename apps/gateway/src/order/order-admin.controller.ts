@@ -3,11 +3,12 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -24,11 +25,20 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
 @Controller('admin/order')
-export class OrderAdminController {
+export class OrderAdminController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.orderService.subscribeToResponseOf(OrderPatterns.LIST_ORDERS);
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_WITH_CUSTOMER,
+    );
+    this.orderService.subscribeToResponseOf(OrderPatterns.DELETE_ORDER);
+    await this.orderService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [OrderWithCustomerDto] })
@@ -64,9 +74,7 @@ export class OrderAdminController {
   @Post('fulfill/:id')
   @ApiOkResponse()
   async fulfillOrder(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.orderService.emit(OrderPatterns.FULFILL_ORDER, id),
-    );
+    this.orderService.emit(OrderPatterns.FULFILL_ORDER, id);
   }
 
   @Post('cancel/:id')

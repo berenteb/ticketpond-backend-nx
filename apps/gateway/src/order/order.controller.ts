@@ -1,5 +1,13 @@
-import { Controller, Get, Inject, Param, Req, UseGuards } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import {
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  Param,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
@@ -14,11 +22,21 @@ import { firstValueFrom } from 'rxjs';
 @ApiTags('order')
 @UseGuards(AuthGuard('jwt'))
 @Controller('order')
-export class OrderController {
+export class OrderController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.LIST_ORDERS_FOR_CUSTOMER,
+    );
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_FOR_CUSTOMER,
+    );
+    await this.orderService.connect();
+  }
 
   @Get('me')
   @ApiOkResponse({ type: [OrderDto] })

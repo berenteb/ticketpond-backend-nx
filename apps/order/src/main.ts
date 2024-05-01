@@ -10,16 +10,21 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     OrderModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.KAFKA,
       options: {
-        host: config.get('host'),
-        port: config.get('port'),
+        client: {
+          clientId: 'order',
+          brokers: [config.get('kafkaBroker')],
+        },
+        consumer: {
+          groupId: 'order',
+        },
       },
     },
   );
   await app.listen();
   Logger.log(
-    `Module is listening on: ${config.get('host')}:${config.get('port')}`,
+    `Module is connected to Kafka at ${config.get('kafkaBroker')}`,
     OrderModule.name,
   );
 }
