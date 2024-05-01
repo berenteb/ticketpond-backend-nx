@@ -4,14 +4,12 @@ dotenv.config();
 
 export class ConfigService {
   private readonly envConfig: {
-    host: string;
-    port: number;
+    kafkaBroker: string;
   };
 
   constructor() {
     this.envConfig = {
-      host: env.get('HOST').required().asString(),
-      port: env.get('PORT').required().asPortNumber(),
+      kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
     };
   }
 

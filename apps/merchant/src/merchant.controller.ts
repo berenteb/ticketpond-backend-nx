@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateMerchantDto,
@@ -18,25 +18,26 @@ export class MerchantController {
   }
 
   @MessagePattern(MerchantPattern.GET_MERCHANT)
-  async getMerchant(id: string): Promise<MerchantDto> {
+  async getMerchant(@Payload() id: string): Promise<MerchantDto> {
     return this.merchantService.getMerchantById(id);
   }
 
   @MessagePattern(MerchantPattern.GET_MERCHANT_BY_USER_ID)
-  async getMerchantByUserId(userId: string): Promise<MerchantDto> {
+  async getMerchantByUserId(@Payload() userId: string): Promise<MerchantDto> {
     return this.merchantService.getMerchantByCustomerAuthId(userId);
   }
 
   @MessagePattern(MerchantPattern.CREATE_MERCHANT)
-  async createMerchant(merchant: CreateMerchantDto): Promise<MerchantDto> {
+  async createMerchant(
+    @Payload() merchant: CreateMerchantDto,
+  ): Promise<MerchantDto> {
     return this.merchantService.createMerchant(merchant);
   }
 
-  @MessagePattern(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT)
-  async assignCustomerToMerchant(data: {
-    merchantId: string;
-    customerAuthId: string;
-  }): Promise<void> {
+  @EventPattern(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT)
+  async assignCustomerToMerchant(
+    @Payload() data: { merchantId: string; customerAuthId: string },
+  ): Promise<void> {
     return this.merchantService.assignCustomerToMerchant(
       data.merchantId,
       data.customerAuthId,
@@ -44,18 +45,16 @@ export class MerchantController {
   }
 
   @MessagePattern(MerchantPattern.UPDATE_MERCHANT)
-  async updateMerchant(data: {
-    id: string;
-    merchant: UpdateMerchantDto;
-  }): Promise<MerchantDto> {
+  async updateMerchant(
+    @Payload() data: { id: string; merchant: UpdateMerchantDto },
+  ): Promise<MerchantDto> {
     return this.merchantService.updateMerchant(data.id, data.merchant);
   }
 
   @MessagePattern(MerchantPattern.UPDATE_MERCHANT_BY_USER_ID)
-  async updateMerchantByUserId(data: {
-    userId: string;
-    merchant: UpdateMerchantDto;
-  }): Promise<MerchantDto> {
+  async updateMerchantByUserId(
+    @Payload() data: { userId: string; merchant: UpdateMerchantDto },
+  ): Promise<MerchantDto> {
     return this.merchantService.updateMerchantByCustomerAuthId(
       data.userId,
       data.merchant,
@@ -63,7 +62,7 @@ export class MerchantController {
   }
 
   @MessagePattern(MerchantPattern.DELETE_MERCHANT)
-  async deleteMerchant(id: string): Promise<void> {
+  async deleteMerchant(@Payload() id: string): Promise<void> {
     return this.merchantService.deleteMerchant(id);
   }
 }

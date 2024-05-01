@@ -3,13 +3,14 @@ import {
   Controller,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Post,
   Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
@@ -17,17 +18,23 @@ import {
   CreateMerchantDto,
   MerchantDto,
   type ReqWithUser,
+  ServiceNames,
 } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('merchant')
 @Controller('merchant')
-export class MerchantController {
+export class MerchantController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientProxy,
+    private readonly merchantService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.merchantService.subscribeToResponseOf(MerchantPattern.GET_MERCHANT);
+    this.merchantService.subscribeToResponseOf(MerchantPattern.CREATE_MERCHANT);
+    await this.merchantService.connect();
+  }
 
   @Get(':id')
   @ApiOkResponse({ type: MerchantDto })
@@ -52,13 +59,10 @@ export class MerchantController {
         merchant,
       ),
     );
-    this.merchantService.send<void>(
-      MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT,
-      {
-        merchantId: createdMerchant.id,
-        customerAuthId: userId,
-      },
-    );
+    this.merchantService.emit(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT, {
+      merchantId: createdMerchant.id,
+      customerAuthId: userId,
+    });
 
     return createdMerchant;
   }

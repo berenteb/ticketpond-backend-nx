@@ -68,7 +68,7 @@ import { createClientProxy } from './utils/create-client-proxy';
   providers: [
     ConfigService,
     createClientProxy(ServiceNames.CUSTOMER_SERVICE, 'customerService'),
-    createClientProxy(ServiceNames.MERCHANT_SERVICE, 'merchantService'),
+    createClientKafka(ServiceNames.MERCHANT_SERVICE),
     createClientKafka(ServiceNames.EXPERIENCE_SERVICE),
     createClientKafka(ServiceNames.TICKET_SERVICE),
     createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
