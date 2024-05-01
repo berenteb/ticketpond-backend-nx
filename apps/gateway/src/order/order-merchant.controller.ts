@@ -3,7 +3,6 @@ import {
   ForbiddenException,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Req,
   UseGuards,
@@ -30,27 +29,11 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
 @UseGuards(AuthGuard('jwt'))
 @Controller('merchant-admin/order')
-export class OrderMerchantController implements OnModuleInit {
+export class OrderMerchantController {
   constructor(
-    @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientKafka,
-    @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.orderService.subscribeToResponseOf(
-      OrderPatterns.LIST_ORDERS_FOR_MERCHANT,
-    );
-    this.orderService.subscribeToResponseOf(
-      OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
-    );
-    this.merchantService.subscribeToResponseOf(
-      MerchantPattern.GET_MERCHANT_BY_USER_ID,
-    );
-    await this.orderService.connect();
-    await this.merchantService.connect();
-  }
 
   @Get()
   @ApiOkResponse({ type: [OrderWithCustomerDto] })
@@ -58,7 +41,7 @@ export class OrderMerchantController implements OnModuleInit {
     const merchant = await this.getMerchantByUserId(req.user.sub);
     if (!merchant) throw new ForbiddenException();
     return firstValueFrom(
-      this.orderService.send<OrderWithCustomerDto[]>(
+      this.kafkaService.send<OrderWithCustomerDto[]>(
         OrderPatterns.LIST_ORDERS_FOR_MERCHANT,
         merchant.id,
       ),
@@ -75,7 +58,7 @@ export class OrderMerchantController implements OnModuleInit {
     const merchant = await this.getMerchantByUserId(req.user.sub);
     if (!merchant) throw new ForbiddenException();
     return firstValueFrom(
-      this.orderService.send<DeepOrderWithCustomerDto>(
+      this.kafkaService.send<DeepOrderWithCustomerDto>(
         OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
         { id, merchantId: merchant.id },
       ),
@@ -84,7 +67,7 @@ export class OrderMerchantController implements OnModuleInit {
 
   private async getMerchantByUserId(userId: string): Promise<MerchantDto> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto>(
+      this.kafkaService.send<MerchantDto>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         userId,
       ),

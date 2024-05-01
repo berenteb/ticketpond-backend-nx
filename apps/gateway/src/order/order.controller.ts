@@ -22,27 +22,17 @@ import { firstValueFrom } from 'rxjs';
 @ApiTags('order')
 @UseGuards(AuthGuard('jwt'))
 @Controller('order')
-export class OrderController implements OnModuleInit {
+export class OrderController {
   constructor(
-    @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.orderService.subscribeToResponseOf(
-      OrderPatterns.LIST_ORDERS_FOR_CUSTOMER,
-    );
-    this.orderService.subscribeToResponseOf(
-      OrderPatterns.GET_ORDER_FOR_CUSTOMER,
-    );
-    await this.orderService.connect();
-  }
 
   @Get('me')
   @ApiOkResponse({ type: [OrderDto] })
   async getOrdersByUser(@Req() req: ReqWithUser): Promise<OrderDto[]> {
     return firstValueFrom(
-      this.orderService.send<OrderDto[]>(
+      this.kafkaService.send<OrderDto[]>(
         OrderPatterns.LIST_ORDERS_FOR_CUSTOMER,
         req.user.sub,
       ),
@@ -57,7 +47,7 @@ export class OrderController implements OnModuleInit {
     @Req() req: ReqWithUser,
   ): Promise<DeepOrderDto> {
     return firstValueFrom(
-      this.orderService.send<DeepOrderDto>(
+      this.kafkaService.send<DeepOrderDto>(
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,

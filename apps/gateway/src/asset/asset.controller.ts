@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, OnModuleInit, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AssetPatterns } from '@ticketpond-backend-nx/message-patterns';
@@ -8,16 +8,11 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('asset')
 @Controller('asset')
-export class AssetController implements OnModuleInit {
+export class AssetController {
   constructor(
-    @Inject(ServiceNames.ASSET_SERVICE)
-    private readonly assetService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.assetService.subscribeToResponseOf(AssetPatterns.UPLOAD_FILE);
-    await this.assetService.connect();
-  }
 
   @Post('upload')
   @FormDataRequest()
@@ -36,7 +31,7 @@ export class AssetController implements OnModuleInit {
   @ApiOkResponse({ type: String })
   async uploadFile(@Body() testDto: FormDataTestDto): Promise<string> {
     return firstValueFrom(
-      this.assetService.send<string>(AssetPatterns.UPLOAD_FILE, testDto.file),
+      this.kafkaService.send<string>(AssetPatterns.UPLOAD_FILE, testDto.file),
     );
   }
 }

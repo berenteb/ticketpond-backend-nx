@@ -4,7 +4,6 @@ import {
   Get,
   Inject,
   NotFoundException,
-  OnModuleInit,
   Post,
   Req,
   UnauthorizedException,
@@ -26,27 +25,17 @@ import { firstValueFrom } from 'rxjs';
 @ApiTags('customer')
 @UseGuards(AuthGuard('jwt'))
 @Controller('customer')
-export class CustomerController implements OnModuleInit {
+export class CustomerController {
   constructor(
-    @Inject(ServiceNames.CUSTOMER_SERVICE)
-    private readonly customerService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
-    );
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.CREATE_CUSTOMER,
-    );
-    await this.customerService.connect();
-  }
 
   @Get('me')
   @ApiOkResponse({ type: CustomerDto })
   async getMe(@Req() req: ReqWithUser): Promise<CustomerDto> {
     const response = await firstValueFrom(
-      this.customerService.send<ServiceResponse<CustomerDto>>(
+      this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
         req.user.sub,
       ),
@@ -70,7 +59,7 @@ export class CustomerController implements OnModuleInit {
     const authId = req.user.sub;
     if (!authId) throw new UnauthorizedException();
     return firstValueFrom(
-      this.customerService.send<CustomerDto>(
+      this.kafkaService.send<CustomerDto>(
         CustomerMessagePattern.CREATE_CUSTOMER,
         { customer, authId },
       ),

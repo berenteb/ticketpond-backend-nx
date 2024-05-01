@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Post,
   Req,
@@ -24,23 +23,17 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('merchant')
 @Controller('merchant')
-export class MerchantController implements OnModuleInit {
+export class MerchantController {
   constructor(
-    @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.merchantService.subscribeToResponseOf(MerchantPattern.GET_MERCHANT);
-    this.merchantService.subscribeToResponseOf(MerchantPattern.CREATE_MERCHANT);
-    await this.merchantService.connect();
-  }
 
   @Get(':id')
   @ApiOkResponse({ type: MerchantDto })
   async getMerchant(@Param('id') id: string): Promise<MerchantDto> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
+      this.kafkaService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
     );
   }
 
@@ -54,12 +47,12 @@ export class MerchantController implements OnModuleInit {
     const userId = req.user.sub;
     if (!userId) throw new UnauthorizedException();
     const createdMerchant = await firstValueFrom(
-      this.merchantService.send<MerchantDto>(
+      this.kafkaService.send<MerchantDto>(
         MerchantPattern.CREATE_MERCHANT,
         merchant,
       ),
     );
-    this.merchantService.emit(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT, {
+    this.kafkaService.emit(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT, {
       merchantId: createdMerchant.id,
       customerAuthId: userId,
     });

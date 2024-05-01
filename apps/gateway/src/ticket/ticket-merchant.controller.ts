@@ -36,35 +36,11 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('ticket-merchant')
 @Controller('merchant-admin/ticket')
-export class TicketMerchantController implements OnModuleInit {
+export class TicketMerchantController {
   constructor(
-    @Inject(ServiceNames.TICKET_SERVICE)
-    private readonly ticketService: ClientKafka,
-    @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientProxy,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID,
-    );
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.GET_TICKET_BY_MERCHANT_ID,
-    );
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
-    );
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
-    );
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID,
-    );
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID,
-    );
-    await this.ticketService.connect();
-  }
 
   @Get()
   @ApiOkResponse({ type: [DeepTicketDto] })
@@ -72,7 +48,7 @@ export class TicketMerchantController implements OnModuleInit {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
 
     return firstValueFrom(
-      this.ticketService.send<DeepTicketDto[]>(
+      this.kafkaService.send<DeepTicketDto[]>(
         TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID,
         merchant.id,
       ),
@@ -87,7 +63,7 @@ export class TicketMerchantController implements OnModuleInit {
   ): Promise<DeepTicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
     return firstValueFrom(
-      this.ticketService.send<DeepTicketDto>(
+      this.kafkaService.send<DeepTicketDto>(
         TicketPatterns.GET_TICKET_BY_MERCHANT_ID,
         {
           id,
@@ -103,7 +79,7 @@ export class TicketMerchantController implements OnModuleInit {
     @Param('id') experienceId: string,
   ): Promise<TicketDto[]> {
     return firstValueFrom(
-      this.ticketService.send<TicketDto[]>(
+      this.kafkaService.send<TicketDto[]>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
       ),
@@ -118,7 +94,7 @@ export class TicketMerchantController implements OnModuleInit {
   ): Promise<TicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
     return firstValueFrom(
-      this.ticketService.send<TicketDto>(
+      this.kafkaService.send<TicketDto>(
         TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
         {
           ticket,
@@ -137,7 +113,7 @@ export class TicketMerchantController implements OnModuleInit {
   ): Promise<TicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
     return firstValueFrom(
-      this.ticketService.send<TicketDto>(
+      this.kafkaService.send<TicketDto>(
         TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID,
         {
           id,
@@ -156,7 +132,7 @@ export class TicketMerchantController implements OnModuleInit {
   ): Promise<void> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
     return firstValueFrom(
-      this.ticketService.send<void>(
+      this.kafkaService.send<void>(
         TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID,
         {
           id,
@@ -168,7 +144,7 @@ export class TicketMerchantController implements OnModuleInit {
 
   private async getMerchantIdByUserId(userId: string): Promise<MerchantDto> {
     const merchant = await firstValueFrom(
-      this.merchantService.send<MerchantDto>(
+      this.kafkaService.send<MerchantDto>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         userId,
       ),

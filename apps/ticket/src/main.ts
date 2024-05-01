@@ -18,6 +18,7 @@ async function bootstrap() {
         },
         consumer: {
           groupId: 'ticket',
+          allowAutoTopicCreation: true,
         },
       },
     },

@@ -29,17 +29,14 @@ import { firstValueFrom } from 'rxjs';
 @Controller('admin/merchant')
 export class MerchantAdminController {
   constructor(
-    @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientProxy,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientProxy,
   ) {}
   @Get()
   @ApiOkResponse({ type: [MerchantDto] })
   async getMerchants(): Promise<MerchantDto[]> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto[]>(
-        MerchantPattern.LIST_MERCHANTS,
-        {},
-      ),
+      this.kafkaService.send<MerchantDto[]>(MerchantPattern.LIST_MERCHANTS, {}),
     );
   }
 
@@ -47,7 +44,7 @@ export class MerchantAdminController {
   @ApiOkResponse({ type: MerchantDto })
   async getMerchant(@Param('id') id: string): Promise<MerchantDto> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
+      this.kafkaService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
     );
   }
 
@@ -57,7 +54,7 @@ export class MerchantAdminController {
     @Body() merchant: CreateMerchantDto,
   ): Promise<MerchantDto> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto>(
+      this.kafkaService.send<MerchantDto>(
         MerchantPattern.CREATE_MERCHANT,
         merchant,
       ),
@@ -71,7 +68,7 @@ export class MerchantAdminController {
     @Body() merchant: UpdateMerchantDto,
   ): Promise<MerchantDto> {
     return firstValueFrom(
-      this.merchantService.send<MerchantDto>(MerchantPattern.UPDATE_MERCHANT, {
+      this.kafkaService.send<MerchantDto>(MerchantPattern.UPDATE_MERCHANT, {
         id,
         merchant,
       }),
@@ -82,7 +79,7 @@ export class MerchantAdminController {
   @ApiOkResponse()
   async deleteMerchant(@Param('id') id: string): Promise<void> {
     return firstValueFrom(
-      this.merchantService.send<void>(MerchantPattern.DELETE_MERCHANT, id),
+      this.kafkaService.send<void>(MerchantPattern.DELETE_MERCHANT, id),
     );
   }
 }

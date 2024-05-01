@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  OnModuleInit,
   Post,
   Req,
   UseGuards,
@@ -24,29 +23,17 @@ import { firstValueFrom } from 'rxjs';
 @ApiTags('cart')
 @UseGuards(AuthGuard('jwt'))
 @Controller('cart')
-export class CartController implements OnModuleInit {
+export class CartController {
   constructor(
-    @Inject(ServiceNames.CART_SERVICE)
-    private readonly cartService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.cartService.subscribeToResponseOf(CartPatterns.GET_CART_BY_AUTH_ID);
-    this.cartService.subscribeToResponseOf(CartPatterns.CHECKOUT_BY_AUTH_ID);
-    this.cartService.subscribeToResponseOf(
-      CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
-    );
-    this.cartService.subscribeToResponseOf(
-      CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
-    );
-    await this.cartService.connect();
-  }
 
   @Get('me')
   @ApiOkResponse({ type: CartDto })
   async getCartForMe(@Req() req: ReqWithUser): Promise<CartDto> {
     return firstValueFrom(
-      this.cartService.send<CartDto>(
+      this.kafkaService.send<CartDto>(
         CartPatterns.GET_CART_BY_AUTH_ID,
         req.user.sub,
       ),
@@ -57,7 +44,7 @@ export class CartController implements OnModuleInit {
   @ApiOkResponse({ type: String })
   async checkoutForMe(@Req() req: ReqWithUser): Promise<string> {
     return firstValueFrom(
-      this.cartService.send<string>(
+      this.kafkaService.send<string>(
         CartPatterns.CHECKOUT_BY_AUTH_ID,
         req.user.sub,
       ),
@@ -71,11 +58,14 @@ export class CartController implements OnModuleInit {
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
     return firstValueFrom(
-      this.cartService.send<CartDto>(CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID, {
-        authId: req.user.sub,
-        ticketId: item.ticketId,
-        quantity: item.quantity,
-      }),
+      this.kafkaService.send<CartDto>(
+        CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
+        {
+          authId: req.user.sub,
+          ticketId: item.ticketId,
+          quantity: item.quantity,
+        },
+      ),
     );
   }
 
@@ -86,7 +76,7 @@ export class CartController implements OnModuleInit {
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
     return firstValueFrom(
-      this.cartService.send<CartDto>(
+      this.kafkaService.send<CartDto>(
         CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
         {
           authId: req.user.sub,

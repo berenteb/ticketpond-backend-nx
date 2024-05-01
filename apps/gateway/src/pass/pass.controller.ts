@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  OnModuleInit,
-  Param,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Param, Res } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { PassPatterns } from '@ticketpond-backend-nx/message-patterns';
@@ -15,16 +8,11 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('pass')
 @Controller('pass')
-export class PassController implements OnModuleInit {
+export class PassController {
   constructor(
-    @Inject(ServiceNames.PASS_SERVICE)
-    private readonly passService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.passService.subscribeToResponseOf(PassPatterns.GET_QRCODE);
-    await this.passService.connect();
-  }
 
   @Get('qr/:id')
   async getQrcode(@Param('id') id: string, @Res() res: Response) {
@@ -35,7 +23,7 @@ export class PassController implements OnModuleInit {
 
   private generateQrCode(text: string, scale = 10) {
     return firstValueFrom(
-      this.passService.send<Buffer>(PassPatterns.GET_QRCODE, { text, scale }),
+      this.kafkaService.send<Buffer>(PassPatterns.GET_QRCODE, { text, scale }),
     );
   }
 }

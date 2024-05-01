@@ -2,7 +2,6 @@ import {
   Controller,
   Inject,
   NotFoundException,
-  OnModuleInit,
   Param,
   Post,
   RawBodyRequest,
@@ -26,24 +25,11 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('payment')
 @Controller('payment')
-export class PaymentController implements OnModuleInit {
+export class PaymentController {
   constructor(
-    @Inject(ServiceNames.PAYMENT_SERVICE)
-    private readonly paymentService: ClientKafka,
-    @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.paymentService.subscribeToResponseOf(
-      PaymentPatterns.CREATE_PAYMENT_INTENT,
-    );
-    this.orderService.subscribeToResponseOf(
-      OrderPatterns.GET_ORDER_FOR_CUSTOMER,
-    );
-    await this.paymentService.connect();
-    await this.orderService.connect();
-  }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('intent/:id')
@@ -69,7 +55,7 @@ export class PaymentController implements OnModuleInit {
 
   private getOrderForCustomer(id: string, customerAuthId: string) {
     return firstValueFrom(
-      this.orderService.send<OrderDto | undefined>(
+      this.kafkaService.send<OrderDto | undefined>(
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,
@@ -81,7 +67,7 @@ export class PaymentController implements OnModuleInit {
 
   private getPaymentIntent(order: OrderDto) {
     return firstValueFrom(
-      this.paymentService.send<PaymentDto>(
+      this.kafkaService.send<PaymentDto>(
         PaymentPatterns.CREATE_PAYMENT_INTENT,
         order,
       ),
@@ -89,7 +75,7 @@ export class PaymentController implements OnModuleInit {
   }
 
   private sendWebhookEvent(signature: string, body: string) {
-    return this.paymentService.emit<void>(PaymentPatterns.HANDLE_WEBHOOK, {
+    return this.kafkaService.emit<void>(PaymentPatterns.HANDLE_WEBHOOK, {
       signature,
       body,
     });

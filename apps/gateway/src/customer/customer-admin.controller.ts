@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Patch,
   Post,
@@ -28,36 +27,17 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('customer-admin')
 @Controller('admin/customer')
-export class CustomerAdminController implements OnModuleInit {
+export class CustomerAdminController {
   constructor(
-    @Inject(ServiceNames.CUSTOMER_SERVICE)
-    private readonly customerService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.LIST_CUSTOMERS,
-    );
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.GET_CUSTOMER,
-    );
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.CREATE_CUSTOMER,
-    );
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.UPDATE_CUSTOMER,
-    );
-    this.customerService.subscribeToResponseOf(
-      CustomerMessagePattern.DELETE_CUSTOMER,
-    );
-    await this.customerService.connect();
-  }
 
   @Get()
   @ApiOkResponse({ type: [CustomerDto] })
   async getCustomers(): Promise<CustomerDto[]> {
     return firstValueFrom(
-      this.customerService.send<CustomerDto[]>(
+      this.kafkaService.send<CustomerDto[]>(
         CustomerMessagePattern.LIST_CUSTOMERS,
         {},
       ),
@@ -69,7 +49,7 @@ export class CustomerAdminController implements OnModuleInit {
   @ApiNotFoundResponse()
   async getCustomerById(@Param('id') id: string): Promise<CustomerDto> {
     return firstValueFrom(
-      this.customerService.send<CustomerDto>(
+      this.kafkaService.send<CustomerDto>(
         CustomerMessagePattern.GET_CUSTOMER,
         id,
       ),
@@ -82,7 +62,7 @@ export class CustomerAdminController implements OnModuleInit {
     @Body() customer: CreateCustomerDto,
   ): Promise<CustomerDto> {
     return firstValueFrom(
-      this.customerService.send<CustomerDto>(
+      this.kafkaService.send<CustomerDto>(
         CustomerMessagePattern.CREATE_CUSTOMER,
         { customer },
       ),
@@ -96,7 +76,7 @@ export class CustomerAdminController implements OnModuleInit {
     @Body() customer: UpdateCustomerDto,
   ): Promise<CustomerDto> {
     return firstValueFrom(
-      this.customerService.send<CustomerDto>(
+      this.kafkaService.send<CustomerDto>(
         CustomerMessagePattern.UPDATE_CUSTOMER,
         { id, customer },
       ),
@@ -107,10 +87,7 @@ export class CustomerAdminController implements OnModuleInit {
   @ApiOkResponse()
   async deleteCustomer(@Param('id') id: string): Promise<void> {
     return firstValueFrom(
-      this.customerService.send<void>(
-        CustomerMessagePattern.DELETE_CUSTOMER,
-        id,
-      ),
+      this.kafkaService.send<void>(CustomerMessagePattern.DELETE_CUSTOMER, id),
     );
   }
 }

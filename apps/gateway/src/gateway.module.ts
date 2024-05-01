@@ -1,6 +1,18 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { AuthzModule } from '@ticketpond-backend-nx/authz';
+import {
+  AssetPatterns,
+  CartPatterns,
+  CustomerMessagePattern,
+  ExperiencePatterns,
+  MerchantPattern,
+  OrderPatterns,
+  PassPatterns,
+  PaymentPatterns,
+  TicketPatterns,
+} from '@ticketpond-backend-nx/message-patterns';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import path from 'path';
@@ -64,17 +76,121 @@ import { createClientKafka } from './utils/create-client-kafka';
     PassController,
     AssetController,
   ],
-  providers: [
-    ConfigService,
-    createClientKafka(ServiceNames.CUSTOMER_SERVICE),
-    createClientKafka(ServiceNames.MERCHANT_SERVICE),
-    createClientKafka(ServiceNames.EXPERIENCE_SERVICE),
-    createClientKafka(ServiceNames.TICKET_SERVICE),
-    createClientKafka(ServiceNames.CART_SERVICE),
-    createClientKafka(ServiceNames.ORDER_SERVICE),
-    createClientKafka(ServiceNames.PAYMENT_SERVICE),
-    createClientKafka(ServiceNames.PASS_SERVICE),
-    createClientKafka(ServiceNames.ASSET_SERVICE),
-  ],
+  providers: [ConfigService, createClientKafka(ServiceNames.KAFKA_SERVICE)],
 })
-export class GatewayModule {}
+export class GatewayModule implements OnModuleInit {
+  constructor(
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.CREATE_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.LIST_CUSTOMERS,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.GET_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.UPDATE_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CustomerMessagePattern.DELETE_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(AssetPatterns.UPLOAD_FILE);
+    this.kafkaService.subscribeToResponseOf(CartPatterns.GET_CART_BY_AUTH_ID);
+    this.kafkaService.subscribeToResponseOf(CartPatterns.CHECKOUT_BY_AUTH_ID);
+    this.kafkaService.subscribeToResponseOf(
+      CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.LIST_EXPERIENCES,
+    );
+    this.kafkaService.subscribeToResponseOf(ExperiencePatterns.GET_EXPERIENCE);
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.UPDATE_EXPERIENCE,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.DELETE_EXPERIENCE,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.GET_EXPERIENCES_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.CREATE_EXPERIENCE,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.UPDATE_EXPERIENCE_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.VALIDATE_EXPERIENCE_PASS,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      ExperiencePatterns.DELETE_EXPERIENCE_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(MerchantPattern.GET_MERCHANT);
+    this.kafkaService.subscribeToResponseOf(MerchantPattern.CREATE_MERCHANT);
+    this.kafkaService.subscribeToResponseOf(MerchantPattern.LIST_MERCHANTS);
+    this.kafkaService.subscribeToResponseOf(MerchantPattern.DELETE_MERCHANT);
+    this.kafkaService.subscribeToResponseOf(
+      MerchantPattern.GET_MERCHANT_BY_USER_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      MerchantPattern.UPDATE_MERCHANT_BY_USER_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      OrderPatterns.LIST_ORDERS_FOR_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_FOR_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(OrderPatterns.LIST_ORDERS);
+    this.kafkaService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_WITH_CUSTOMER,
+    );
+    this.kafkaService.subscribeToResponseOf(OrderPatterns.DELETE_ORDER);
+    this.kafkaService.subscribeToResponseOf(
+      OrderPatterns.LIST_ORDERS_FOR_MERCHANT,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
+    );
+    this.kafkaService.subscribeToResponseOf(PassPatterns.GET_QRCODE);
+    this.kafkaService.subscribeToResponseOf(
+      PaymentPatterns.CREATE_PAYMENT_INTENT,
+    );
+    this.kafkaService.subscribeToResponseOf(TicketPatterns.GET_TICKET);
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
+    );
+    this.kafkaService.subscribeToResponseOf(TicketPatterns.LIST_TICKETS);
+    this.kafkaService.subscribeToResponseOf(TicketPatterns.UPDATE_TICKET);
+    this.kafkaService.subscribeToResponseOf(TicketPatterns.DELETE_TICKET);
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.GET_TICKET_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID,
+    );
+    this.kafkaService.subscribeToResponseOf(
+      TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID,
+    );
+
+    await this.kafkaService.connect();
+  }
+}

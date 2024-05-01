@@ -19,6 +19,7 @@ export function createClientKafka(provide: string) {
           },
           consumer: {
             groupId: 'gateway',
+            allowAutoTopicCreation: true,
           },
         },
       };

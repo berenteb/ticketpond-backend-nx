@@ -4,12 +4,11 @@ import {
   Delete,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { ClientKafka, ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -27,28 +26,17 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('ticket-admin')
 @Controller('admin/ticket')
-export class TicketAdminController implements OnModuleInit {
+export class TicketAdminController {
   constructor(
-    @Inject(ServiceNames.TICKET_SERVICE)
-    private readonly ticketService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.ticketService.subscribeToResponseOf(TicketPatterns.LIST_TICKETS);
-    this.ticketService.subscribeToResponseOf(TicketPatterns.GET_TICKET);
-    this.ticketService.subscribeToResponseOf(
-      TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
-    );
-    this.ticketService.subscribeToResponseOf(TicketPatterns.UPDATE_TICKET);
-    this.ticketService.subscribeToResponseOf(TicketPatterns.DELETE_TICKET);
-    await this.ticketService.connect();
-  }
 
   @Get()
   @ApiOkResponse({ type: [DeepTicketDto] })
   async getTickets(): Promise<DeepTicketDto[]> {
     return firstValueFrom(
-      this.ticketService.send<DeepTicketDto[]>(TicketPatterns.LIST_TICKETS, {}),
+      this.kafkaService.send<DeepTicketDto[]>(TicketPatterns.LIST_TICKETS, {}),
     );
   }
 
@@ -56,7 +44,7 @@ export class TicketAdminController implements OnModuleInit {
   @ApiOkResponse({ type: DeepTicketDto })
   async getTicketById(@Param('id') id: string): Promise<DeepTicketDto> {
     return firstValueFrom(
-      this.ticketService.send<DeepTicketDto>(TicketPatterns.GET_TICKET, id),
+      this.kafkaService.send<DeepTicketDto>(TicketPatterns.GET_TICKET, id),
     );
   }
 
@@ -66,7 +54,7 @@ export class TicketAdminController implements OnModuleInit {
     @Param('id') experienceId: string,
   ): Promise<TicketDto[]> {
     return firstValueFrom(
-      this.ticketService.send<TicketDto[]>(
+      this.kafkaService.send<TicketDto[]>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
       ),
@@ -80,7 +68,7 @@ export class TicketAdminController implements OnModuleInit {
     @Body() ticket: UpdateTicketDto,
   ): Promise<TicketDto> {
     return firstValueFrom(
-      this.ticketService.send<TicketDto>(TicketPatterns.UPDATE_TICKET, {
+      this.kafkaService.send<TicketDto>(TicketPatterns.UPDATE_TICKET, {
         id,
         ticket,
       }),
@@ -91,7 +79,7 @@ export class TicketAdminController implements OnModuleInit {
   @ApiOkResponse()
   async deleteTicket(@Param('id') id: string): Promise<void> {
     return firstValueFrom(
-      this.ticketService.send<void>(TicketPatterns.DELETE_TICKET, id),
+      this.kafkaService.send<void>(TicketPatterns.DELETE_TICKET, id),
     );
   }
 }

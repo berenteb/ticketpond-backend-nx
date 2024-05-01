@@ -18,6 +18,7 @@ async function bootstrap() {
         },
         consumer: {
           groupId: 'payment',
+          allowAutoTopicCreation: true,
         },
       },
     },
