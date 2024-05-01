@@ -2,13 +2,14 @@ import {
   Controller,
   Inject,
   NotFoundException,
+  OnModuleInit,
   Param,
   Post,
   RawBodyRequest,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -25,13 +26,24 @@ import { firstValueFrom } from 'rxjs';
 
 @ApiTags('payment')
 @Controller('payment')
-export class PaymentController {
+export class PaymentController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.PAYMENT_SERVICE)
-    private readonly paymentService: ClientProxy,
+    private readonly paymentService: ClientKafka,
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.paymentService.subscribeToResponseOf(
+      PaymentPatterns.CREATE_PAYMENT_INTENT,
+    );
+    this.orderService.subscribeToResponseOf(
+      OrderPatterns.GET_ORDER_FOR_CUSTOMER,
+    );
+    await this.paymentService.connect();
+    await this.orderService.connect();
+  }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('intent/:id')

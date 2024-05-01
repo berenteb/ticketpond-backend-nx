@@ -8,7 +8,7 @@ import {
 import { CartController } from './cart.controller';
 import { CartService } from './cart.service';
 import { ConfigService } from './config.service';
-import { createClientProxy } from './utils/create-client-proxy';
+import { createClientKafka } from './utils/create-client-kafka';
 
 @Module({
   imports: [PrismaModule],
@@ -19,7 +19,7 @@ import { createClientProxy } from './utils/create-client-proxy';
       provide: CartServiceInterface,
       useClass: CartService,
     },
-    createClientProxy(ServiceNames.ORDER_SERVICE),
+    createClientKafka(ServiceNames.ORDER_SERVICE),
   ],
 })
 export class CartModule {}

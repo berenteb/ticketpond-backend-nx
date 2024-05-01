@@ -3,8 +3,9 @@ import {
   Inject,
   Injectable,
   Logger,
+  OnModuleInit,
 } from '@nestjs/common';
-import { ClientProxy, EventPattern } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   OrderDto,
@@ -17,19 +18,23 @@ import Stripe from 'stripe';
 import { ConfigService } from './config.service';
 
 @Injectable()
-export class PaymentService implements PaymentServiceInterface {
+export class PaymentService implements PaymentServiceInterface, OnModuleInit {
   private readonly logger = new Logger(PaymentService.name);
   private stripe: Stripe;
 
   constructor(
     private readonly configService: ConfigService,
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
   ) {
     this.stripe = new Stripe(this.configService.get('stripeSecretKey'), {
       typescript: true,
       apiVersion: '2024-04-10',
     });
+  }
+
+  async onModuleInit() {
+    await this.orderService.connect();
   }
 
   async createIntent(order: OrderDto): Promise<PaymentDto> {
@@ -59,16 +64,17 @@ export class PaymentService implements PaymentServiceInterface {
       throw new BadRequestException();
     }
     this.logger.debug(`Received event of type ${event.type}`);
+    let orderId: string;
     switch (event.type) {
       case 'charge.succeeded':
-        const succeededOrderId = event.data.object.metadata.orderId;
-        this.logger.log(`Order ${succeededOrderId} succeeded`);
-        this.orderService.emit(OrderPatterns.FULFILL_ORDER, succeededOrderId);
+        orderId = event.data.object.metadata.orderId;
+        this.logger.log(`Order ${orderId} succeeded`);
+        this.orderService.emit(OrderPatterns.FULFILL_ORDER, orderId);
         break;
       case 'charge.failed':
-        const failedOrderId = event.data.object.metadata.orderId;
-        this.logger.log(`Order ${failedOrderId} failed`);
-        this.orderService.emit(OrderPatterns.FAIL_ORDER, failedOrderId);
+        orderId = event.data.object.metadata.orderId;
+        this.logger.log(`Order ${orderId} failed`);
+        this.orderService.emit(OrderPatterns.FAIL_ORDER, orderId);
         break;
     }
     return;

@@ -9,9 +9,6 @@ type ServiceConfig = {
 };
 
 export type ClientProxyOptions = {
-  orderService: ServiceConfig;
-  cartService: ServiceConfig;
-  paymentService: ServiceConfig;
   passService: ServiceConfig;
   assetService: ServiceConfig;
 };
@@ -27,18 +24,6 @@ export class ConfigService {
     this.envConfig = {
       host: env.get('HOST').required().asString(),
       port: env.get('PORT').required().asPortNumber(),
-      orderService: {
-        host: env.get('ORDER_SERVICE_HOST').required().asString(),
-        port: env.get('ORDER_SERVICE_PORT').required().asPortNumber(),
-      },
-      cartService: {
-        host: env.get('CART_SERVICE_HOST').required().asString(),
-        port: env.get('CART_SERVICE_PORT').required().asPortNumber(),
-      },
-      paymentService: {
-        host: env.get('PAYMENT_SERVICE_HOST').required().asString(),
-        port: env.get('PAYMENT_SERVICE_PORT').required().asPortNumber(),
-      },
       passService: {
         host: env.get('PASS_SERVICE_HOST').required().asString(),
         port: env.get('PASS_SERVICE_PORT').required().asPortNumber(),

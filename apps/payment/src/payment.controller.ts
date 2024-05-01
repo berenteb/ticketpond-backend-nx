@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { PaymentPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   OrderDto,
@@ -12,12 +12,14 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentServiceInterface) {}
 
   @MessagePattern(PaymentPatterns.CREATE_PAYMENT_INTENT)
-  createPaymentIntent(data: OrderDto): Promise<PaymentDto> {
+  createPaymentIntent(@Payload() data: OrderDto): Promise<PaymentDto> {
     return this.paymentService.createIntent(data);
   }
 
   @EventPattern(PaymentPatterns.HANDLE_WEBHOOK)
-  handleWebhook(data: { signature: string; body: string }): Promise<void> {
+  handleWebhook(
+    @Payload() data: { signature: string; body: string },
+  ): Promise<void> {
     return this.paymentService.handleWebhook(data.signature, data.body);
   }
 }

@@ -6,7 +6,7 @@ import {
 
 import { ConfigService } from '../config.service';
 
-export function createClientProxy(provide: string) {
+export function createClientKafka(provide: string) {
   return {
     provide,
     useFactory: (configService: ConfigService) => {
@@ -14,11 +14,11 @@ export function createClientProxy(provide: string) {
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'cart',
+            clientId: 'payment',
             brokers: [configService.get('kafkaBroker')],
           },
           consumer: {
-            groupId: 'cart',
+            groupId: 'payment',
           },
         },
       };

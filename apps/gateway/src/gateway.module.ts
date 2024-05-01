@@ -73,7 +73,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     createClientKafka(ServiceNames.TICKET_SERVICE),
     createClientKafka(ServiceNames.CART_SERVICE),
     createClientKafka(ServiceNames.ORDER_SERVICE),
-    createClientProxy(ServiceNames.PAYMENT_SERVICE, 'paymentService'),
+    createClientKafka(ServiceNames.PAYMENT_SERVICE),
     createClientProxy(ServiceNames.PASS_SERVICE, 'passService'),
     createClientProxy(ServiceNames.ASSET_SERVICE, 'assetService'),
   ],

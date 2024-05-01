@@ -7,7 +7,7 @@ import {
 import { ConfigService } from './config.service';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
-import { createClientProxy } from './utils/create-client-proxy';
+import { createClientKafka } from './utils/create-client-kafka';
 
 @Module({
   imports: [],
@@ -18,7 +18,7 @@ import { createClientProxy } from './utils/create-client-proxy';
       useClass: PaymentService,
     },
     ConfigService,
-    createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
+    createClientKafka(ServiceNames.ORDER_SERVICE),
   ],
 })
 export class PaymentModule {}
