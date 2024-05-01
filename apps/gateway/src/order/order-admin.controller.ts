@@ -57,7 +57,7 @@ export class OrderAdminController {
   @ApiOkResponse()
   async deleteOrder(@Param('id') id: string): Promise<void> {
     return firstValueFrom(
-      this.orderService.send<void>(OrderPatterns.DELETE_ORDER, id),
+      this.orderService.send(OrderPatterns.DELETE_ORDER, id),
     );
   }
 
@@ -65,23 +65,19 @@ export class OrderAdminController {
   @ApiOkResponse()
   async fulfillOrder(@Param('id') id: string): Promise<void> {
     return firstValueFrom(
-      this.orderService.send<void>(OrderPatterns.FULFILL_ORDER, id),
+      this.orderService.emit(OrderPatterns.FULFILL_ORDER, id),
     );
   }
 
   @Post('cancel/:id')
   @ApiOkResponse()
   async cancelOrder(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.orderService.send<void>(OrderPatterns.CANCEL_ORDER, id),
-    );
+    this.orderService.emit(OrderPatterns.CANCEL_ORDER, id);
   }
 
   @Post('fail/:id')
   @ApiOkResponse()
   async failOrder(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.orderService.send<void>(OrderPatterns.FAIL_ORDER, id),
-    );
+    this.orderService.emit(OrderPatterns.FAIL_ORDER, id);
   }
 }

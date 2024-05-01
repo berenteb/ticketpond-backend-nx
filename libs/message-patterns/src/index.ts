@@ -1,3 +1,4 @@
+export * from './lib/asset.patterns';
 export * from './lib/cart.patterns';
 export * from './lib/customer.patterns';
 export * from './lib/experience.patterns';

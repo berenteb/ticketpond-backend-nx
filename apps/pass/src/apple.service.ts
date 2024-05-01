@@ -10,13 +10,15 @@ import * as path from 'path';
 
 import { ConfigService } from './config.service';
 
-const genFolder = path.resolve(__dirname, '../passes');
+const genFolder = path.resolve(__dirname, '../../static/passes/apple');
 
 @Injectable()
 export class AppleService {
   private readonly logger = new Logger(AppleService.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    this.createIfNotExists();
+  }
 
   async generatePass(orderItem: DeepOrderItemDto) {
     this.logger.log(`Generating pass for ${orderItem.serialNumber}`);
@@ -138,5 +140,9 @@ export class AppleService {
       labelColor: 'rgb(160, 152, 224)',
       backgroundColor: 'rgb(248, 250, 252)',
     };
+  }
+
+  createIfNotExists() {
+    if (!fs.existsSync(genFolder)) fs.mkdirSync(genFolder, { recursive: true });
   }
 }

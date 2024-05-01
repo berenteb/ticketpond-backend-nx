@@ -52,14 +52,12 @@ export class MerchantController {
         merchant,
       ),
     );
-    await firstValueFrom(
-      this.merchantService.send<void>(
-        MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT,
-        {
-          merchantId: createdMerchant.id,
-          customerAuthId: userId,
-        },
-      ),
+    this.merchantService.send<void>(
+      MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT,
+      {
+        merchantId: createdMerchant.id,
+        customerAuthId: userId,
+      },
     );
 
     return createdMerchant;

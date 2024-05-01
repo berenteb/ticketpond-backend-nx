@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PassController } from './pass.controller';
 import { PassService } from './pass.service';
 
-describe('AppController', () => {
+describe('AssetController', () => {
   let app: TestingModule;
 
   beforeAll(async () => {

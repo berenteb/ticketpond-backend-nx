@@ -7,7 +7,7 @@ import { GatewayModule } from './gateway.module';
 
 async function bootstrap() {
   const config = new ConfigService();
-  const app = await NestFactory.create(GatewayModule);
+  const app = await NestFactory.create(GatewayModule, { rawBody: true });
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();

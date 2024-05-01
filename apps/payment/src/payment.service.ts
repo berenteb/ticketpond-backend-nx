@@ -1,15 +1,31 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { OrderDto, PaymentDto } from '@ticketpond-backend-nx/types';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
+import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
+import {
+  OrderDto,
+  PaymentDto,
+  PaymentServiceInterface,
+  ServiceNames,
+} from '@ticketpond-backend-nx/types';
 import Stripe from 'stripe';
 
 import { ConfigService } from './config.service';
 
 @Injectable()
-export class PaymentService {
+export class PaymentService implements PaymentServiceInterface {
   private readonly logger = new Logger(PaymentService.name);
   private stripe: Stripe;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(ServiceNames.ORDER_SERVICE)
+    private readonly orderService: ClientProxy,
+  ) {
     this.stripe = new Stripe(this.configService.get('stripeSecretKey'), {
       typescript: true,
       apiVersion: '2024-04-10',
@@ -30,10 +46,7 @@ export class PaymentService {
     return { clientSecret: paymentIntent.client_secret };
   }
 
-  async handleWebhook(
-    signature: string | string[] | Buffer,
-    body: Buffer,
-  ): Promise<void> {
+  async handleWebhook(signature: string, body: string): Promise<void> {
     let event: Stripe.Event;
     try {
       event = this.stripe.webhooks.constructEvent(
@@ -48,14 +61,14 @@ export class PaymentService {
     this.logger.debug(`Received event of type ${event.type}`);
     switch (event.type) {
       case 'charge.succeeded':
-        // const succeededOrderId = event.data.object.metadata.orderId;
-        // await this.orderService.fulfillOrder(succeededOrderId);
-        console.log('Order fulfilled');
+        const succeededOrderId = event.data.object.metadata.orderId;
+        this.logger.log(`Order ${succeededOrderId} succeeded`);
+        this.orderService.emit(OrderPatterns.FULFILL_ORDER, succeededOrderId);
         break;
       case 'charge.failed':
-        // const failedOrderId = event.data.object.metadata.orderId;
-        // await this.orderService.failOrder(failedOrderId);
-        console.log('Order failed');
+        const failedOrderId = event.data.object.metadata.orderId;
+        this.logger.log(`Order ${failedOrderId} failed`);
+        this.orderService.emit(OrderPatterns.FAIL_ORDER, failedOrderId);
         break;
     }
     return;

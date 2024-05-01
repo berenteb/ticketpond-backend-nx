@@ -24,7 +24,6 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('payment')
-@UseGuards(AuthGuard('jwt'))
 @Controller('payment')
 export class PaymentController {
   constructor(
@@ -50,7 +49,10 @@ export class PaymentController {
 
   @Post('webhook')
   async handleWebhook(@Req() req: RawBodyRequest<Request>): Promise<void> {
-    this.sendWebhookEvent(req.headers['stripe-signature'], req.rawBody);
+    this.sendWebhookEvent(
+      req.headers['stripe-signature'],
+      req.rawBody.toString(),
+    );
   }
 
   private getOrderForCustomer(id: string, customerAuthId: string) {
@@ -74,11 +76,8 @@ export class PaymentController {
     );
   }
 
-  private sendWebhookEvent(
-    signature: string | string[] | Buffer,
-    body: Buffer,
-  ) {
-    return this.paymentService.send<void>(PaymentPatterns.HANDLE_WEBHOOK, {
+  private sendWebhookEvent(signature: string, body: string) {
+    return this.paymentService.emit<void>(PaymentPatterns.HANDLE_WEBHOOK, {
       signature,
       body,
     });

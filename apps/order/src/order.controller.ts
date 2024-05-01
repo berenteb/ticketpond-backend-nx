@@ -3,7 +3,7 @@ import {
   ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   CartDto,
@@ -81,17 +81,17 @@ export class OrderController {
     return this.orderService.getOrdersForMerchant(merchantId);
   }
 
-  @MessagePattern(OrderPatterns.FULFILL_ORDER)
+  @EventPattern(OrderPatterns.FULFILL_ORDER)
   async fulfillOrder(id: string): Promise<void> {
     return this.orderService.fulfillOrder(id);
   }
 
-  @MessagePattern(OrderPatterns.FAIL_ORDER)
+  @EventPattern(OrderPatterns.FAIL_ORDER)
   async failOrder(id: string): Promise<void> {
     return this.orderService.failOrder(id);
   }
 
-  @MessagePattern(OrderPatterns.CANCEL_ORDER)
+  @EventPattern(OrderPatterns.CANCEL_ORDER)
   async cancelOrder(id: string): Promise<void> {
     return this.orderService.cancelOrder(id);
   }

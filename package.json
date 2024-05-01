@@ -13,7 +13,9 @@
     "build": "nx run-many --target=build --all",
     "build:docker": "nx run-many --target=docker-build --all",
     "test": "nx run-many --target=test --all",
-    "lint": "nx run-many --target=lint --all"
+    "lint": "nx run-many --target=lint --all",
+    "stripe-webhook": "stripe listen --forward-to localhost:3001/payment/webhook",
+    "stripe-login": "stripe login"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.2",
@@ -21,6 +23,7 @@
     "@nestjs/microservices": "^10.3.3",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.3.0",
     "@prisma/client": "5.11.0",
     "@types/qrcode": "^1.5.5",

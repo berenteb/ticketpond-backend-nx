@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 
 import { PassService } from './pass.service';
 
-describe('AppService', () => {
+describe('AssetService', () => {
   let service: PassService;
 
   beforeAll(async () => {

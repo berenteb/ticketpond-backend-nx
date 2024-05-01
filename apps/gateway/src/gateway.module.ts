@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { AuthzModule } from '@ticketpond-backend-nx/authz';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
+import { NestjsFormDataModule } from 'nestjs-form-data';
+import path from 'path';
 
+import { AssetController } from './asset/asset.controller';
 import { CartController } from './cart/cart.controller';
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
@@ -25,10 +29,19 @@ import { createClientProxy } from './utils/create-client-proxy';
 
 @Module({
   imports: [
+    NestjsFormDataModule,
     AuthzModule.forRoot([
       createClientProxy(ServiceNames.MERCHANT_SERVICE, 'merchantService'),
       ConfigService,
     ]),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', '..', 'static'),
+      serveRoot: '/cdn',
+      serveStaticOptions: {
+        index: false,
+        redirect: false,
+      },
+    }),
   ],
   controllers: [
     GatewayController,
@@ -49,6 +62,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     CartController,
     PaymentController,
     PassController,
+    AssetController,
   ],
   providers: [
     ConfigService,
@@ -60,6 +74,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     createClientProxy(ServiceNames.CART_SERVICE, 'cartService'),
     createClientProxy(ServiceNames.PAYMENT_SERVICE, 'paymentService'),
     createClientProxy(ServiceNames.PASS_SERVICE, 'passService'),
+    createClientProxy(ServiceNames.ASSET_SERVICE, 'assetService'),
   ],
 })
 export class GatewayModule {}
