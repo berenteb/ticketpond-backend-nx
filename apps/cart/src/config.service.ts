@@ -3,26 +3,14 @@ import * as env from 'env-var';
 
 dotenv.config();
 
-type ServiceConfig = {
-  host: string;
-  port: number;
-};
-
-export type ClientProxyOptions = {
-  orderService: ServiceConfig;
-};
-
 export class ConfigService {
-  private readonly envConfig: ServiceConfig & ClientProxyOptions;
+  private readonly envConfig: {
+    kafkaBroker: string;
+  };
 
   constructor() {
     this.envConfig = {
-      host: env.get('HOST').required().asString(),
-      port: env.get('PORT').required().asPortNumber(),
-      orderService: {
-        host: env.get('ORDER_SERVICE_HOST').required().asString(),
-        port: env.get('ORDER_SERVICE_PORT').required().asPortNumber(),
-      },
+      kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
     };
   }
 

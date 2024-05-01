@@ -19,7 +19,7 @@ import { createClientProxy } from './utils/create-client-proxy';
       provide: CartServiceInterface,
       useClass: CartService,
     },
-    createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
+    createClientProxy(ServiceNames.ORDER_SERVICE),
   ],
 })
 export class CartModule {}

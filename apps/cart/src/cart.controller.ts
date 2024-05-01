@@ -3,7 +3,7 @@ import {
   Controller,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CartPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { CartDto, CartServiceInterface } from '@ticketpond-backend-nx/types';
 
@@ -12,12 +12,12 @@ export class CartController {
   constructor(private readonly cartService: CartServiceInterface) {}
 
   @MessagePattern(CartPatterns.GET_CART_BY_AUTH_ID)
-  async getCartForCustomer(authId: string): Promise<CartDto> {
+  async getCartForCustomer(@Payload() authId: string): Promise<CartDto> {
     return this.cartService.getCartForCustomer(authId);
   }
 
   @MessagePattern(CartPatterns.CHECKOUT_BY_AUTH_ID)
-  async checkoutForCustomer(authId: string): Promise<string> {
+  async checkoutForCustomer(@Payload() authId: string): Promise<string> {
     const cart = await this.cartService.getCartForCustomer(authId);
     if (cart.items.length === 0) {
       throw new BadRequestException('Cart is empty');
@@ -35,11 +35,9 @@ export class CartController {
   }
 
   @MessagePattern(CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID)
-  async addItemToCartForCustomer(data: {
-    authId: string;
-    ticketId: string;
-    quantity: number;
-  }): Promise<CartDto> {
+  async addItemToCartForCustomer(
+    @Payload() data: { authId: string; ticketId: string; quantity: number },
+  ): Promise<CartDto> {
     return this.cartService.addItemToCartForCustomer(
       data.authId,
       data.ticketId,
@@ -48,11 +46,9 @@ export class CartController {
   }
 
   @MessagePattern(CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID)
-  async removeItemFromCartForCustomer(data: {
-    authId: string;
-    ticketId: string;
-    quantity: number;
-  }): Promise<CartDto> {
+  async removeItemFromCartForCustomer(
+    @Payload() data: { authId: string; ticketId: string; quantity: number },
+  ): Promise<CartDto> {
     return this.cartService.removeItemFromCartForCustomer(
       data.authId,
       data.ticketId,

@@ -4,18 +4,23 @@ import {
   Transport,
 } from '@nestjs/microservices';
 
-import { ClientProxyOptions, ConfigService } from '../config.service';
+import { ConfigService } from '../config.service';
 
-export function createClientProxy(
-  provide: string,
-  configName: keyof ClientProxyOptions,
-) {
+export function createClientProxy(provide: string) {
   return {
     provide,
     useFactory: (configService: ConfigService) => {
       const serviceOptions: ClientOptions = {
-        transport: Transport.TCP,
-        options: configService.get(configName),
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'cart',
+            brokers: [configService.get('kafkaBroker')],
+          },
+          consumer: {
+            groupId: 'cart',
+          },
+        },
       };
       return ClientProxyFactory.create(serviceOptions);
     },

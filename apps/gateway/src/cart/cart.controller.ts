@@ -3,47 +3,48 @@ import {
   Controller,
   Get,
   Inject,
-  NotFoundException,
+  OnModuleInit,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import {
-  CartPatterns,
-  CustomerMessagePattern,
-} from '@ticketpond-backend-nx/message-patterns';
+import { CartPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   AddToCartDto,
   CartDto,
-  CustomerDto,
   RemoveFromCartDto,
   type ReqWithUser,
   ServiceNames,
 } from '@ticketpond-backend-nx/types';
-import { ServiceResponse } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('cart')
 @UseGuards(AuthGuard('jwt'))
 @Controller('cart')
-export class CartController {
+export class CartController implements OnModuleInit {
   constructor(
-    @Inject(ServiceNames.CUSTOMER_SERVICE)
-    private readonly customerService: ClientProxy,
     @Inject(ServiceNames.CART_SERVICE)
-    private readonly cartService: ClientProxy,
+    private readonly cartService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.cartService.subscribeToResponseOf(CartPatterns.GET_CART_BY_AUTH_ID);
+    this.cartService.subscribeToResponseOf(CartPatterns.CHECKOUT_BY_AUTH_ID);
+    this.cartService.subscribeToResponseOf(
+      CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
+    );
+    this.cartService.subscribeToResponseOf(
+      CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
+    );
+    await this.cartService.connect();
+  }
 
   @Get('me')
   @ApiOkResponse({ type: CartDto })
   async getCartForMe(@Req() req: ReqWithUser): Promise<CartDto> {
-    const customer = await this.getCustomerById(req.user.sub);
-    if (!customer) {
-      throw new NotFoundException(`Customer with id ${req.user.sub} not found`);
-    }
     return firstValueFrom(
       this.cartService.send<CartDto>(
         CartPatterns.GET_CART_BY_AUTH_ID,
@@ -55,10 +56,6 @@ export class CartController {
   @Post('me/checkout')
   @ApiOkResponse({ type: String })
   async checkoutForMe(@Req() req: ReqWithUser): Promise<string> {
-    const customer = await this.getCustomerById(req.user.sub);
-    if (!customer) {
-      throw new NotFoundException(`Customer with id ${req.user.sub} not found`);
-    }
     return firstValueFrom(
       this.cartService.send<string>(
         CartPatterns.CHECKOUT_BY_AUTH_ID,
@@ -73,10 +70,6 @@ export class CartController {
     @Body() item: AddToCartDto,
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
-    const customer = await this.getCustomerById(req.user.sub);
-    if (!customer) {
-      throw new NotFoundException(`Customer with id ${req.user.sub} not found`);
-    }
     return firstValueFrom(
       this.cartService.send<CartDto>(CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID, {
         authId: req.user.sub,
@@ -92,10 +85,6 @@ export class CartController {
     @Body() item: RemoveFromCartDto,
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
-    const customer = await this.getCustomerById(req.user.sub);
-    if (!customer) {
-      throw new NotFoundException(`Customer with id ${req.user.sub} not found`);
-    }
     return firstValueFrom(
       this.cartService.send<CartDto>(
         CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
@@ -106,16 +95,5 @@ export class CartController {
         },
       ),
     );
-  }
-
-  private async getCustomerById(authId: string): Promise<CustomerDto> {
-    const response = await firstValueFrom(
-      this.customerService.send<ServiceResponse<CustomerDto>>(
-        CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
-        authId,
-      ),
-    );
-    if (!response.success) return null;
-    return response.data;
   }
 }

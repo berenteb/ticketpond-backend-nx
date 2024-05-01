@@ -1,5 +1,11 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
@@ -11,14 +17,19 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class CartService implements CartServiceInterface {
+export class CartService implements CartServiceInterface, OnModuleInit {
   private readonly logger = new Logger(CartService.name);
 
   constructor(
     private readonly prismaService: PrismaService,
     @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientProxy,
+    private readonly orderService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.orderService.subscribeToResponseOf(OrderPatterns.CREATE_ORDER);
+    await this.orderService.connect();
+  }
 
   async createCartForCustomer(authId: string): Promise<CartDto> {
     const cart = await this.prismaService.cart.create({
