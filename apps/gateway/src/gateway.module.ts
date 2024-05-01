@@ -26,7 +26,6 @@ import { TicketController } from './ticket/ticket.controller';
 import { TicketAdminController } from './ticket/ticket-admin.controller';
 import { TicketMerchantController } from './ticket/ticket-merchant.controller';
 import { createClientKafka } from './utils/create-client-kafka';
-import { createClientProxy } from './utils/create-client-proxy';
 
 @Module({
   imports: [
@@ -75,7 +74,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     createClientKafka(ServiceNames.ORDER_SERVICE),
     createClientKafka(ServiceNames.PAYMENT_SERVICE),
     createClientKafka(ServiceNames.PASS_SERVICE),
-    createClientProxy(ServiceNames.ASSET_SERVICE, 'assetService'),
+    createClientKafka(ServiceNames.ASSET_SERVICE),
   ],
 })
 export class GatewayModule {}

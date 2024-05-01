@@ -4,7 +4,7 @@ import {
   Transport,
 } from '@nestjs/microservices';
 
-import { ClientProxyOptions, ConfigService } from '../config.service';
+import { ConfigService } from '../config.service';
 
 export function createClientKafka(provide: string) {
   return {
