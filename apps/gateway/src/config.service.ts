@@ -24,6 +24,7 @@ export class ConfigService {
   private readonly envConfig: ServiceConfig &
     ClientProxyOptions & {
       frontendUrl: string;
+      kafkaBroker: string;
     };
 
   constructor() {
@@ -67,6 +68,7 @@ export class ConfigService {
         port: env.get('ASSET_SERVICE_PORT').required().asPortNumber(),
       },
       frontendUrl: env.get('FRONTEND_URL').required().asString(),
+      kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
     };
   }
 

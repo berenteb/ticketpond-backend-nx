@@ -5,13 +5,14 @@ import {
   Get,
   Inject,
   NotFoundException,
+  OnModuleInit,
   Param,
   Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -35,13 +36,35 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
 @UseGuards(AuthGuard('jwt'))
 @Controller('merchant-admin/experience')
-export class ExperienceMerchantController {
+export class ExperienceMerchantController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.EXPERIENCE_SERVICE)
-    private readonly experienceService: ClientProxy,
+    private readonly experienceService: ClientKafka,
     @Inject(ServiceNames.MERCHANT_SERVICE)
     private readonly merchantService: ClientProxy,
   ) {}
+
+  async onModuleInit() {
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.GET_EXPERIENCES_BY_MERCHANT_ID,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.GET_EXPERIENCE,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.CREATE_EXPERIENCE,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.UPDATE_EXPERIENCE_BY_MERCHANT_ID,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.VALIDATE_EXPERIENCE_PASS,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.DELETE_EXPERIENCE_BY_MERCHANT_ID,
+    );
+    await this.experienceService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [ExperienceDto] })

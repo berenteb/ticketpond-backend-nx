@@ -4,11 +4,12 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -26,11 +27,27 @@ import { firstValueFrom } from 'rxjs';
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
 @Controller('admin/experience')
-export class ExperienceAdminController {
+export class ExperienceAdminController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.EXPERIENCE_SERVICE)
-    private readonly experienceService: ClientProxy,
+    private readonly experienceService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.LIST_EXPERIENCES,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.GET_EXPERIENCE,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.UPDATE_EXPERIENCE,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.DELETE_EXPERIENCE,
+    );
+    await this.experienceService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [ExperienceDto] })

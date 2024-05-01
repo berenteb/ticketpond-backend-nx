@@ -25,6 +25,7 @@ import { PaymentController } from './payment/payment.controller';
 import { TicketController } from './ticket/ticket.controller';
 import { TicketAdminController } from './ticket/ticket-admin.controller';
 import { TicketMerchantController } from './ticket/ticket-merchant.controller';
+import { createClientKafka } from './utils/create-client-kafka';
 import { createClientProxy } from './utils/create-client-proxy';
 
 @Module({
@@ -68,7 +69,7 @@ import { createClientProxy } from './utils/create-client-proxy';
     ConfigService,
     createClientProxy(ServiceNames.CUSTOMER_SERVICE, 'customerService'),
     createClientProxy(ServiceNames.MERCHANT_SERVICE, 'merchantService'),
-    createClientProxy(ServiceNames.EXPERIENCE_SERVICE, 'experienceService'),
+    createClientKafka(ServiceNames.EXPERIENCE_SERVICE),
     createClientProxy(ServiceNames.TICKET_SERVICE, 'ticketService'),
     createClientProxy(ServiceNames.ORDER_SERVICE, 'orderService'),
     createClientProxy(ServiceNames.CART_SERVICE, 'cartService'),

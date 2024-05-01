@@ -1,18 +1,31 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Controller, Get, Inject, OnModuleInit, Param } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
-import { DeepExperienceDto, ExperienceDto } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
+import {
+  DeepExperienceDto,
+  ExperienceDto,
+  ServiceNames,
+} from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('experience')
 @Controller('experience')
-export class ExperienceController {
+export class ExperienceController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.EXPERIENCE_SERVICE)
-    private readonly experienceService: ClientProxy,
+    private readonly experienceService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.LIST_EXPERIENCES,
+    );
+    this.experienceService.subscribeToResponseOf(
+      ExperiencePatterns.GET_EXPERIENCE,
+    );
+    await this.experienceService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [ExperienceDto] })
