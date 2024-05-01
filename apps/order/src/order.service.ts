@@ -1,5 +1,16 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
+import {
+  NotificationPatterns,
+  PassPatterns,
+} from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
   CartDto,
@@ -8,6 +19,7 @@ import {
   OrderDto,
   OrderServiceInterface,
   OrderWithCustomerDto,
+  ServiceNames,
 } from '@ticketpond-backend-nx/types';
 import {
   generateDateBasedSerialNumber,
@@ -15,10 +27,21 @@ import {
 } from '@ticketpond-backend-nx/utils';
 
 @Injectable()
-export class OrderService implements OrderServiceInterface {
+export class OrderService implements OrderServiceInterface, OnModuleInit {
   private readonly logger = new Logger(OrderService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(ServiceNames.PASS_SERVICE)
+    private readonly passService: ClientKafka,
+    @Inject(ServiceNames.NOTIFICATION_SERVICE)
+    private readonly notificationService: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    await this.passService.connect();
+    await this.notificationService.connect();
+  }
 
   async getOrderById(id: string): Promise<DeepOrderDto> {
     const order = await this.prisma.order.findUnique({
@@ -203,12 +226,15 @@ export class OrderService implements OrderServiceInterface {
   }
 
   async generatePasses(order: DeepOrderDto): Promise<void> {
-    // TODO: Implement pass generation
+    this.passService.emit(PassPatterns.GENERATE_PASSES, order);
     this.logger.debug(`Generated pass for order with id ${order.id}`);
   }
 
   async sendOrderSuccess(order: DeepOrderDto): Promise<void> {
-    // TODO: Implement order success notification
+    this.notificationService.emit(
+      NotificationPatterns.SEND_ORDER_CONFIRMATION,
+      order,
+    );
     this.logger.debug(
       `Sent order success notification for order with id ${order.id}`,
     );

@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '@ticketpond-backend-nx/prisma';
-import { OrderServiceInterface } from '@ticketpond-backend-nx/types';
+import {
+  OrderServiceInterface,
+  ServiceNames,
+} from '@ticketpond-backend-nx/types';
 
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
+import { createClientKafka } from './utils/create-client-kafka';
 
 @Module({
   imports: [PrismaModule],
@@ -13,6 +17,8 @@ import { OrderService } from './order.service';
       provide: OrderServiceInterface,
       useClass: OrderService,
     },
+    createClientKafka(ServiceNames.PASS_SERVICE),
+    createClientKafka(ServiceNames.NOTIFICATION_SERVICE),
   ],
 })
 export class OrderModule {}

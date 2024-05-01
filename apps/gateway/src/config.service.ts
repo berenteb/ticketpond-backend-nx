@@ -9,7 +9,6 @@ type ServiceConfig = {
 };
 
 export type ClientProxyOptions = {
-  passService: ServiceConfig;
   assetService: ServiceConfig;
 };
 
@@ -24,10 +23,6 @@ export class ConfigService {
     this.envConfig = {
       host: env.get('HOST').required().asString(),
       port: env.get('PORT').required().asPortNumber(),
-      passService: {
-        host: env.get('PASS_SERVICE_HOST').required().asString(),
-        port: env.get('PASS_SERVICE_PORT').required().asPortNumber(),
-      },
       assetService: {
         host: env.get('ASSET_SERVICE_HOST').required().asString(),
         port: env.get('ASSET_SERVICE_PORT').required().asPortNumber(),

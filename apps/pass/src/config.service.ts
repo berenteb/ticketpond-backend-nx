@@ -4,8 +4,7 @@ dotenv.config();
 
 export class ConfigService {
   private readonly envConfig: {
-    host: string;
-    port: number;
+    kafkaBroker: string;
     walletPassphrase: string;
     walletPassTypeIdentifier: string;
     walletTeamIdentifier: string;
@@ -14,8 +13,7 @@ export class ConfigService {
 
   constructor() {
     this.envConfig = {
-      host: env.get('HOST').required().asString(),
-      port: env.get('PORT').required().asPortNumber(),
+      kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
       walletPassphrase: env.get('WALLET_PASSPHRASE').required().asString(),
       walletPassTypeIdentifier: env
         .get('WALLET_PASS_TYPE_IDENTIFIER')
