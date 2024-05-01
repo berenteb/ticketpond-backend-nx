@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { Customer } from '@prisma/client';
+import { NotificationPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
   CreateCustomerDto,
@@ -19,7 +20,7 @@ export class CustomerService
   constructor(
     private readonly prismaService: PrismaService,
     @Inject(ServiceNames.NOTIFICATION_SERVICE)
-    private readonly notificationService: ClientProxy,
+    private readonly notificationService: ClientKafka,
   ) {
     super();
   }
@@ -98,6 +99,6 @@ export class CustomerService
   }
 
   private async sendWelcomeEmail(customer: Customer): Promise<void> {
-    this.notificationService.emit('sendWelcome', customer);
+    this.notificationService.emit(NotificationPatterns.SEND_WELCOME, customer);
   }
 }

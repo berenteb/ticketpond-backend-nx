@@ -19,10 +19,7 @@ import { createKafkaClientProxy } from './utils/create-kafka-client-proxy';
       provide: CustomerServiceInterface,
       useClass: CustomerService,
     },
-    createKafkaClientProxy(
-      ServiceNames.NOTIFICATION_SERVICE,
-      'notificationService',
-    ),
+    createKafkaClientProxy(ServiceNames.NOTIFICATION_SERVICE),
   ],
 })
 export class CustomerModule {}

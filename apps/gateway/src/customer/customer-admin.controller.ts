@@ -4,12 +4,13 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -18,20 +19,39 @@ import {
   CreateCustomerDto,
   CustomerDto,
   PermissionLevel,
+  ServiceNames,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('customer-admin')
 @Controller('admin/customer')
-export class CustomerAdminController {
+export class CustomerAdminController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.CUSTOMER_SERVICE)
-    private readonly customerService: ClientProxy,
+    private readonly customerService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.LIST_CUSTOMERS,
+    );
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.GET_CUSTOMER,
+    );
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.CREATE_CUSTOMER,
+    );
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.UPDATE_CUSTOMER,
+    );
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.DELETE_CUSTOMER,
+    );
+    await this.customerService.connect();
+  }
 
   @Get()
   @ApiOkResponse({ type: [CustomerDto] })

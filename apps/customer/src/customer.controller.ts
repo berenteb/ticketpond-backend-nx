@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateCustomerDto,
@@ -14,13 +14,13 @@ export class CustomerController {
   constructor(private readonly customerService: CustomerServiceInterface) {}
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER)
-  async getCustomer(id: string) {
+  async getCustomer(@Payload() id: string) {
     return await this.customerService.getCustomerById(id);
   }
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID)
   async getCustomerByAuthId(
-    authId: string,
+    @Payload() authId: string,
   ): Promise<ServiceResponse<CustomerDto>> {
     const customer = await this.customerService.getCustomerByAuthId(authId);
     if (!customer) {
@@ -40,13 +40,10 @@ export class CustomerController {
   }
 
   @MessagePattern(CustomerMessagePattern.CREATE_CUSTOMER)
-  async createCustomer({
-    customer,
-    authId,
-  }: {
-    customer: CreateCustomerDto;
-    authId?: string;
-  }) {
+  async createCustomer(
+    @Payload()
+    { customer, authId }: { customer: CreateCustomerDto; authId?: string },
+  ) {
     return await this.customerService.createCustomer(customer, authId);
   }
 
@@ -56,29 +53,22 @@ export class CustomerController {
   }
 
   @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER)
-  async updateCustomer({
-    id,
-    customer,
-  }: {
-    id: string;
-    customer: UpdateCustomerDto;
-  }) {
+  async updateCustomer(
+    @Payload() { id, customer }: { id: string; customer: UpdateCustomerDto },
+  ) {
     return await this.customerService.updateCustomer(id, customer);
   }
 
   @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER_BY_AUTH_ID)
-  async updateCustomerByAuthId({
-    authId,
-    customer,
-  }: {
-    authId: string;
-    customer: UpdateCustomerDto;
-  }) {
+  async updateCustomerByAuthId(
+    @Payload()
+    { authId, customer }: { authId: string; customer: UpdateCustomerDto },
+  ) {
     return await this.customerService.updateCustomerByAuthId(authId, customer);
   }
 
   @MessagePattern(CustomerMessagePattern.DELETE_CUSTOMER)
-  async deleteCustomer(id: string) {
+  async deleteCustomer(@Payload() id: string) {
     return await this.customerService.deleteCustomer(id);
   }
 }

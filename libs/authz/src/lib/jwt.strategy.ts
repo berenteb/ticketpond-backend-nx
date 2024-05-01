@@ -1,5 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
 import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
@@ -17,11 +17,14 @@ import { AUTH0_AUDIENCE, AUTH0_ISSUER_URL } from './config';
 dotenv.config();
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy
+  extends PassportStrategy(Strategy)
+  implements OnModuleInit
+{
   private readonly logger = new Logger(JwtStrategy.name);
   constructor(
     @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientProxy,
+    private readonly merchantService: ClientKafka,
   ) {
     super({
       secretOrKeyProvider: passportJwtSecret({
@@ -36,6 +39,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       issuer: AUTH0_ISSUER_URL,
       algorithms: ['RS256'],
     });
+  }
+
+  async onModuleInit() {
+    this.merchantService.subscribeToResponseOf(
+      MerchantPattern.GET_MERCHANT_BY_USER_ID,
+    );
+    await this.merchantService.connect();
   }
 
   async validate(payload: JwtUser): Promise<JwtUser> {

@@ -32,7 +32,7 @@ import { createClientProxy } from './utils/create-client-proxy';
   imports: [
     NestjsFormDataModule,
     AuthzModule.forRoot([
-      createClientProxy(ServiceNames.MERCHANT_SERVICE, 'merchantService'),
+      createClientKafka(ServiceNames.MERCHANT_SERVICE),
       ConfigService,
     ]),
     ServeStaticModule.forRoot({
@@ -67,7 +67,7 @@ import { createClientProxy } from './utils/create-client-proxy';
   ],
   providers: [
     ConfigService,
-    createClientProxy(ServiceNames.CUSTOMER_SERVICE, 'customerService'),
+    createClientKafka(ServiceNames.CUSTOMER_SERVICE),
     createClientKafka(ServiceNames.MERCHANT_SERVICE),
     createClientKafka(ServiceNames.EXPERIENCE_SERVICE),
     createClientKafka(ServiceNames.TICKET_SERVICE),

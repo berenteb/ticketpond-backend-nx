@@ -4,29 +4,43 @@ import {
   Get,
   Inject,
   NotFoundException,
+  OnModuleInit,
   Post,
   Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import type { ReqWithUser } from '@ticketpond-backend-nx/types';
-import { CreateCustomerDto, CustomerDto } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
-import { ServiceResponse } from '@ticketpond-backend-nx/types';
+import {
+  CreateCustomerDto,
+  CustomerDto,
+  ServiceNames,
+  ServiceResponse,
+} from '@ticketpond-backend-nx/types';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('customer')
 @UseGuards(AuthGuard('jwt'))
 @Controller('customer')
-export class CustomerController {
+export class CustomerController implements OnModuleInit {
   constructor(
     @Inject(ServiceNames.CUSTOMER_SERVICE)
-    private readonly customerService: ClientProxy,
+    private readonly customerService: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
+    );
+    this.customerService.subscribeToResponseOf(
+      CustomerMessagePattern.CREATE_CUSTOMER,
+    );
+    await this.customerService.connect();
+  }
 
   @Get('me')
   @ApiOkResponse({ type: CustomerDto })
