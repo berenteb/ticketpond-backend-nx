@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  NotFoundException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
@@ -17,19 +11,14 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class CartService implements CartServiceInterface, OnModuleInit {
+export class CartService implements CartServiceInterface {
   private readonly logger = new Logger(CartService.name);
 
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    this.orderService.subscribeToResponseOf(OrderPatterns.CREATE_ORDER);
-    await this.orderService.connect();
-  }
 
   async createCartForCustomer(authId: string): Promise<CartDto> {
     const cart = await this.prismaService.cart.create({
@@ -139,12 +128,12 @@ export class CartService implements CartServiceInterface, OnModuleInit {
   }
 
   fulfillOrder(orderId: string): void {
-    this.orderService.send(OrderPatterns.FULFILL_ORDER, orderId);
+    this.kafkaService.send(OrderPatterns.FULFILL_ORDER, orderId);
   }
 
   private async createOrder(cart: CartDto): Promise<OrderDto> {
     return firstValueFrom(
-      this.orderService.send<OrderDto>(OrderPatterns.CREATE_ORDER, cart),
+      this.kafkaService.send<OrderDto>(OrderPatterns.CREATE_ORDER, cart),
     );
   }
 

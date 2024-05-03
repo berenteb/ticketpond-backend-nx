@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Customer } from '@prisma/client';
 import { NotificationPatterns } from '@ticketpond-backend-nx/message-patterns';
@@ -12,22 +12,13 @@ import {
 } from '@ticketpond-backend-nx/types';
 
 @Injectable()
-export class CustomerService
-  extends CustomerServiceInterface
-  implements OnModuleInit
-{
+export class CustomerService implements CustomerServiceInterface {
   private readonly logger = new Logger(CustomerService.name);
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(ServiceNames.NOTIFICATION_SERVICE)
-    private readonly notificationService: ClientKafka,
-  ) {
-    super();
-  }
-
-  async onModuleInit() {
-    await this.notificationService.connect();
-  }
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
 
   async createCustomer(
     customer: CreateCustomerDto,
@@ -99,6 +90,6 @@ export class CustomerService
   }
 
   private async sendWelcomeEmail(customer: Customer): Promise<void> {
-    this.notificationService.emit(NotificationPatterns.SEND_WELCOME, customer);
+    this.kafkaService.emit(NotificationPatterns.SEND_WELCOME, customer);
   }
 }

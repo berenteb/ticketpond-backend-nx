@@ -1,4 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaModule } from '@ticketpond-backend-nx/prisma';
 import {
   CartServiceInterface,
@@ -19,7 +21,17 @@ import { createClientKafka } from './utils/create-client-kafka';
       provide: CartServiceInterface,
       useClass: CartService,
     },
-    createClientKafka(ServiceNames.ORDER_SERVICE),
+    createClientKafka(ServiceNames.KAFKA_SERVICE),
   ],
 })
-export class CartModule {}
+export class CartModule implements OnModuleInit {
+  constructor(
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    this.kafkaService.subscribeToResponseOf(OrderPatterns.CREATE_ORDER);
+    await this.kafkaService.connect();
+  }
+}

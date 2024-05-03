@@ -18,23 +18,19 @@ import Stripe from 'stripe';
 import { ConfigService } from './config.service';
 
 @Injectable()
-export class PaymentService implements PaymentServiceInterface, OnModuleInit {
+export class PaymentService implements PaymentServiceInterface {
   private readonly logger = new Logger(PaymentService.name);
   private stripe: Stripe;
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(ServiceNames.ORDER_SERVICE)
-    private readonly orderService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {
     this.stripe = new Stripe(this.configService.get('stripeSecretKey'), {
       typescript: true,
       apiVersion: '2024-04-10',
     });
-  }
-
-  async onModuleInit() {
-    await this.orderService.connect();
   }
 
   async createIntent(order: OrderDto): Promise<PaymentDto> {
@@ -69,12 +65,12 @@ export class PaymentService implements PaymentServiceInterface, OnModuleInit {
       case 'charge.succeeded':
         orderId = event.data.object.metadata.orderId;
         this.logger.log(`Order ${orderId} succeeded`);
-        this.orderService.emit(OrderPatterns.FULFILL_ORDER, orderId);
+        this.kafkaService.emit(OrderPatterns.FULFILL_ORDER, orderId);
         break;
       case 'charge.failed':
         orderId = event.data.object.metadata.orderId;
         this.logger.log(`Order ${orderId} failed`);
-        this.orderService.emit(OrderPatterns.FAIL_ORDER, orderId);
+        this.kafkaService.emit(OrderPatterns.FAIL_ORDER, orderId);
         break;
     }
     return;

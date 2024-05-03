@@ -6,7 +6,7 @@ import {
 
 import { ConfigService } from '../config.service';
 
-export function createKafkaClientProxy(provide: string) {
+export function createClientKafka(provide: string) {
   return {
     provide,
     useFactory: (configService: ConfigService) => {
@@ -19,6 +19,7 @@ export function createKafkaClientProxy(provide: string) {
           },
           consumer: {
             groupId: 'customer',
+            allowAutoTopicCreation: true,
           },
         },
       };

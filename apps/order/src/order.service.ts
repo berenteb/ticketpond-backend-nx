@@ -27,21 +27,14 @@ import {
 } from '@ticketpond-backend-nx/utils';
 
 @Injectable()
-export class OrderService implements OrderServiceInterface, OnModuleInit {
+export class OrderService implements OrderServiceInterface {
   private readonly logger = new Logger(OrderService.name);
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(ServiceNames.PASS_SERVICE)
-    private readonly passService: ClientKafka,
-    @Inject(ServiceNames.NOTIFICATION_SERVICE)
-    private readonly notificationService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    await this.passService.connect();
-    await this.notificationService.connect();
-  }
 
   async getOrderById(id: string): Promise<DeepOrderDto> {
     const order = await this.prisma.order.findUnique({
@@ -226,15 +219,12 @@ export class OrderService implements OrderServiceInterface, OnModuleInit {
   }
 
   async generatePasses(order: DeepOrderDto): Promise<void> {
-    this.passService.emit(PassPatterns.GENERATE_PASSES, order);
+    this.kafkaService.emit(PassPatterns.GENERATE_PASSES, order);
     this.logger.debug(`Generated pass for order with id ${order.id}`);
   }
 
   async sendOrderSuccess(order: DeepOrderDto): Promise<void> {
-    this.notificationService.emit(
-      NotificationPatterns.SEND_ORDER_CONFIRMATION,
-      order,
-    );
+    this.kafkaService.emit(NotificationPatterns.SEND_ORDER_CONFIRMATION, order);
     this.logger.debug(
       `Sent order success notification for order with id ${order.id}`,
     );

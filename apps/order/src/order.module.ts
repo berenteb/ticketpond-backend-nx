@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import { PrismaModule } from '@ticketpond-backend-nx/prisma';
 import {
   OrderServiceInterface,
@@ -19,8 +20,16 @@ import { createClientKafka } from './utils/create-client-kafka';
       provide: OrderServiceInterface,
       useClass: OrderService,
     },
-    createClientKafka(ServiceNames.PASS_SERVICE),
-    createClientKafka(ServiceNames.NOTIFICATION_SERVICE),
+    createClientKafka(ServiceNames.KAFKA_SERVICE),
   ],
 })
-export class OrderModule {}
+export class OrderModule implements OnModuleInit {
+  constructor(
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    await this.kafkaService.connect();
+  }
+}

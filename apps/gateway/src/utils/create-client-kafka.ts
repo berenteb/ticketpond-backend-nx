@@ -6,7 +6,11 @@ import {
 
 import { ConfigService } from '../config.service';
 
-export function createClientKafka(provide: string) {
+export function createClientKafka(
+  provide: string,
+  clientId: string,
+  groupId: string,
+) {
   return {
     provide,
     useFactory: (configService: ConfigService) => {
@@ -14,11 +18,11 @@ export function createClientKafka(provide: string) {
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'gateway',
+            clientId,
             brokers: [configService.get('kafkaBroker')],
           },
           consumer: {
-            groupId: 'gateway',
+            groupId,
             allowAutoTopicCreation: true,
           },
         },

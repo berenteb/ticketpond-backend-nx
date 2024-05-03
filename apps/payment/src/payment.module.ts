@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 import {
   PaymentServiceInterface,
   ServiceNames,
@@ -18,7 +19,16 @@ import { createClientKafka } from './utils/create-client-kafka';
       useClass: PaymentService,
     },
     ConfigService,
-    createClientKafka(ServiceNames.ORDER_SERVICE),
+    createClientKafka(ServiceNames.KAFKA_SERVICE),
   ],
 })
-export class PaymentModule {}
+export class PaymentModule implements OnModuleInit {
+  constructor(
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
+
+  async onModuleInit() {
+    await this.kafkaService.connect();
+  }
+}

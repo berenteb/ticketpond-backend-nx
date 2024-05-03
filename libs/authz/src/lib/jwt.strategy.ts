@@ -23,8 +23,8 @@ export class JwtStrategy
 {
   private readonly logger = new Logger(JwtStrategy.name);
   constructor(
-    @Inject(ServiceNames.MERCHANT_SERVICE)
-    private readonly merchantService: ClientKafka,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
   ) {
     super({
       secretOrKeyProvider: passportJwtSecret({
@@ -42,15 +42,15 @@ export class JwtStrategy
   }
 
   async onModuleInit() {
-    this.merchantService.subscribeToResponseOf(
+    this.kafkaService.subscribeToResponseOf(
       MerchantPattern.GET_MERCHANT_BY_USER_ID,
     );
-    await this.merchantService.connect();
+    await this.kafkaService.connect();
   }
 
   async validate(payload: JwtUser): Promise<JwtUser> {
     const merchantForUser = await firstValueFrom(
-      this.merchantService.send<boolean>(
+      this.kafkaService.send<boolean>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         payload.sub,
       ),
