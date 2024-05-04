@@ -13,8 +13,8 @@ export class AssetController {
   constructor(private readonly assetService: AssetServiceInterface) {}
 
   @EventPattern(AssetPatterns.DELETE_FILE)
-  deleteFile(@Payload() fileName: string): Promise<void> {
-    return this.assetService.deleteFile(fileName);
+  async deleteFile(@Payload() fileName: string): Promise<void> {
+    await this.assetService.deleteFile(fileName);
   }
 
   @MessagePattern(AssetPatterns.UPLOAD_FILE)
