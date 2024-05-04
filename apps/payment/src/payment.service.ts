@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   Logger,
-  OnModuleInit,
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
