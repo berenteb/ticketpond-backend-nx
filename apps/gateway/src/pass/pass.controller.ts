@@ -21,9 +21,10 @@ export class PassController {
     res.send(qr);
   }
 
-  private generateQrCode(text: string, scale = 10) {
-    return firstValueFrom(
-      this.kafkaService.send<Buffer>(PassPatterns.GET_QRCODE, { text, scale }),
+  private async generateQrCode(text: string, scale = 10) {
+    const raw = await firstValueFrom(
+      this.kafkaService.send(PassPatterns.GET_QRCODE, { text, scale }),
     );
+    return Buffer.from(raw);
   }
 }

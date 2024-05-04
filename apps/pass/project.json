@@ -23,8 +23,34 @@
         "webpackConfig": "apps/pass/webpack.config.js"
       },
       "configurations": {
-        "development": {},
-        "production": {}
+        "development": {
+          "assets": [
+            {
+                "glob": "**/*",
+                "input": "apps/pass/creds",
+                "output": "/creds"
+            },
+            {
+                "glob": "**/*",
+                "input": "apps/pass/assets",
+                "output": "/assets"
+            }
+          ]
+        },
+        "production": {
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/pass/creds",
+              "output": "/creds"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/pass/assets",
+              "output": "/assets"
+            }
+          ]
+        }
       }
     },
     "serve": {

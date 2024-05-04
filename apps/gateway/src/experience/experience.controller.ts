@@ -20,7 +20,6 @@ export class ExperienceController {
   @Get()
   @ApiOkResponse({ type: [ExperienceDto] })
   async getExperiences(): Promise<ExperienceDto[]> {
-    console.log(this.kafkaService);
     return firstValueFrom(
       this.kafkaService.send<ExperienceDto[]>(
         ExperiencePatterns.LIST_EXPERIENCES,

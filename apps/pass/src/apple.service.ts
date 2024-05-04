@@ -9,11 +9,12 @@ import { OverridablePassProps, PKPass } from 'passkit-generator';
 import * as path from 'path';
 
 import { ConfigService } from './config.service';
+import { PassGeneratorInterface } from './pass-generator.interface';
 
 const genFolder = path.resolve(__dirname, '../../static/passes/apple');
 
 @Injectable()
-export class AppleService {
+export class AppleService implements PassGeneratorInterface {
   private readonly logger = new Logger(AppleService.name);
 
   constructor(private readonly configService: ConfigService) {
@@ -87,17 +88,17 @@ export class AppleService {
     const identifier = orderItem.id;
     const passFileName = `${identifier}.pkpass`;
     try {
-      const logoUrl = path.resolve(__dirname, '../assets', 'logo.png');
-      const logo2Url = path.resolve(__dirname, '../assets', 'logo@2x.png');
-      const iconUrl = path.resolve(__dirname, '../assets', 'icon.png');
-      const icon2Url = path.resolve(__dirname, '../assets', 'icon@2x.png');
+      const logoUrl = path.resolve(__dirname, 'assets', 'logo.png');
+      const logo2Url = path.resolve(__dirname, 'assets', 'logo@2x.png');
+      const iconUrl = path.resolve(__dirname, 'assets', 'icon.png');
+      const icon2Url = path.resolve(__dirname, 'assets', 'icon@2x.png');
 
       pass.addBuffer('logo.png', fs.readFileSync(logoUrl));
       pass.addBuffer('icon.png', fs.readFileSync(iconUrl));
       pass.addBuffer('logo@2x.png', fs.readFileSync(logo2Url));
       pass.addBuffer('icon@2x.png', fs.readFileSync(icon2Url));
 
-      return await this.writePassToFile(pass, passFileName);
+      await this.writePassToFile(pass, passFileName);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException(e);
@@ -106,12 +107,12 @@ export class AppleService {
 
   private loadCerts() {
     return {
-      wwdr: fs.readFileSync(path.resolve(__dirname, '../creds/wwdr.pem')),
+      wwdr: fs.readFileSync(path.resolve(__dirname, 'creds/wwdr.pem')),
       signerCert: fs.readFileSync(
-        path.resolve(__dirname, '../creds/signerCert.pem'),
+        path.resolve(__dirname, 'creds/signerCert.pem'),
       ),
       signerKey: fs.readFileSync(
-        path.resolve(__dirname, '../creds/signerKey.pem'),
+        path.resolve(__dirname, 'creds/signerKey.pem'),
       ),
       signerKeyPassphrase: this.configService.get('walletPassphrase'),
     };
