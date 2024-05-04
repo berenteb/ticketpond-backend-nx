@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
+import { PrismaMock } from '@ticketpond-backend-nx/testing';
 
 import { ExperienceMock } from './__mocks__/entities/experience.mock';
-import { PrismaMock } from './__mocks__/services/prisma.mock';
 import { ExperienceService } from './experience.service';
 
 let service: ExperienceService;

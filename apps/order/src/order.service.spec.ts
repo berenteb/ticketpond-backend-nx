@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
+import { KafkaMock, PrismaMock } from '@ticketpond-backend-nx/testing';
 import {
   CartDto,
   CartItemDto,
@@ -8,8 +9,6 @@ import {
   ServiceNames,
 } from '@ticketpond-backend-nx/types';
 
-import { KafkaMock } from '../../../libs/utils/src/lib/test/mocks/kafka.mock';
-import { PrismaMock } from '../../merchant/src/__mocks__/services/prisma.mock';
 import { OrderMock } from './__mocks__/entities/orderMock';
 import { OrderService } from './order.service';
 
@@ -54,7 +53,7 @@ it('should return order by id with items', async () => {
   PrismaMock.order.findUnique.mockResolvedValue(OrderMock);
   const order = await service.getOrderById('1');
   expect(order).toEqual(OrderMock);
-  expect(PrismaMock.order.findUnique).toBeCalledWith({
+  expect(PrismaMock.order.findUnique).toHaveBeenCalledWith({
     where: { id: '1' },
     include: {
       items: { include: { ticket: { include: { experience: true } } } },
@@ -64,7 +63,7 @@ it('should return order by id with items', async () => {
 
 it('should throw not found exception when order not found by id', async () => {
   PrismaMock.order.findUnique.mockResolvedValue(null);
-  await expect(service.getOrderById('1')).rejects.toThrowError(
+  await expect(service.getOrderById('1')).rejects.toThrow(
     'Order with id 1 not found',
   );
 });
@@ -73,7 +72,7 @@ it('should return order by id with items for customer', async () => {
   PrismaMock.order.findFirst.mockResolvedValue(OrderMock);
   const order = await service.getOrderByIdForCustomer('1', '1');
   expect(order).toEqual(OrderMock);
-  expect(PrismaMock.order.findFirst).toBeCalledWith({
+  expect(PrismaMock.order.findFirst).toHaveBeenCalledWith({
     where: { id: '1', customer: { authId: '1' } },
     include: {
       items: { include: { ticket: { include: { experience: true } } } },
@@ -83,7 +82,7 @@ it('should return order by id with items for customer', async () => {
 
 it('should throw not found exception when order not found by id for customer', async () => {
   PrismaMock.order.findFirst.mockResolvedValue(null);
-  await expect(service.getOrderByIdForCustomer('1', '1')).rejects.toThrowError(
+  await expect(service.getOrderByIdForCustomer('1', '1')).rejects.toThrow(
     'Order with id 1 not found',
   );
 });
@@ -92,7 +91,7 @@ it('should return orders with items and customer', async () => {
   PrismaMock.order.findMany.mockResolvedValue([OrderMock]);
   const orders = await service.getOrders();
   expect(orders).toEqual([OrderMock]);
-  expect(PrismaMock.order.findMany).toBeCalledWith({
+  expect(PrismaMock.order.findMany).toHaveBeenCalledWith({
     include: {
       items: { include: { ticket: { include: { experience: true } } } },
       customer: true,
@@ -104,7 +103,7 @@ it('should return orders for customer', async () => {
   PrismaMock.order.findMany.mockResolvedValue([OrderMock]);
   const orders = await service.getOrdersForCustomer('1');
   expect(orders).toEqual([OrderMock]);
-  expect(PrismaMock.order.findMany).toBeCalledWith({
+  expect(PrismaMock.order.findMany).toHaveBeenCalledWith({
     where: { customer: { authId: '1' } },
     include: { items: true },
   });
@@ -112,8 +111,8 @@ it('should return orders for customer', async () => {
 
 it('should delete order and order items by id', async () => {
   await service.deleteOrder('1');
-  expect(PrismaMock.order.delete).toBeCalledWith({ where: { id: '1' } });
-  expect(PrismaMock.orderItem.deleteMany).toBeCalledWith({
+  expect(PrismaMock.order.delete).toHaveBeenCalledWith({ where: { id: '1' } });
+  expect(PrismaMock.orderItem.deleteMany).toHaveBeenCalledWith({
     where: { orderId: '1' },
   });
 });
@@ -121,7 +120,7 @@ it('should delete order and order items by id', async () => {
 it('should fulfill order by id', async () => {
   PrismaMock.order.update.mockResolvedValue(OrderMock);
   await service.fulfillOrder('1');
-  expect(PrismaMock.order.update).toBeCalledWith({
+  expect(PrismaMock.order.update).toHaveBeenCalledWith({
     where: { id: '1' },
     data: {
       orderStatus: OrderStatus.PAID,
@@ -137,7 +136,7 @@ it('should fulfill order by id', async () => {
 it('should cancel order by id', async () => {
   PrismaMock.order.update.mockResolvedValue(OrderMock);
   await service.cancelOrder('1');
-  expect(PrismaMock.order.update).toBeCalledWith({
+  expect(PrismaMock.order.update).toHaveBeenCalledWith({
     where: { id: '1' },
     data: {
       orderStatus: OrderStatus.CANCELLED,
@@ -147,7 +146,7 @@ it('should cancel order by id', async () => {
 
 it('should fail order', async () => {
   await service.failOrder('1');
-  expect(PrismaMock.order.update).toBeCalledWith({
+  expect(PrismaMock.order.update).toHaveBeenCalledWith({
     where: { id: '1' },
     data: { paymentStatus: PaymentStatus.FAIL },
   });
@@ -169,7 +168,7 @@ it('should create order from cart with default statuses', async () => {
   PrismaMock.order.create.mockResolvedValue(OrderMock);
   const order = await service.createOrder(cart);
   expect(order).toEqual(OrderMock);
-  expect(PrismaMock.order.create).toBeCalledWith({
+  expect(PrismaMock.order.create).toHaveBeenCalledWith({
     data: {
       customerId: cart.customerId,
       serialNumber: expect.any(String),
@@ -195,7 +194,7 @@ it('should create order from cart with paid and success statuses', async () => {
 
   const order = await service.createOrder(freeCart);
   expect(order).toEqual(OrderMock);
-  expect(PrismaMock.order.create).toBeCalledWith({
+  expect(PrismaMock.order.create).toHaveBeenCalledWith({
     data: {
       customerId: freeCart.customerId,
       serialNumber: expect.any(String),

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotificationPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
+import { KafkaMock, PrismaMock } from '@ticketpond-backend-nx/testing';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 
 import { CustomerMock } from './__mocks__/entities/customer.mock';
-import { ClientKafkaMock } from './__mocks__/services/clientKafkaMock';
-import { PrismaMock } from './__mocks__/services/prisma.mock';
 import { CustomerService } from './customer.service';
 
 let service: CustomerService;
@@ -16,7 +16,7 @@ beforeEach(async () => {
       { provide: PrismaService, useValue: PrismaMock },
       {
         provide: ServiceNames.KAFKA_SERVICE,
-        useValue: ClientKafkaMock,
+        useValue: KafkaMock,
       },
     ],
   }).compile();
@@ -30,9 +30,10 @@ it('should create customer with custom id and send welcome email', async () => {
   expect(PrismaMock.customer.create).toHaveBeenCalledWith({
     data: { ...CustomerMock, authId: 'custom-id' },
   });
-  // expect(NotificationServiceMock.sendWelcome).toHaveBeenCalledWith(
-  //   CustomerMock,
-  // );
+  expect(KafkaMock.emit).toHaveBeenCalledWith(
+    NotificationPatterns.SEND_WELCOME,
+    CustomerMock,
+  );
 });
 
 it('should call delete customer with id', async () => {

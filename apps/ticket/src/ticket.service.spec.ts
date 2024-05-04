@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
+import { PrismaMock } from '@ticketpond-backend-nx/testing';
 
-import { PrismaMock } from '../../merchant/src/__mocks__/services/prisma.mock';
 import { TicketMock } from './__mocks__/entities/ticket.mock';
 import { TicketService } from './ticket.service';
 

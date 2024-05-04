@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { ConfigServiceMock } from '@ticketpond-backend-nx/utils';
+import { ConfigServiceMock } from '@ticketpond-backend-nx/testing';
 
 import { AppleService } from './apple.service';
 import { ConfigService } from './config.service';

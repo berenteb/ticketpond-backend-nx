@@ -1,8 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { ConfigServiceMock, KafkaMock } from '@ticketpond-backend-nx/testing';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 
-import { ConfigServiceMock } from '../../../libs/utils/src/lib/test/mocks/config.mock';
-import { KafkaMock } from '../../../libs/utils/src/lib/test/mocks/kafka.mock';
 import { ConfigService } from './config.service';
 import { PaymentService } from './payment.service';
 

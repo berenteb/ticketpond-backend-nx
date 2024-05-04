@@ -1,3 +1,12 @@
+export const ConfigServiceMock = {
+  get: jest.fn(),
+};
+
+export const KafkaMock = {
+  send: jest.fn().mockResolvedValue({}),
+  emit: jest.fn(),
+};
+
 const createDelegateMock = () => {
   return {
     create: jest.fn(),
