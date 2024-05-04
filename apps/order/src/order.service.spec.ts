@@ -61,11 +61,9 @@ it('should return order by id with items', async () => {
   });
 });
 
-it('should throw not found exception when order not found by id', async () => {
+it('should return null when order not found by id', async () => {
   PrismaMock.order.findUnique.mockResolvedValue(null);
-  await expect(service.getOrderById('1')).rejects.toThrow(
-    'Order with id 1 not found',
-  );
+  expect(await service.getOrderById('1')).toBe(null);
 });
 
 it('should return order by id with items for customer', async () => {
@@ -80,11 +78,9 @@ it('should return order by id with items for customer', async () => {
   });
 });
 
-it('should throw not found exception when order not found by id for customer', async () => {
+it('should return null when order not found by id for customer', async () => {
   PrismaMock.order.findFirst.mockResolvedValue(null);
-  await expect(service.getOrderByIdForCustomer('1', '1')).rejects.toThrow(
-    'Order with id 1 not found',
-  );
+  expect(await service.getOrderByIdForCustomer('1', '1')).toBe(null);
 });
 
 it('should return orders with items and customer', async () => {

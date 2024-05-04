@@ -36,9 +36,9 @@ it('should get ticket by id', async () => {
   expect(ticket).toEqual(TicketMock);
 });
 
-it("should throw error if ticket doesn't exist", async () => {
+it("should return null if ticket doesn't exist", async () => {
   PrismaMock.ticket.findUnique.mockResolvedValue(null);
-  await expect(service.getTicketById(TicketMock.id)).rejects.toThrowError();
+  expect(await service.getTicketById(TicketMock.id)).toBe(null);
 });
 
 it('should get tickets for experience', async () => {

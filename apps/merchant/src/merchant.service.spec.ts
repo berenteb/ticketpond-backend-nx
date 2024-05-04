@@ -48,12 +48,10 @@ it('should get a merchant by id', async () => {
   });
 });
 
-it('should throw a NotFoundException when getting a merchant by id', async () => {
+it('should return null when getting a merchant by id', async () => {
   PrismaMock.merchant.findUnique.mockResolvedValue(null);
-
-  await expect(service.getMerchantById('merchant-id')).rejects.toThrow(
-    'Merchant with id merchant-id not found',
-  );
+  const merchant = await service.getMerchantById('merchant-id');
+  expect(merchant).toBeNull();
 });
 
 it('should get all merchants', async () => {

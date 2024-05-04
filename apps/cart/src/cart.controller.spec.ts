@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartServiceInterface } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { CartMock, OrderMock } from './__mocks__/entities/cart.mock';
 import { CartServiceMock } from './__mocks__/services/cartService.mock';
@@ -22,7 +23,7 @@ it('should get cart for user by user sub', async () => {
   expect(CartServiceMock.getCartForCustomer).toHaveBeenCalledWith(
     'test-user-sub',
   );
-  expect(cart).toBe(CartMock);
+  expect(cart).toStrictEqual(CreateServiceResponse.success(CartMock));
 });
 
 it('should checkout cart for user by user sub and return payment url', async () => {
@@ -31,24 +32,28 @@ it('should checkout cart for user by user sub and return payment url', async () 
     'test-user-sub',
   );
   expect(CartServiceMock.checkout).toHaveBeenCalledWith(CartMock.id);
-  expect(checkout).toBe('/payment/order-id');
+  expect(checkout).toStrictEqual(
+    CreateServiceResponse.success('/payment/order-id'),
+  );
 });
 
-it('should throw bad request exception if cart is empty when checking out cart for user by user sub', async () => {
+it('should return error bad request status if cart is empty when checking out cart for user by user sub', async () => {
   (CartServiceMock.getCartForCustomer as jest.Mock).mockResolvedValueOnce({
     ...CartMock,
     items: [],
   });
-  await expect(
-    controller.checkoutForCustomer('test-user-sub'),
-  ).rejects.toThrow();
+  const checkout = await controller.checkoutForCustomer('test-user-sub');
+  expect(checkout).toStrictEqual(
+    CreateServiceResponse.error('Cart is empty', 400),
+  );
 });
 
 it('should throw if order is undefined when checking out cart for user by user sub', async () => {
   (CartServiceMock.checkout as jest.Mock).mockResolvedValueOnce(undefined);
-  await expect(
-    controller.checkoutForCustomer('test-user-sub'),
-  ).rejects.toThrow();
+  const checkout = await controller.checkoutForCustomer('test-user-sub');
+  expect(checkout).toStrictEqual(
+    CreateServiceResponse.error('Could not checkout', 500),
+  );
 });
 
 it("should return order url if order's sum is 0 when checking out cart for user by user sub", async () => {
@@ -61,7 +66,9 @@ it("should return order url if order's sum is 0 when checking out cart for user 
     'test-user-sub',
   );
   expect(CartServiceMock.checkout).toHaveBeenCalledWith(CartMock.id);
-  expect(checkout).toBe('/profile/orders/order-id');
+  expect(checkout).toStrictEqual(
+    CreateServiceResponse.success('/profile/orders/order-id'),
+  );
 });
 
 it('should add an item to cart by user', async () => {
@@ -75,7 +82,7 @@ it('should add an item to cart by user', async () => {
     'test-ticket-id',
     1,
   );
-  expect(cart).toBe(CartMock);
+  expect(cart).toStrictEqual(CreateServiceResponse.success(CartMock));
 });
 
 it('should add three items to cart by user', async () => {
@@ -89,7 +96,7 @@ it('should add three items to cart by user', async () => {
     'test-ticket-id',
     3,
   );
-  expect(cart).toBe(CartMock);
+  expect(cart).toStrictEqual(CreateServiceResponse.success(CartMock));
 });
 
 it('should remove an item from cart by user', async () => {
@@ -103,7 +110,7 @@ it('should remove an item from cart by user', async () => {
     'test-ticket-id',
     1,
   );
-  expect(cart).toBe(CartMock);
+  expect(cart).toStrictEqual(CreateServiceResponse.success(CartMock));
 });
 
 it('should remove three items from cart by user', async () => {
@@ -117,5 +124,5 @@ it('should remove three items from cart by user', async () => {
     'test-ticket-id',
     3,
   );
-  expect(cart).toBe(CartMock);
+  expect(cart).toStrictEqual(CreateServiceResponse.success(CartMock));
 });

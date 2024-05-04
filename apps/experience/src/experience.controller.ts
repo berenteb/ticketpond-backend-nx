@@ -75,7 +75,7 @@ export class ExperienceController {
     },
   ): Promise<ServiceResponse<ExperienceDto>> {
     if (!(await this.experienceService.isOwnProperty(data.id, data.merchantId)))
-      return CreateServiceResponse.error('Experience not found', 404);
+      return CreateServiceResponse.error('Forbidden', 403);
     const updatedExperience = await this.experienceService.updateExperience(
       data.id,
       data.experience,
@@ -114,7 +114,7 @@ export class ExperienceController {
         data.merchantId,
       ))
     )
-      return CreateServiceResponse.error('Experience not found', 404);
+      return CreateServiceResponse.error('Forbidden', 403);
     const result = await this.experienceService.validateExperiencePass(
       data.ticketSerialNumber,
       data.experienceId,

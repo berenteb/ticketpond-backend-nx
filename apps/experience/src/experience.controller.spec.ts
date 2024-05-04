@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExperienceServiceInterface } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { ExperienceMock } from './__mocks__/entities/experience.mock';
 import { ExperienceServiceMock } from './__mocks__/services/experience-service.mock';
@@ -22,7 +23,7 @@ beforeEach(async () => {
 it('should list experiences', async () => {
   const experiences = await controller.listExperiences();
   expect(ExperienceServiceMock.getExperiences).toHaveBeenCalled();
-  expect(experiences).toEqual([ExperienceMock]);
+  expect(experiences).toEqual(CreateServiceResponse.success([ExperienceMock]));
 });
 
 it('should get experience by id', async () => {
@@ -30,7 +31,7 @@ it('should get experience by id', async () => {
   expect(ExperienceServiceMock.getExperienceById).toHaveBeenCalledWith(
     'test-experience-id',
   );
-  expect(experience).toEqual(ExperienceMock);
+  expect(experience).toEqual(CreateServiceResponse.success(ExperienceMock));
 });
 
 it('should get experiences by merchant id', async () => {
@@ -39,7 +40,7 @@ it('should get experiences by merchant id', async () => {
   expect(ExperienceServiceMock.getExperiencesByMerchantId).toHaveBeenCalledWith(
     'test-merchant-id',
   );
-  expect(experiences).toEqual([ExperienceMock]);
+  expect(experiences).toEqual(CreateServiceResponse.success([ExperienceMock]));
 });
 
 it('should create experience', async () => {
@@ -51,7 +52,7 @@ it('should create experience', async () => {
     ExperienceMock,
     'test-merchant-id',
   );
-  expect(experience).toEqual(ExperienceMock);
+  expect(experience).toEqual(CreateServiceResponse.success(ExperienceMock));
 });
 
 it('should update experience', async () => {
@@ -63,7 +64,7 @@ it('should update experience', async () => {
     'test-experience-id',
     ExperienceMock,
   );
-  expect(experience).toEqual(ExperienceMock);
+  expect(experience).toEqual(CreateServiceResponse.success(ExperienceMock));
 });
 
 it('should update experience by merchant id', async () => {
@@ -81,12 +82,12 @@ it('should update experience by merchant id', async () => {
     'test-experience-id',
     ExperienceMock,
   );
-  expect(experience).toEqual(ExperienceMock);
+  expect(experience).toEqual(CreateServiceResponse.success(ExperienceMock));
 });
 
 it('should not update experience by merchant id', async () => {
   (ExperienceServiceMock.isOwnProperty as jest.Mock).mockResolvedValue(false);
-  const experience = await controller.updateExperienceByMerchantId({
+  const response = await controller.updateExperienceByMerchantId({
     id: 'test-experience-id',
     experience: ExperienceMock,
     merchantId: 'test-merchant-id',
@@ -96,7 +97,7 @@ it('should not update experience by merchant id', async () => {
     'test-merchant-id',
   );
   expect(ExperienceServiceMock.updateExperience).not.toHaveBeenCalled();
-  expect(experience).toBeNull();
+  expect(response).toEqual(CreateServiceResponse.error('Forbidden', 403));
 });
 
 it('should delete experience', async () => {
@@ -149,7 +150,9 @@ it('should validate experience pass', async () => {
     'test-ticket-serial-number',
     'test-experience-id',
   );
-  expect(validationResponse).toEqual({ isValid: true });
+  expect(validationResponse).toEqual(
+    CreateServiceResponse.success({ isValid: true }),
+  );
 });
 
 it('should not validate experience pass', async () => {
@@ -164,5 +167,7 @@ it('should not validate experience pass', async () => {
     'test-merchant-id',
   );
   expect(ExperienceServiceMock.validateExperiencePass).not.toHaveBeenCalled();
-  expect(validationResponse).toBeNull();
+  expect(validationResponse).toEqual(
+    CreateServiceResponse.error('Forbidden', 403),
+  );
 });

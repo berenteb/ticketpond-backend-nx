@@ -3,6 +3,7 @@ import {
   CustomerServiceInterface,
   ReqWithUser,
 } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { CustomerMock } from './__mocks__/entities/customer.mock';
 import { CustomerServiceMock } from './__mocks__/services/customerService.mock';
@@ -24,7 +25,7 @@ beforeEach(async () => {
 
 it('should get customer by id', async () => {
   const result = await controller.getCustomer(CustomerMock.id);
-  expect(result).toEqual(CustomerMock);
+  expect(result).toEqual(CreateServiceResponse.success(CustomerMock));
   expect(CustomerServiceMock.getCustomerById).toHaveBeenCalledWith(
     CustomerMock.id,
   );
@@ -45,7 +46,7 @@ it('should create customer', async () => {
   const result = await controller.createCustomer({
     customer: CustomerMock,
   });
-  expect(result).toEqual(CustomerMock);
+  expect(result).toEqual(CreateServiceResponse.success(CustomerMock));
   expect(CustomerServiceMock.createCustomer).toHaveBeenCalledWith(
     CustomerMock,
     undefined,
@@ -54,7 +55,7 @@ it('should create customer', async () => {
 
 it('should list customers', async () => {
   const result = await controller.listCustomers();
-  expect(result).toEqual([CustomerMock]);
+  expect(result).toEqual(CreateServiceResponse.success([CustomerMock]));
   expect(CustomerServiceMock.getCustomers).toHaveBeenCalled();
 });
 
@@ -64,7 +65,7 @@ it('should update customer', async () => {
     id,
     customer: UpdateCustomerMock,
   });
-  expect(result).toEqual(CustomerMock);
+  expect(result).toEqual(CreateServiceResponse.success(CustomerMock));
   expect(CustomerServiceMock.updateCustomer).toHaveBeenCalledWith(
     id,
     UpdateCustomerMock,
@@ -77,7 +78,7 @@ it('should update customer by auth id', async () => {
     authId,
     customer: UpdateCustomerMock,
   });
-  expect(result).toEqual(CustomerMock);
+  expect(result).toEqual(CreateServiceResponse.success(CustomerMock));
   expect(CustomerServiceMock.updateCustomerByAuthId).toHaveBeenCalledWith(
     authId,
     UpdateCustomerMock,

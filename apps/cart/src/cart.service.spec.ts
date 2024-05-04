@@ -3,6 +3,7 @@ import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import { KafkaMock, PrismaMock } from '@ticketpond-backend-nx/testing';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { CartMock, OrderMock } from './__mocks__/entities/cart.mock';
 import { CartService } from './cart.service';
@@ -10,7 +11,9 @@ import { CartService } from './cart.service';
 let service: CartService;
 
 jest.mock('rxjs', () => ({
-  firstValueFrom: jest.fn(() => Promise.resolve(OrderMock)),
+  firstValueFrom: jest.fn(() =>
+    Promise.resolve(CreateServiceResponse.success(OrderMock)),
+  ),
 }));
 
 beforeEach(async () => {
@@ -39,10 +42,10 @@ it('should return cart', async () => {
   expect(cart).toBe(CartMock);
 });
 
-it('should throw not found exception if cart is undefined', () => {
-  PrismaMock.cart.findUnique.mockResolvedValue(undefined);
+it('should return null if cart is undefined', async () => {
+  PrismaMock.cart.findUnique.mockResolvedValueOnce(undefined);
 
-  expect(service.getCartById('test-cart-id')).rejects.toThrow();
+  expect(await service.getCartById('test-cart-id')).toBe(null);
 });
 
 it('should create cart with customer id', async () => {

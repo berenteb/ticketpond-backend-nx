@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantServiceInterface } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { MerchantMock } from './__mocks__/entities/merchantMock';
 import { MerchantServiceMock } from './__mocks__/services/merchant-service.mock';
@@ -21,19 +22,19 @@ beforeEach(async () => {
 
 it('should list merchants', async () => {
   const merchants = await controller.listMerchants();
-  expect(merchants).toEqual([MerchantMock]);
+  expect(merchants).toEqual(CreateServiceResponse.success([MerchantMock]));
   expect(MerchantServiceMock.getMerchants).toHaveBeenCalled();
 });
 
 it('should get merchant by id', async () => {
   const merchant = await controller.getMerchant('1');
-  expect(merchant).toEqual(MerchantMock);
+  expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(MerchantServiceMock.getMerchantById).toHaveBeenCalledWith('1');
 });
 
 it('should get merchant by user id', async () => {
   const merchant = await controller.getMerchantByUserId('1');
-  expect(merchant).toEqual(MerchantMock);
+  expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(MerchantServiceMock.getMerchantByCustomerAuthId).toHaveBeenCalledWith(
     '1',
   );
@@ -41,7 +42,7 @@ it('should get merchant by user id', async () => {
 
 it('should create merchant', async () => {
   const merchant = await controller.createMerchant(MerchantMock);
-  expect(merchant).toEqual(MerchantMock);
+  expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(MerchantServiceMock.createMerchant).toHaveBeenCalledWith(MerchantMock);
 });
 
@@ -61,7 +62,7 @@ it('should update merchant', async () => {
     id: '1',
     merchant: MerchantMock,
   });
-  expect(merchant).toEqual(MerchantMock);
+  expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(MerchantServiceMock.updateMerchant).toHaveBeenCalledWith(
     '1',
     MerchantMock,
@@ -73,7 +74,7 @@ it('should update merchant by user id', async () => {
     userId: '1',
     merchant: MerchantMock,
   });
-  expect(merchant).toEqual(MerchantMock);
+  expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(
     MerchantServiceMock.updateMerchantByCustomerAuthId,
   ).toHaveBeenCalledWith('1', MerchantMock);
