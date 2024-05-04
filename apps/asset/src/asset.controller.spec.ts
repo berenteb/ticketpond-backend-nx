@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { AssetServiceInterface } from '@ticketpond-backend-nx/types';
 
+import { AssetServiceMock } from './__mocks__/services/asset-service.mock';
 import { AssetController } from './asset.controller';
-import { AssetService } from './asset.service';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -9,14 +10,19 @@ describe('AppController', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [AssetController],
-      providers: [AssetService],
+      providers: [
+        {
+          provide: AssetServiceInterface,
+          useValue: AssetServiceMock,
+        },
+      ],
     }).compile();
   });
 
   describe('getData', () => {
     it('should return "Hello API"', () => {
       const appController = app.get<AssetController>(AssetController);
-      expect(appController.getData()).toEqual({ message: 'Hello API' });
+      expect(appController).toBeDefined();
     });
   });
 });

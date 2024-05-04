@@ -9,7 +9,6 @@ import {
   ExperiencePatterns,
   MerchantPattern,
   OrderPatterns,
-  PassPatterns,
   PaymentPatterns,
   TicketPatterns,
 } from '@ticketpond-backend-nx/message-patterns';
@@ -32,7 +31,6 @@ import { MerchantSelfController } from './merchant/merchant-self.controller';
 import { OrderController } from './order/order.controller';
 import { OrderAdminController } from './order/order-admin.controller';
 import { OrderMerchantController } from './order/order-merchant.controller';
-import { PassController } from './pass/pass.controller';
 import { PaymentController } from './payment/payment.controller';
 import { TicketController } from './ticket/ticket.controller';
 import { TicketAdminController } from './ticket/ticket-admin.controller';
@@ -77,7 +75,6 @@ import { createClientKafka } from './utils/create-client-kafka';
     OrderMerchantController,
     CartController,
     PaymentController,
-    PassController,
     AssetController,
   ],
   providers: [
@@ -171,7 +168,6 @@ export class GatewayModule implements OnModuleInit {
     this.kafkaService.subscribeToResponseOf(
       OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
     );
-    this.kafkaService.subscribeToResponseOf(PassPatterns.GET_QRCODE);
     this.kafkaService.subscribeToResponseOf(
       PaymentPatterns.CREATE_PAYMENT_INTENT,
     );

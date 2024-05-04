@@ -5,8 +5,10 @@ import {
   CartDto,
   CartItemDto,
   DeepTicketDto,
+  ServiceNames,
 } from '@ticketpond-backend-nx/types';
 
+import { KafkaMock } from '../../../libs/utils/src/lib/test/mocks/kafka.mock';
 import { PrismaMock } from '../../merchant/src/__mocks__/services/prisma.mock';
 import { OrderMock } from './__mocks__/entities/orderMock';
 import { OrderService } from './order.service';
@@ -38,7 +40,11 @@ let service: OrderService;
 beforeEach(async () => {
   jest.clearAllMocks();
   const module: TestingModule = await Test.createTestingModule({
-    providers: [OrderService, { provide: PrismaService, useValue: PrismaMock }],
+    providers: [
+      OrderService,
+      { provide: PrismaService, useValue: PrismaMock },
+      { provide: ServiceNames.KAFKA_SERVICE, useValue: KafkaMock },
+    ],
   }).compile();
 
   service = module.get<OrderService>(OrderService);

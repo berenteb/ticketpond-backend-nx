@@ -1,5 +1,5 @@
 import { OrderDto } from '@ticketpond-backend-nx/types';
 
-export const ClientProxyMock = {
+export const ClientKafkaMock = {
   send: jest.fn().mockResolvedValue(OrderDto),
 };

@@ -4,7 +4,7 @@ import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 
 import { CartMock, OrderMock } from './__mocks__/entities/cart.mock';
-import { ClientProxyMock } from './__mocks__/services/clientProxy.mock';
+import { ClientKafkaMock } from './__mocks__/services/ClientKafkaMock';
 import { PrismaMock } from './__mocks__/services/prisma.mock';
 import { CartService } from './cart.service';
 
@@ -20,7 +20,7 @@ beforeEach(async () => {
     providers: [
       CartService,
       { provide: PrismaService, useValue: PrismaMock },
-      { provide: ServiceNames.ORDER_SERVICE, useValue: ClientProxyMock },
+      { provide: ServiceNames.KAFKA_SERVICE, useValue: ClientKafkaMock },
     ],
   }).compile();
 
@@ -255,7 +255,7 @@ it('should get cart, create order and delete cart, then return order', async () 
       items: { include: { ticket: { include: { experience: true } } } },
     },
   });
-  expect(ClientProxyMock.send).toHaveBeenCalledWith(
+  expect(ClientKafkaMock.send).toHaveBeenCalledWith(
     OrderPatterns.CREATE_ORDER,
     CartMock,
   );

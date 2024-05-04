@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PaymentServiceInterface } from '@ticketpond-backend-nx/types';
 
+import { PaymentServiceMock } from './__mocks__/payment-service.mock';
 import { PaymentController } from './payment.controller';
-import { PaymentService } from './payment.service';
 
 describe('PassController', () => {
   let app: TestingModule;
@@ -9,7 +10,12 @@ describe('PassController', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [PaymentController],
-      providers: [PaymentService],
+      providers: [
+        {
+          provide: PaymentServiceInterface,
+          useValue: PaymentServiceMock,
+        },
+      ],
     }).compile();
   });
 

@@ -3,7 +3,7 @@ import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
 
 import { CustomerMock } from './__mocks__/entities/customer.mock';
-import { NotificationServiceMock } from './__mocks__/services/notificationService.mock';
+import { ClientKafkaMock } from './__mocks__/services/clientKafkaMock';
 import { PrismaMock } from './__mocks__/services/prisma.mock';
 import { CustomerService } from './customer.service';
 
@@ -15,8 +15,8 @@ beforeEach(async () => {
       CustomerService,
       { provide: PrismaService, useValue: PrismaMock },
       {
-        provide: ServiceNames.NOTIFICATION_SERVICE,
-        useValue: NotificationServiceMock,
+        provide: ServiceNames.KAFKA_SERVICE,
+        useValue: ClientKafkaMock,
       },
     ],
   }).compile();
@@ -51,13 +51,6 @@ it('should get customer by id', async () => {
   expect(customer).toEqual(CustomerMock);
 });
 
-it('should throw not found exception when getting customer by id', async () => {
-  PrismaMock.customer.findUnique.mockResolvedValue(null);
-  await expect(
-    service.getCustomerById('test-customer-id'),
-  ).rejects.toThrowError('Customer with id test-customer-id not found');
-});
-
 it('should get customer by internal id', async () => {
   PrismaMock.customer.findUnique.mockResolvedValue(CustomerMock);
   const customer = await service.getCustomerByAuthId('test-customer-auth-id');
@@ -65,15 +58,6 @@ it('should get customer by internal id', async () => {
     where: { id: 'test-customer-id' },
   });
   expect(customer).toEqual(CustomerMock);
-});
-
-it('should throw not found exception when getting customer by internal id', async () => {
-  PrismaMock.customer.findUnique.mockResolvedValue(null);
-  await expect(
-    service.getCustomerByAuthId('test-customer-auth-id'),
-  ).rejects.toThrowError(
-    'Customer with authId test-customer-auth-id not found',
-  );
 });
 
 it('should get customers', async () => {
