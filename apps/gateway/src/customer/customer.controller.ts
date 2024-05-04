@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  NotFoundException,
   Post,
   Req,
   UnauthorizedException,
@@ -20,7 +19,7 @@ import {
   ServiceNames,
   ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('customer')
 @UseGuards(AuthGuard('jwt'))
@@ -34,14 +33,12 @@ export class CustomerController {
   @Get('me')
   @ApiOkResponse({ type: CustomerDto })
   async getMe(@Req() req: ReqWithUser): Promise<CustomerDto> {
-    const response = await firstValueFrom(
+    return responseFrom(
       this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
         req.user.sub,
       ),
     );
-    if (!response.success) throw new NotFoundException();
-    return response.data;
   }
 
   @Get('permissions')
@@ -58,8 +55,8 @@ export class CustomerController {
   ): Promise<CustomerDto> {
     const authId = req.user.sub;
     if (!authId) throw new UnauthorizedException();
-    return firstValueFrom(
-      this.kafkaService.send<CustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.CREATE_CUSTOMER,
         { customer, authId },
       ),

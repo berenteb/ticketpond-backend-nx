@@ -18,10 +18,11 @@ import {
   CreateMerchantDto,
   MerchantDto,
   PermissionLevel,
+  ServiceNames,
+  ServiceResponse,
   UpdateMerchantDto,
 } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('merchant-admin')
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
@@ -35,16 +36,22 @@ export class MerchantAdminController {
   @Get()
   @ApiOkResponse({ type: [MerchantDto] })
   async getMerchants(): Promise<MerchantDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto[]>(MerchantPattern.LIST_MERCHANTS, {}),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto[]>>(
+        MerchantPattern.LIST_MERCHANTS,
+        {},
+      ),
     );
   }
 
   @Get(':id')
   @ApiOkResponse({ type: MerchantDto })
   async getMerchant(@Param('id') id: string): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
+        MerchantPattern.GET_MERCHANT,
+        id,
+      ),
     );
   }
 
@@ -53,8 +60,8 @@ export class MerchantAdminController {
   async createMerchant(
     @Body() merchant: CreateMerchantDto,
   ): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.CREATE_MERCHANT,
         merchant,
       ),
@@ -67,19 +74,20 @@ export class MerchantAdminController {
     @Param('id') id: string,
     @Body() merchant: UpdateMerchantDto,
   ): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(MerchantPattern.UPDATE_MERCHANT, {
-        id,
-        merchant,
-      }),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
+        MerchantPattern.UPDATE_MERCHANT,
+        {
+          id,
+          merchant,
+        },
+      ),
     );
   }
 
   @Delete(':id')
   @ApiOkResponse()
-  async deleteMerchant(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.kafkaService.send<void>(MerchantPattern.DELETE_MERCHANT, id),
-    );
+  deleteMerchant(@Param('id') id: string): void {
+    this.kafkaService.emit(MerchantPattern.DELETE_MERCHANT, id);
   }
 }

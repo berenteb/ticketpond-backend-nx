@@ -17,10 +17,11 @@ import {
   DeepTicketDto,
   PermissionLevel,
   ServiceNames,
+  ServiceResponse,
   TicketDto,
   UpdateTicketDto,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
@@ -35,16 +36,22 @@ export class TicketAdminController {
   @Get()
   @ApiOkResponse({ type: [DeepTicketDto] })
   async getTickets(): Promise<DeepTicketDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepTicketDto[]>(TicketPatterns.LIST_TICKETS, {}),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepTicketDto[]>>(
+        TicketPatterns.LIST_TICKETS,
+        {},
+      ),
     );
   }
 
   @Get(':id')
   @ApiOkResponse({ type: DeepTicketDto })
   async getTicketById(@Param('id') id: string): Promise<DeepTicketDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepTicketDto>(TicketPatterns.GET_TICKET, id),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepTicketDto>>(
+        TicketPatterns.GET_TICKET,
+        id,
+      ),
     );
   }
 
@@ -53,8 +60,8 @@ export class TicketAdminController {
   async getTicketsForExperience(
     @Param('id') experienceId: string,
   ): Promise<TicketDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto[]>>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
       ),
@@ -67,19 +74,20 @@ export class TicketAdminController {
     @Param('id') id: string,
     @Body() ticket: UpdateTicketDto,
   ): Promise<TicketDto> {
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto>(TicketPatterns.UPDATE_TICKET, {
-        id,
-        ticket,
-      }),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto>>(
+        TicketPatterns.UPDATE_TICKET,
+        {
+          id,
+          ticket,
+        },
+      ),
     );
   }
 
   @Delete(':id')
   @ApiOkResponse()
   async deleteTicket(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.kafkaService.send<void>(TicketPatterns.DELETE_TICKET, id),
-    );
+    this.kafkaService.emit(TicketPatterns.DELETE_TICKET, id);
   }
 }

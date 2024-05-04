@@ -5,21 +5,26 @@ import {
   OrderDto,
   PaymentDto,
   PaymentServiceInterface,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 @Controller()
 export class PaymentController {
   constructor(private readonly paymentService: PaymentServiceInterface) {}
 
   @MessagePattern(PaymentPatterns.CREATE_PAYMENT_INTENT)
-  createPaymentIntent(@Payload() data: OrderDto): Promise<PaymentDto> {
-    return this.paymentService.createIntent(data);
+  async createPaymentIntent(
+    @Payload() data: OrderDto,
+  ): Promise<ServiceResponse<PaymentDto>> {
+    const intent = await this.paymentService.createIntent(data);
+    return CreateServiceResponse.success(intent);
   }
 
   @EventPattern(PaymentPatterns.HANDLE_WEBHOOK)
-  handleWebhook(
+  async handleWebhook(
     @Payload() data: { signature: string; body: string },
   ): Promise<void> {
-    return this.paymentService.handleWebhook(data.signature, data.body);
+    await this.paymentService.handleWebhook(data.signature, data.body);
   }
 }

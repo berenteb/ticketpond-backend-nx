@@ -18,8 +18,9 @@ import {
   MerchantDto,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('merchant')
 @Controller('merchant')
@@ -32,8 +33,11 @@ export class MerchantController {
   @Get(':id')
   @ApiOkResponse({ type: MerchantDto })
   async getMerchant(@Param('id') id: string): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(MerchantPattern.GET_MERCHANT, id),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
+        MerchantPattern.GET_MERCHANT,
+        id,
+      ),
     );
   }
 
@@ -46,8 +50,8 @@ export class MerchantController {
   ): Promise<MerchantDto> {
     const userId = req.user.sub;
     if (!userId) throw new UnauthorizedException();
-    const createdMerchant = await firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    const createdMerchant = await responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.CREATE_MERCHANT,
         merchant,
       ),

@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  OnModuleInit,
-  Param,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Param, Req, UseGuards } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -16,8 +8,9 @@ import {
   OrderDto,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('order')
 @UseGuards(AuthGuard('jwt'))
@@ -31,8 +24,8 @@ export class OrderController {
   @Get('me')
   @ApiOkResponse({ type: [OrderDto] })
   async getOrdersByUser(@Req() req: ReqWithUser): Promise<OrderDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<OrderDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderDto[]>>(
         OrderPatterns.LIST_ORDERS_FOR_CUSTOMER,
         req.user.sub,
       ),
@@ -46,8 +39,8 @@ export class OrderController {
     @Param('id') id: string,
     @Req() req: ReqWithUser,
   ): Promise<DeepOrderDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepOrderDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepOrderDto>>(
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,

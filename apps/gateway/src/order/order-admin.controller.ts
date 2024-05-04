@@ -17,8 +17,9 @@ import {
   OrderWithCustomerDto,
   PermissionLevel,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('order-admin')
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
@@ -33,8 +34,8 @@ export class OrderAdminController {
   @Get()
   @ApiOkResponse({ type: [OrderWithCustomerDto] })
   async getOrders(): Promise<OrderWithCustomerDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<OrderWithCustomerDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderWithCustomerDto[]>>(
         OrderPatterns.LIST_ORDERS,
         {},
       ),
@@ -45,8 +46,8 @@ export class OrderAdminController {
   @ApiOkResponse({ type: DeepOrderWithCustomerDto })
   @ApiNotFoundResponse()
   async getOrder(@Param('id') id: string): Promise<DeepOrderWithCustomerDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepOrderWithCustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepOrderWithCustomerDto>>(
         OrderPatterns.GET_ORDER_WITH_CUSTOMER,
         id,
       ),
@@ -56,9 +57,7 @@ export class OrderAdminController {
   @Delete(':id')
   @ApiOkResponse()
   async deleteOrder(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.kafkaService.send(OrderPatterns.DELETE_ORDER, id),
-    );
+    this.kafkaService.emit(OrderPatterns.DELETE_ORDER, id);
   }
 
   @Post('fulfill/:id')

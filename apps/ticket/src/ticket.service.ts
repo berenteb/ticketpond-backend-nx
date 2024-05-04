@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
   CreateTicketDto,
@@ -26,7 +26,7 @@ export class TicketService implements TicketServiceInterface {
       include: { experience: true },
     });
     if (!ticket) {
-      throw new NotFoundException(`Ticket with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found ticket with id ${id}`);
     return ticket;

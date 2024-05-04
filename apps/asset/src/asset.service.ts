@@ -6,6 +6,13 @@ import path from 'path';
 
 const pathName = path.resolve(__dirname, '../../static/uploads');
 
+type FileObject = {
+  buffer: Buffer;
+  fileType: {
+    ext: string;
+  };
+};
+
 @Injectable()
 export class AssetService implements AssetServiceInterface {
   constructor() {
@@ -16,7 +23,7 @@ export class AssetService implements AssetServiceInterface {
     return fs.promises.rm(path.resolve(pathName, fileName));
   }
 
-  async uploadFile(file: any): Promise<string> {
+  async uploadFile(file: FileObject): Promise<string> {
     const fileName = generateRandomString(16);
     const fullName = `${fileName}.${file.fileType.ext}`;
     await fs.promises.writeFile(

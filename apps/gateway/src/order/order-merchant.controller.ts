@@ -1,12 +1,4 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Inject,
-  Param,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Param, Req, UseGuards } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -22,8 +14,9 @@ import {
   PermissionLevel,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('order-merchant')
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
@@ -39,9 +32,8 @@ export class OrderMerchantController {
   @ApiOkResponse({ type: [OrderWithCustomerDto] })
   async getOrders(@Req() req: ReqWithUser): Promise<OrderWithCustomerDto[]> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
-    if (!merchant) throw new ForbiddenException();
-    return firstValueFrom(
-      this.kafkaService.send<OrderWithCustomerDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderWithCustomerDto[]>>(
         OrderPatterns.LIST_ORDERS_FOR_MERCHANT,
         merchant.id,
       ),
@@ -56,9 +48,8 @@ export class OrderMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<DeepOrderWithCustomerDto> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
-    if (!merchant) throw new ForbiddenException();
-    return firstValueFrom(
-      this.kafkaService.send<DeepOrderWithCustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepOrderWithCustomerDto>>(
         OrderPatterns.GET_ORDER_WITH_CUSTOMER_FOR_MERCHANT,
         { id, merchantId: merchant.id },
       ),
@@ -66,8 +57,8 @@ export class OrderMerchantController {
   }
 
   private async getMerchantByUserId(userId: string): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         userId,
       ),

@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  NotFoundException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { OrderStatus, PaymentStatus } from '@prisma/client';
 import {
@@ -43,8 +37,9 @@ export class OrderService implements OrderServiceInterface {
         items: { include: { ticket: { include: { experience: true } } } },
       },
     });
+
     if (!order) {
-      throw new NotFoundException(`Order with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found order with id ${id}`);
     return order;
@@ -66,7 +61,7 @@ export class OrderService implements OrderServiceInterface {
       },
     });
     if (!order) {
-      throw new NotFoundException(`Order with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found order with id ${id}`);
     return order;
@@ -146,7 +141,7 @@ export class OrderService implements OrderServiceInterface {
       },
     });
     if (!order) {
-      throw new NotFoundException(`Order with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found order with id ${id}`);
     return order;

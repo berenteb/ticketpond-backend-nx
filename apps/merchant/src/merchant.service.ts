@@ -43,7 +43,7 @@ export class MerchantService implements MerchantServiceInterface {
   async getMerchantById(id: string): Promise<Merchant> {
     const merchant = await this.prisma.merchant.findUnique({ where: { id } });
     if (!merchant) {
-      throw new NotFoundException(`Merchant with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found merchant with id ${id}`);
     return merchant;
@@ -95,9 +95,7 @@ export class MerchantService implements MerchantServiceInterface {
     const merchantForUser =
       await this.getMerchantByCustomerAuthId(customerAuthId);
     if (!merchantForUser) {
-      throw new NotFoundException(
-        `Merchant for user ${customerAuthId} not found`,
-      );
+      return null;
     }
     const updated = await this.prisma.merchant.update({
       where: { id: merchantForUser.id },

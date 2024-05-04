@@ -43,7 +43,7 @@ export class ExperienceService implements ExperienceServiceInterface {
       include: { tickets: true, merchant: true },
     });
     if (!experience) {
-      throw new NotFoundException(`Experience with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found experience with id ${id}`);
     return experience;

@@ -19,9 +19,10 @@ import {
   CustomerDto,
   PermissionLevel,
   ServiceNames,
+  ServiceResponse,
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @UseGuards(PermissionGuard(PermissionLevel.ADMIN))
 @UseGuards(AuthGuard('jwt'))
@@ -36,8 +37,8 @@ export class CustomerAdminController {
   @Get()
   @ApiOkResponse({ type: [CustomerDto] })
   async getCustomers(): Promise<CustomerDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<CustomerDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CustomerDto[]>>(
         CustomerMessagePattern.LIST_CUSTOMERS,
         {},
       ),
@@ -48,8 +49,8 @@ export class CustomerAdminController {
   @ApiOkResponse({ type: CustomerDto })
   @ApiNotFoundResponse()
   async getCustomerById(@Param('id') id: string): Promise<CustomerDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.GET_CUSTOMER,
         id,
       ),
@@ -61,8 +62,8 @@ export class CustomerAdminController {
   async createCustomer(
     @Body() customer: CreateCustomerDto,
   ): Promise<CustomerDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.CREATE_CUSTOMER,
         { customer },
       ),
@@ -75,8 +76,8 @@ export class CustomerAdminController {
     @Param('id') id: string,
     @Body() customer: UpdateCustomerDto,
   ): Promise<CustomerDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CustomerDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CustomerDto>>(
         CustomerMessagePattern.UPDATE_CUSTOMER,
         { id, customer },
       ),
@@ -86,8 +87,6 @@ export class CustomerAdminController {
   @Delete(':id')
   @ApiOkResponse()
   async deleteCustomer(@Param('id') id: string): Promise<void> {
-    return firstValueFrom(
-      this.kafkaService.send<void>(CustomerMessagePattern.DELETE_CUSTOMER, id),
-    );
+    this.kafkaService.emit(CustomerMessagePattern.DELETE_CUSTOMER, id);
   }
 }

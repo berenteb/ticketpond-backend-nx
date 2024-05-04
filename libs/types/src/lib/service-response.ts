@@ -1,12 +1,16 @@
 export type ServiceResponse<T> =
-  | {
-      success: false;
-      error: {
-        status?: number;
-        message: string;
-      };
-    }
-  | {
-      success: true;
-      data: T;
-    };
+  | ServiceErrorResponse
+  | ServiceSuccessResponse<T>;
+
+type ServiceErrorResponse = {
+  success: false;
+  error: {
+    status?: number;
+    message: string;
+  };
+};
+
+type ServiceSuccessResponse<T> = {
+  success: true;
+  data: T;
+};

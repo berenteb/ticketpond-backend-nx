@@ -6,8 +6,9 @@ import {
   DeepExperienceDto,
   ExperienceDto,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('experience')
 @Controller('experience')
@@ -20,8 +21,8 @@ export class ExperienceController {
   @Get()
   @ApiOkResponse({ type: [ExperienceDto] })
   async getExperiences(): Promise<ExperienceDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<ExperienceDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<ExperienceDto[]>>(
         ExperiencePatterns.LIST_EXPERIENCES,
         {},
       ),
@@ -32,8 +33,8 @@ export class ExperienceController {
   @ApiOkResponse({ type: DeepExperienceDto })
   @ApiNotFoundResponse()
   async getExperienceById(@Param('id') id: string): Promise<DeepExperienceDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepExperienceDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepExperienceDto>>(
         ExperiencePatterns.GET_EXPERIENCE,
         id,
       ),

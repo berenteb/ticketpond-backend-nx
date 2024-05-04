@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Patch,
   Post,
@@ -12,7 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ClientKafka, ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
@@ -27,10 +26,11 @@ import {
   PermissionLevel,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
   TicketDto,
   UpdateTicketDto,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
 @UseGuards(AuthGuard('jwt'))
@@ -47,8 +47,8 @@ export class TicketMerchantController {
   async getTickets(@Req() req: ReqWithUser): Promise<DeepTicketDto[]> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
 
-    return firstValueFrom(
-      this.kafkaService.send<DeepTicketDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepTicketDto[]>>(
         TicketPatterns.LIST_TICKETS_BY_MERCHANT_ID,
         merchant.id,
       ),
@@ -62,8 +62,8 @@ export class TicketMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<DeepTicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<DeepTicketDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepTicketDto>>(
         TicketPatterns.GET_TICKET_BY_MERCHANT_ID,
         {
           id,
@@ -78,8 +78,8 @@ export class TicketMerchantController {
   async getTicketsForExperience(
     @Param('id') experienceId: string,
   ): Promise<TicketDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto[]>>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
       ),
@@ -93,8 +93,8 @@ export class TicketMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<TicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto>>(
         TicketPatterns.CREATE_TICKET_BY_MERCHANT_ID,
         {
           ticket,
@@ -112,8 +112,8 @@ export class TicketMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<TicketDto> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto>>(
         TicketPatterns.UPDATE_TICKET_BY_MERCHANT_ID,
         {
           id,
@@ -131,20 +131,15 @@ export class TicketMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<void> {
     const merchant = await this.getMerchantIdByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<void>(
-        TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID,
-        {
-          id,
-          merchantId: merchant.id,
-        },
-      ),
-    );
+    this.kafkaService.emit(TicketPatterns.DELETE_TICKET_BY_MERCHANT_ID, {
+      id,
+      merchantId: merchant.id,
+    });
   }
 
   private async getMerchantIdByUserId(userId: string): Promise<MerchantDto> {
-    const merchant = await firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    const merchant = await responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         userId,
       ),

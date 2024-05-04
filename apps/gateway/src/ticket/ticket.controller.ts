@@ -5,9 +5,10 @@ import { TicketPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   DeepTicketDto,
   ServiceNames,
+  ServiceResponse,
   TicketDto,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('ticket')
 @Controller('ticket')
@@ -20,8 +21,11 @@ export class TicketController {
   @Get(':id')
   @ApiOkResponse({ type: DeepTicketDto })
   async getMerchant(@Param('id') id: string): Promise<DeepTicketDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepTicketDto>(TicketPatterns.GET_TICKET, id),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepTicketDto>>(
+        TicketPatterns.GET_TICKET,
+        id,
+      ),
     );
   }
 
@@ -30,8 +34,8 @@ export class TicketController {
   async getTicketsForExperience(
     @Param('id') experienceId: string,
   ): Promise<TicketDto[]> {
-    return firstValueFrom(
-      this.kafkaService.send<TicketDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<TicketDto[]>>(
         TicketPatterns.LIST_TICKETS_FOR_EXPERIENCE,
         experienceId,
       ),

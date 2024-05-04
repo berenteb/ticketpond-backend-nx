@@ -5,19 +5,20 @@ import {
   Get,
   Inject,
   NotFoundException,
-  OnModuleInit,
   Param,
   Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ClientKafka, ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from '@ticketpond-backend-nx/authz';
-import { ExperiencePatterns } from '@ticketpond-backend-nx/message-patterns';
-import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
+import {
+  ExperiencePatterns,
+  MerchantPattern,
+} from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateExperienceDto,
   DeepExperienceDto,
@@ -25,12 +26,13 @@ import {
   MerchantDto,
   PermissionLevel,
   type ReqWithUser,
+  ServiceNames,
+  ServiceResponse,
   UpdateExperienceDto,
   ValidationRequestDto,
   ValidationResponseDto,
 } from '@ticketpond-backend-nx/types';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('experience-merchant')
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
@@ -47,8 +49,8 @@ export class ExperienceMerchantController {
   async getExperiences(@Req() req: ReqWithUser): Promise<ExperienceDto[]> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
     if (!merchant) throw new NotFoundException();
-    return firstValueFrom(
-      this.kafkaService.send<ExperienceDto[]>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<ExperienceDto[]>>(
         ExperiencePatterns.GET_EXPERIENCES_BY_MERCHANT_ID,
         merchant.id,
       ),
@@ -58,8 +60,8 @@ export class ExperienceMerchantController {
   @Get(':id')
   @ApiOkResponse({ type: DeepExperienceDto })
   async getExperienceById(@Param('id') id: string): Promise<DeepExperienceDto> {
-    return firstValueFrom(
-      this.kafkaService.send<DeepExperienceDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<DeepExperienceDto>>(
         ExperiencePatterns.GET_EXPERIENCE,
         id,
       ),
@@ -73,8 +75,8 @@ export class ExperienceMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<ExperienceDto> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<ExperienceDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<ExperienceDto>>(
         ExperiencePatterns.CREATE_EXPERIENCE,
         { experience, merchantId: merchant.id },
       ),
@@ -89,8 +91,8 @@ export class ExperienceMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<ExperienceDto> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<ExperienceDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<ExperienceDto>>(
         ExperiencePatterns.UPDATE_EXPERIENCE_BY_MERCHANT_ID,
         { id, experience, merchantId: merchant.id },
       ),
@@ -105,8 +107,8 @@ export class ExperienceMerchantController {
     @Req() req: ReqWithUser,
   ): Promise<ValidationResponseDto> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
-    return firstValueFrom(
-      this.kafkaService.send<ValidationResponseDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<ValidationResponseDto>>(
         ExperiencePatterns.VALIDATE_EXPERIENCE_PASS,
         {
           experienceId,
@@ -125,17 +127,15 @@ export class ExperienceMerchantController {
   ): Promise<void> {
     const merchant = await this.getMerchantByUserId(req.user.sub);
 
-    return firstValueFrom(
-      this.kafkaService.send<void>(
-        ExperiencePatterns.DELETE_EXPERIENCE_BY_MERCHANT_ID,
-        { id, merchantId: merchant.id },
-      ),
+    this.kafkaService.emit(
+      ExperiencePatterns.DELETE_EXPERIENCE_BY_MERCHANT_ID,
+      { id, merchantId: merchant.id },
     );
   }
 
   private async getMerchantByUserId(userId: string): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         userId,
       ),

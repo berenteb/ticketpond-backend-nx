@@ -16,10 +16,11 @@ import {
   MerchantDto,
   PermissionLevel,
   type ReqWithUser,
+  ServiceResponse,
   UpdateMerchantDto,
 } from '@ticketpond-backend-nx/types';
 import { ServiceNames } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('merchant-self')
 @UseGuards(PermissionGuard(PermissionLevel.MERCHANT))
@@ -34,8 +35,8 @@ export class MerchantSelfController {
   @Get()
   @ApiOkResponse({ type: MerchantDto })
   async getMerchantMe(@Req() req: ReqWithUser): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         req.user.sub,
       ),
@@ -48,8 +49,8 @@ export class MerchantSelfController {
     @Body() updateMerchantDto: UpdateMerchantDto,
     @Req() req: ReqWithUser,
   ): Promise<MerchantDto> {
-    return firstValueFrom(
-      this.kafkaService.send<MerchantDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.UPDATE_MERCHANT_BY_USER_ID,
         {
           merchant: updateMerchantDto,

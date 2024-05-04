@@ -1,58 +1,75 @@
-import {
-  BadRequestException,
-  Controller,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CartPatterns } from '@ticketpond-backend-nx/message-patterns';
-import { CartDto, CartServiceInterface } from '@ticketpond-backend-nx/types';
+import {
+  CartDto,
+  CartServiceInterface,
+  ServiceResponse,
+} from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 @Controller()
 export class CartController {
   constructor(private readonly cartService: CartServiceInterface) {}
 
   @MessagePattern(CartPatterns.GET_CART_BY_AUTH_ID)
-  async getCartForCustomer(@Payload() authId: string): Promise<CartDto> {
-    return this.cartService.getCartForCustomer(authId);
+  async getCartForCustomer(
+    @Payload() authId: string,
+  ): Promise<ServiceResponse<CartDto>> {
+    const cart = await this.cartService.getCartForCustomer(authId);
+    if (!cart) {
+      return CreateServiceResponse.error('Cart not found', 404);
+    }
+    return CreateServiceResponse.success(cart);
   }
 
   @MessagePattern(CartPatterns.CHECKOUT_BY_AUTH_ID)
-  async checkoutForCustomer(@Payload() authId: string): Promise<string> {
+  async checkoutForCustomer(
+    @Payload() authId: string,
+  ): Promise<ServiceResponse<string>> {
     const cart = await this.cartService.getCartForCustomer(authId);
     if (cart.items.length === 0) {
-      throw new BadRequestException('Cart is empty');
+      return CreateServiceResponse.error('Cart is empty', 400);
     }
     const order = await this.cartService.checkout(cart.id);
     if (!order) {
-      throw new InternalServerErrorException('Could not checkout');
+      return CreateServiceResponse.error('Could not checkout');
     }
     const sum = order.items.reduce((acc, item) => acc + item.price, 0);
     if (sum === 0) {
       this.cartService.fulfillOrder(order.id);
-      return '/profile/orders/' + order.id;
+      return CreateServiceResponse.success('/profile/orders/' + order.id);
     }
-    return '/payment/' + order.id;
+    return CreateServiceResponse.success('/payment/' + order.id);
   }
 
   @MessagePattern(CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID)
   async addItemToCartForCustomer(
     @Payload() data: { authId: string; ticketId: string; quantity: number },
-  ): Promise<CartDto> {
-    return this.cartService.addItemToCartForCustomer(
+  ): Promise<ServiceResponse<CartDto>> {
+    const cart = await this.cartService.addItemToCartForCustomer(
       data.authId,
       data.ticketId,
       data.quantity,
     );
+    if (!cart) {
+      return CreateServiceResponse.error('Could not add item to cart');
+    }
+    return CreateServiceResponse.success(cart);
   }
 
   @MessagePattern(CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID)
   async removeItemFromCartForCustomer(
     @Payload() data: { authId: string; ticketId: string; quantity: number },
-  ): Promise<CartDto> {
-    return this.cartService.removeItemFromCartForCustomer(
+  ): Promise<ServiceResponse<CartDto>> {
+    const cart = await this.cartService.removeItemFromCartForCustomer(
       data.authId,
       data.ticketId,
       data.quantity,
     );
+    if (!cart) {
+      return CreateServiceResponse.error('Could not remove item from cart');
+    }
+    return CreateServiceResponse.success(cart);
   }
 }

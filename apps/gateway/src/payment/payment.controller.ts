@@ -20,8 +20,9 @@ import {
   PaymentDto,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('payment')
 @Controller('payment')
@@ -54,8 +55,8 @@ export class PaymentController {
   }
 
   private getOrderForCustomer(id: string, customerAuthId: string) {
-    return firstValueFrom(
-      this.kafkaService.send<OrderDto | undefined>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderDto>>(
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,
@@ -66,8 +67,8 @@ export class PaymentController {
   }
 
   private getPaymentIntent(order: OrderDto) {
-    return firstValueFrom(
-      this.kafkaService.send<PaymentDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<PaymentDto>>(
         PaymentPatterns.CREATE_PAYMENT_INTENT,
         order,
       ),

@@ -17,8 +17,9 @@ import {
   RemoveFromCartDto,
   type ReqWithUser,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('cart')
 @UseGuards(AuthGuard('jwt'))
@@ -32,8 +33,8 @@ export class CartController {
   @Get('me')
   @ApiOkResponse({ type: CartDto })
   async getCartForMe(@Req() req: ReqWithUser): Promise<CartDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CartDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CartDto>>(
         CartPatterns.GET_CART_BY_AUTH_ID,
         req.user.sub,
       ),
@@ -43,8 +44,8 @@ export class CartController {
   @Post('me/checkout')
   @ApiOkResponse({ type: String })
   async checkoutForMe(@Req() req: ReqWithUser): Promise<string> {
-    return firstValueFrom(
-      this.kafkaService.send<string>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<string>>(
         CartPatterns.CHECKOUT_BY_AUTH_ID,
         req.user.sub,
       ),
@@ -57,8 +58,8 @@ export class CartController {
     @Body() item: AddToCartDto,
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CartDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CartDto>>(
         CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
         {
           authId: req.user.sub,
@@ -75,8 +76,8 @@ export class CartController {
     @Body() item: RemoveFromCartDto,
     @Req() req: ReqWithUser,
   ): Promise<CartDto> {
-    return firstValueFrom(
-      this.kafkaService.send<CartDto>(
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<CartDto>>(
         CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
         {
           authId: req.user.sub,

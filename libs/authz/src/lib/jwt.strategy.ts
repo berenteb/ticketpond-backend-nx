@@ -1,16 +1,18 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { PassportStrategy } from '@nestjs/passport';
+import { type AbstractStrategy, PassportStrategy } from '@nestjs/passport';
 import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   JwtUser,
+  MerchantDto,
   PermissionLevel,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 import * as dotenv from 'dotenv';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { firstValueFrom } from 'rxjs';
 
 import { AUTH0_AUDIENCE, AUTH0_ISSUER_URL } from './config';
 
@@ -19,7 +21,7 @@ dotenv.config();
 @Injectable()
 export class JwtStrategy
   extends PassportStrategy(Strategy)
-  implements OnModuleInit
+  implements OnModuleInit, AbstractStrategy
 {
   private readonly logger = new Logger(JwtStrategy.name);
   constructor(
@@ -49,8 +51,8 @@ export class JwtStrategy
   }
 
   async validate(payload: JwtUser): Promise<JwtUser> {
-    const merchantForUser = await firstValueFrom(
-      this.kafkaService.send<boolean>(
+    const merchantForUser = await responseFrom(
+      this.kafkaService.send<ServiceResponse<MerchantDto>>(
         MerchantPattern.GET_MERCHANT_BY_USER_ID,
         payload.sub,
       ),

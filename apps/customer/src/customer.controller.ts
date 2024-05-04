@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { CustomerMessagePattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateCustomerDto,
@@ -8,14 +8,21 @@ import {
   UpdateCustomerDto,
 } from '@ticketpond-backend-nx/types';
 import { ServiceResponse } from '@ticketpond-backend-nx/types';
+import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 @Controller()
 export class CustomerController {
   constructor(private readonly customerService: CustomerServiceInterface) {}
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER)
-  async getCustomer(@Payload() id: string) {
-    return await this.customerService.getCustomerById(id);
+  async getCustomer(
+    @Payload() id: string,
+  ): Promise<ServiceResponse<CustomerDto>> {
+    const customer = await this.customerService.getCustomerById(id);
+    if (!customer) {
+      return CreateServiceResponse.error('Customer not found', 404);
+    }
+    return CreateServiceResponse.success(customer);
   }
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID)
@@ -24,51 +31,58 @@ export class CustomerController {
   ): Promise<ServiceResponse<CustomerDto>> {
     const customer = await this.customerService.getCustomerByAuthId(authId);
     if (!customer) {
-      return {
-        success: false,
-        error: {
-          status: 404,
-          message: `Customer with authId ${authId} not found`,
-        },
-      };
+      return CreateServiceResponse.error('Customer not found', 404);
     }
 
-    return {
-      success: true,
-      data: customer,
-    };
+    return CreateServiceResponse.success(customer);
   }
 
   @MessagePattern(CustomerMessagePattern.CREATE_CUSTOMER)
   async createCustomer(
     @Payload()
     { customer, authId }: { customer: CreateCustomerDto; authId?: string },
-  ) {
-    return await this.customerService.createCustomer(customer, authId);
+  ): Promise<ServiceResponse<CustomerDto>> {
+    const created = await this.customerService.createCustomer(customer, authId);
+    return CreateServiceResponse.success(created);
   }
 
   @MessagePattern(CustomerMessagePattern.LIST_CUSTOMERS)
-  async listCustomers() {
-    return await this.customerService.getCustomers();
+  async listCustomers(): Promise<ServiceResponse<CustomerDto[]>> {
+    const customers = await this.customerService.getCustomers();
+    return CreateServiceResponse.success(customers);
   }
 
   @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER)
   async updateCustomer(
     @Payload() { id, customer }: { id: string; customer: UpdateCustomerDto },
-  ) {
-    return await this.customerService.updateCustomer(id, customer);
+  ): Promise<ServiceResponse<CustomerDto>> {
+    const updatedCustomer = await this.customerService.updateCustomer(
+      id,
+      customer,
+    );
+    if (!updatedCustomer) {
+      return CreateServiceResponse.error('Customer not found', 404);
+    }
+    return CreateServiceResponse.success(updatedCustomer);
   }
 
   @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER_BY_AUTH_ID)
   async updateCustomerByAuthId(
     @Payload()
     { authId, customer }: { authId: string; customer: UpdateCustomerDto },
-  ) {
-    return await this.customerService.updateCustomerByAuthId(authId, customer);
+  ): Promise<ServiceResponse<CustomerDto>> {
+    const updatedCustomer = await this.customerService.updateCustomerByAuthId(
+      authId,
+      customer,
+    );
+    if (!updatedCustomer) {
+      return CreateServiceResponse.error('Customer not found', 404);
+    }
+    return CreateServiceResponse.success(updatedCustomer);
   }
 
-  @MessagePattern(CustomerMessagePattern.DELETE_CUSTOMER)
-  async deleteCustomer(@Payload() id: string) {
-    return await this.customerService.deleteCustomer(id);
+  @EventPattern(CustomerMessagePattern.DELETE_CUSTOMER)
+  async deleteCustomer(@Payload() id: string): Promise<void> {
+    await this.customerService.deleteCustomer(id);
   }
 }

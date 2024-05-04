@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
@@ -7,8 +7,9 @@ import {
   CartServiceInterface,
   OrderDto,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { firstValueFrom } from 'rxjs';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
 @Injectable()
 export class CartService implements CartServiceInterface {
@@ -39,7 +40,7 @@ export class CartService implements CartServiceInterface {
       },
     });
     if (!cart) {
-      throw new NotFoundException(`Cart with id ${id} not found`);
+      return null;
     }
     this.logger.debug(`Found cart with id ${id}`);
     return cart;
@@ -132,8 +133,11 @@ export class CartService implements CartServiceInterface {
   }
 
   private async createOrder(cart: CartDto): Promise<OrderDto> {
-    return firstValueFrom(
-      this.kafkaService.send<OrderDto>(OrderPatterns.CREATE_ORDER, cart),
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderDto>>(
+        OrderPatterns.CREATE_ORDER,
+        cart,
+      ),
     );
   }
 
