@@ -1,34 +1,16 @@
-import {
-  ClientOptions,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
+import { configureKafkaClient } from '@ticketpond-backend-nx/utils';
 
 import { ConfigService } from '../config.service';
 
 export function createClientKafka(
   provide: string,
   clientId: string,
-  groupId: string,
+  groupId?: string,
 ) {
   return {
     provide,
-    useFactory: (configService: ConfigService) => {
-      const serviceOptions: ClientOptions = {
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId,
-            brokers: [configService.get('kafkaBroker')],
-          },
-          consumer: {
-            groupId,
-            allowAutoTopicCreation: true,
-          },
-        },
-      };
-      return ClientProxyFactory.create(serviceOptions);
-    },
+    useFactory: (configService: ConfigService) =>
+      configureKafkaClient(configService.get('kafkaBroker'), clientId, groupId),
     inject: [ConfigService],
   };
 }

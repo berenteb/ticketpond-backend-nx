@@ -41,11 +41,7 @@ import { createClientKafka } from './utils/create-client-kafka';
   imports: [
     NestjsFormDataModule,
     AuthzModule.forRoot([
-      createClientKafka(
-        ServiceNames.KAFKA_SERVICE,
-        'gateway-auth',
-        'gateway-auth',
-      ),
+      createClientKafka(ServiceNames.KAFKA_SERVICE, 'gateway-auth'),
       ConfigService,
     ]),
     ServeStaticModule.forRoot({
@@ -79,7 +75,7 @@ import { createClientKafka } from './utils/create-client-kafka';
   ],
   providers: [
     ConfigService,
-    createClientKafka(ServiceNames.KAFKA_SERVICE, 'gateway', 'gateway'),
+    createClientKafka(ServiceNames.KAFKA_SERVICE, 'gateway'),
   ],
 })
 export class GatewayModule implements OnModuleInit {
