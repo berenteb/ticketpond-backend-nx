@@ -1,8 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationServiceInterface } from '@ticketpond-backend-nx/types';
+import { Customer } from '@prisma/client';
+import {
+  DeepOrderWithCustomerDto,
+  NotificationServiceInterface,
+} from '@ticketpond-backend-nx/types';
 
+import { NotificationServiceMock } from './__mocks__/notification-service.mock';
 import { NotificationController } from './notification.controller';
-import { NotificationService } from './notification.service';
 
 let controller: NotificationController;
 
@@ -12,7 +16,7 @@ beforeEach(async () => {
     providers: [
       {
         provide: NotificationServiceInterface,
-        useValue: NotificationService,
+        useValue: NotificationServiceMock,
       },
     ],
     controllers: [NotificationController],
@@ -21,8 +25,16 @@ beforeEach(async () => {
   controller = module.get<NotificationController>(NotificationController);
 });
 
-describe('NotificationController', () => {
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+it('should send welcome email', async () => {
+  const customer = {} as Customer;
+  await controller.sendWelcome(customer);
+  expect(NotificationServiceMock.sendWelcome).toHaveBeenCalledWith(customer);
+});
+
+it('should send order confirmation email', async () => {
+  const customer = {} as DeepOrderWithCustomerDto;
+  await controller.sendOrderConfirmation(customer);
+  expect(NotificationServiceMock.sendOrderSuccess).toHaveBeenCalledWith(
+    customer,
+  );
 });
