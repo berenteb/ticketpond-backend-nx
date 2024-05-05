@@ -1,27 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PassServiceInterface } from '@ticketpond-backend-nx/types';
+import {
+  DeepOrderDto,
+  PassServiceInterface,
+} from '@ticketpond-backend-nx/types';
 
-import { PassServiceMock } from './__mocks__/pass-service.mock';
+import { PassServiceMock } from './__mocks__/services/pass-service.mock';
 import { PassController } from './pass.controller';
 
-describe('AssetController', () => {
-  let app: TestingModule;
+let controller: PassController;
 
-  beforeAll(async () => {
-    app = await Test.createTestingModule({
-      controllers: [PassController],
-      providers: [
-        {
-          provide: PassServiceInterface,
-          useValue: PassServiceMock,
-        },
-      ],
-    }).compile();
-  });
+beforeEach(async () => {
+  jest.clearAllMocks();
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [{ provide: PassServiceInterface, useValue: PassServiceMock }],
+    controllers: [PassController],
+  }).compile();
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
-      expect(app).toBeDefined();
-    });
-  });
+  controller = module.get<PassController>(PassController);
+});
+
+it('should generate passes with service', async () => {
+  const order = {} as DeepOrderDto;
+  await controller.generatePasses(order);
+  expect(PassServiceMock.generatePasses).toHaveBeenCalledWith(order);
 });

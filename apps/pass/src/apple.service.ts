@@ -28,7 +28,7 @@ export class AppleService implements PassGeneratorInterface {
     const passProps = this.getPassProps();
     passProps.description = orderItem.ticket.name;
     passProps.serialNumber = orderItem.serialNumber;
-    passProps.organizationName = 'Merhcant of Ticketpond';
+    passProps.organizationName = 'Merchant of Ticketpond';
 
     const pass = new PKPass({}, certs, passProps);
 
@@ -118,9 +118,8 @@ export class AppleService implements PassGeneratorInterface {
     };
   }
 
-  private writePassToFile(pass: PKPass, passPath: string): Promise<string> {
+  protected writePassToFile(pass: PKPass, passPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (!fs.existsSync(genFolder)) fs.mkdirSync(genFolder);
       const fullPath = path.resolve(genFolder, passPath);
       fs.createWriteStream(fullPath).write(pass.getAsBuffer(), (err) => {
         if (err) {

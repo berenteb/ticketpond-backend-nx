@@ -1,31 +1,56 @@
-import { Test } from '@nestjs/testing';
-import { ConfigServiceMock } from '@ticketpond-backend-nx/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+import { DeepOrderDto } from '@ticketpond-backend-nx/types';
 
+import { OrderItemMock } from './__mocks__/entities/order-item.mock';
+import {
+  AppleGeneratorServiceMock,
+  ImageServiceMock,
+} from './__mocks__/services/pass-generator-service.mock';
 import { AppleService } from './apple.service';
-import { ConfigService } from './config.service';
 import { ImageService } from './image.service';
 import { PassService } from './pass.service';
 
-describe('AssetService', () => {
-  let service: PassService;
+let service: PassService;
 
-  beforeAll(async () => {
-    const app = await Test.createTestingModule({
-      providers: [
-        PassService,
-        AppleService,
-        ImageService,
-        {
-          provide: ConfigService,
-          useValue: ConfigServiceMock,
-        },
-      ],
-    }).compile();
+beforeEach(async () => {
+  jest.clearAllMocks();
 
-    service = app.get<PassService>(PassService);
-  });
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [
+      PassService,
+      {
+        provide: AppleService,
+        useValue: AppleGeneratorServiceMock,
+      },
+      {
+        provide: ImageService,
+        useValue: ImageServiceMock,
+      },
+    ],
+  }).compile();
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {});
-  });
+  service = module.get<PassService>(PassService);
+});
+
+it('should generate pass for each item with each generator', async () => {
+  await service.generatePasses({
+    items: [OrderItemMock, OrderItemMock],
+  } as DeepOrderDto);
+
+  expect(AppleGeneratorServiceMock.generatePass).toHaveBeenNthCalledWith(
+    1,
+    OrderItemMock,
+  );
+  expect(AppleGeneratorServiceMock.generatePass).toHaveBeenNthCalledWith(
+    2,
+    OrderItemMock,
+  );
+  expect(ImageServiceMock.generatePass).toHaveBeenNthCalledWith(
+    1,
+    OrderItemMock,
+  );
+  expect(ImageServiceMock.generatePass).toHaveBeenNthCalledWith(
+    2,
+    OrderItemMock,
+  );
 });
