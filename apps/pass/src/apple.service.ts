@@ -85,7 +85,7 @@ export class AppleService implements PassGeneratorInterface {
       orderItem.ticket.validFrom,
     ).toLocaleDateString();
 
-    const identifier = orderItem.id;
+    const identifier = orderItem.serialNumber;
     const passFileName = `${identifier}.pkpass`;
     try {
       const logoUrl = path.resolve(__dirname, 'assets', 'logo.png');
