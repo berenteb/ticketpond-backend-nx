@@ -50,9 +50,7 @@ it('should delete file from folder', async () => {
 it("should upload file to folder and return it's name", async () => {
   const file = {
     buffer: Buffer.from('test'),
-    fileType: {
-      ext: 'jpg',
-    },
+    extension: 'jpg',
   } as unknown as MemoryStoredFile;
   const result = await service.uploadFile(file);
   expect(result).toMatch(/.{16}\.jpg/);
