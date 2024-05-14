@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import fs from 'fs';
+import { MemoryStoredFile } from 'nestjs-form-data';
 
 import { AssetService } from './asset.service';
 
@@ -52,7 +53,7 @@ it("should upload file to folder and return it's name", async () => {
     fileType: {
       ext: 'jpg',
     },
-  };
+  } as unknown as MemoryStoredFile;
   const result = await service.uploadFile(file);
   expect(result).toMatch(/.{16}\.jpg/);
   expect(fs.promises.writeFile).toHaveBeenCalledWith(

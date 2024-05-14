@@ -2,7 +2,7 @@ FROM docker.io/node:lts-alpine
 
 ARG SERVICE_NAME=customer
 
-WORKDIR /app
+WORKDIR /apps/${SERVICE_NAME}
 
 RUN addgroup --system ${SERVICE_NAME} && \
           adduser --system -G ${SERVICE_NAME} ${SERVICE_NAME}

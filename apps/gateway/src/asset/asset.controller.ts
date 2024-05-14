@@ -1,22 +1,15 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AssetPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
-  FormDataTestDto,
-  ServiceNames,
-  ServiceResponse,
+  AssetServiceInterface,
+  FileFormDataDto,
 } from '@ticketpond-backend-nx/types';
-import { responseFrom } from '@ticketpond-backend-nx/utils';
 import { FormDataRequest } from 'nestjs-form-data';
 
 @ApiTags('asset')
 @Controller('asset')
 export class AssetController {
-  constructor(
-    @Inject(ServiceNames.KAFKA_SERVICE)
-    private readonly kafkaService: ClientKafka,
-  ) {}
+  constructor(private readonly assetService: AssetServiceInterface) {}
 
   @Post('upload')
   @FormDataRequest()
@@ -33,12 +26,7 @@ export class AssetController {
     },
   })
   @ApiOkResponse({ type: String })
-  async uploadFile(@Body() testDto: FormDataTestDto): Promise<string> {
-    return responseFrom(
-      this.kafkaService.send<ServiceResponse<string>>(
-        AssetPatterns.UPLOAD_FILE,
-        testDto.file,
-      ),
-    );
+  async uploadFile(@Body() fileFormDataDto: FileFormDataDto): Promise<string> {
+    return this.assetService.uploadFile(fileFormDataDto.file);
   }
 }

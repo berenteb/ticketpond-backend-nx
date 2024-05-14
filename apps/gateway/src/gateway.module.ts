@@ -12,11 +12,15 @@ import {
   PaymentPatterns,
   TicketPatterns,
 } from '@ticketpond-backend-nx/message-patterns';
-import { ServiceNames } from '@ticketpond-backend-nx/types';
+import {
+  AssetServiceInterface,
+  ServiceNames,
+} from '@ticketpond-backend-nx/types';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import path from 'path';
 
 import { AssetController } from './asset/asset.controller';
+import { AssetService } from './asset/asset.service';
 import { CartController } from './cart/cart.controller';
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
@@ -75,6 +79,10 @@ import { createClientKafka } from './utils/create-client-kafka';
   ],
   providers: [
     ConfigService,
+    {
+      provide: AssetServiceInterface,
+      useClass: AssetService,
+    },
     createClientKafka(ServiceNames.KAFKA_SERVICE, 'gateway'),
   ],
 })
