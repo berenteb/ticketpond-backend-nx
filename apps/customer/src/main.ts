@@ -15,6 +15,11 @@ async function bootstrap() {
         client: {
           clientId: 'customer',
           brokers: [config.get('kafkaBroker')],
+          sasl: {
+            mechanism: 'scram-sha-256',
+            username: config.get('kafkaUsername'),
+            password: config.get('kafkaPassword'),
+          },
         },
         consumer: {
           groupId: 'customer',

@@ -6,7 +6,12 @@ export function createClientKafka(provide: string) {
   return {
     provide,
     useFactory: (configService: ConfigService) =>
-      configureKafkaClient(configService.get('kafkaBroker'), 'order'),
+      configureKafkaClient(
+        configService.get('kafkaBroker'),
+        'order',
+        configService.get('kafkaUsername'),
+        configService.get('kafkaPassword'),
+      ),
     inject: [ConfigService],
   };
 }

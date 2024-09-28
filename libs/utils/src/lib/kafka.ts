@@ -12,6 +12,8 @@ import { handleServiceResponse } from './service-response';
 export function configureKafkaClient(
   broker: string,
   clientId: string,
+  username: string,
+  password: string,
   groupId?: string,
 ) {
   const serviceOptions: ClientOptions = {
@@ -20,6 +22,11 @@ export function configureKafkaClient(
       client: {
         clientId,
         brokers: [broker],
+        sasl: {
+          mechanism: 'plain',
+          username,
+          password,
+        },
       },
       consumer: {
         groupId: groupId || clientId,

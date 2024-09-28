@@ -10,7 +10,13 @@ export function createClientKafka(
   return {
     provide,
     useFactory: (configService: ConfigService) =>
-      configureKafkaClient(configService.get('kafkaBroker'), clientId, groupId),
+      configureKafkaClient(
+        configService.get('kafkaBroker'),
+        clientId,
+        configService.get('kafkaUsername'),
+        configService.get('kafkaPassword'),
+        groupId,
+      ),
     inject: [ConfigService],
   };
 }

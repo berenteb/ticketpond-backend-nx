@@ -12,6 +12,8 @@ export class ConfigService {
   private readonly envConfig: ServiceConfig & {
     frontendUrl: string;
     kafkaBroker: string;
+    kafkaUsername: string;
+    kafkaPassword: string;
   };
 
   constructor() {
@@ -20,6 +22,8 @@ export class ConfigService {
       port: env.get('PORT').required().asPortNumber(),
       frontendUrl: env.get('FRONTEND_URL').required().asString(),
       kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
+      kafkaUsername: env.get('KAFKA_USERNAME').required().asString(),
+      kafkaPassword: env.get('KAFKA_PASSWORD').required().asString(),
     };
   }
 
