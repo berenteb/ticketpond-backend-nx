@@ -35,7 +35,7 @@ export class CartController {
   async getCartForMe(@Req() req: ReqWithUser): Promise<CartDto> {
     return responseFrom(
       this.kafkaService.send<ServiceResponse<CartDto>>(
-        CartPatterns.GET_CART_BY_AUTH_ID,
+        CartPatterns.GET_CART_BY_USER_ID,
         req.user.sub,
       ),
     );
@@ -46,7 +46,7 @@ export class CartController {
   async checkoutForMe(@Req() req: ReqWithUser): Promise<string> {
     return responseFrom(
       this.kafkaService.send<ServiceResponse<string>>(
-        CartPatterns.CHECKOUT_BY_AUTH_ID,
+        CartPatterns.CHECKOUT_BY_USER_ID,
         req.user.sub,
       ),
     );
@@ -60,9 +60,9 @@ export class CartController {
   ): Promise<CartDto> {
     return responseFrom(
       this.kafkaService.send<ServiceResponse<CartDto>>(
-        CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
+        CartPatterns.ADD_ITEM_TO_CART_BY_USER_ID,
         {
-          authId: req.user.sub,
+          customerId: req.user.sub,
           ticketId: item.ticketId,
           quantity: item.quantity,
         },
@@ -78,9 +78,9 @@ export class CartController {
   ): Promise<CartDto> {
     return responseFrom(
       this.kafkaService.send<ServiceResponse<CartDto>>(
-        CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
+        CartPatterns.REMOVE_ITEM_FROM_CART_BY_USER_ID,
         {
-          authId: req.user.sub,
+          customerId: req.user.sub,
           ticketId: item.ticketId,
           quantity: item.quantity,
         },

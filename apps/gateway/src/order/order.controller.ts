@@ -44,7 +44,7 @@ export class OrderController {
         OrderPatterns.GET_ORDER_FOR_CUSTOMER,
         {
           id,
-          customerAuthId: req.user.sub,
+          customerId: req.user.sub,
         },
       ),
     );

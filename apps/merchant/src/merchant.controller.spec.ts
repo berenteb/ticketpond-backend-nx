@@ -33,7 +33,7 @@ it('should get merchant by id', async () => {
 });
 
 it('should get merchant by user id', async () => {
-  const merchant = await controller.getMerchantByUserId('1');
+  const merchant = await controller.getMerchantByCustomerId('1');
   expect(merchant).toEqual(CreateServiceResponse.success(MerchantMock));
   expect(MerchantServiceMock.getMerchantByCustomerAuthId).toHaveBeenCalledWith(
     '1',

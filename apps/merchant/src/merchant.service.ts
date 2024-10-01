@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Merchant } from '@prisma/client';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
@@ -16,16 +16,16 @@ export class MerchantService implements MerchantServiceInterface {
 
   async assignCustomerToMerchant(
     merchantId: string,
-    customerAuthId: string,
+    customerId: string,
   ): Promise<void> {
     await this.prisma.merchantOnCustomer.create({
       data: {
         merchant: { connect: { id: merchantId } },
-        customer: { connect: { authId: customerAuthId } },
+        customer: { connect: { id: customerId } },
       },
     });
     this.logger.debug(
-      `Assigned customer ${customerAuthId} to merchant ${merchantId}`,
+      `Assigned customer ${customerId} to merchant ${merchantId}`,
     );
   }
 
@@ -72,28 +72,27 @@ export class MerchantService implements MerchantServiceInterface {
     this.logger.debug(`Deleted merchant with id ${id}`);
   }
 
-  async getMerchantByCustomerAuthId(
-    customerAuthId: string,
+  async getMerchantByCustomerId(
+    customerId: string,
   ): Promise<MerchantDto | undefined> {
     const merchant = await this.prisma.merchant.findFirst({
       where: {
-        MerchantOnCustomer: { some: { customer: { authId: customerAuthId } } },
+        MerchantOnCustomer: { some: { customer: { id: customerId } } },
       },
     });
     if (!merchant) {
-      this.logger.debug(`No merchant found for user ${customerAuthId}`);
+      this.logger.debug(`No merchant found for user ${customerId}`);
     } else {
-      this.logger.debug(`Found merchant for user ${customerAuthId}`);
+      this.logger.debug(`Found merchant for user ${customerId}`);
     }
     return merchant;
   }
 
-  async updateMerchantByCustomerAuthId(
-    customerAuthId: string,
+  async updateMerchantByCustomerId(
+    customerId: string,
     merchant: UpdateMerchantDto,
   ) {
-    const merchantForUser =
-      await this.getMerchantByCustomerAuthId(customerAuthId);
+    const merchantForUser = await this.getMerchantByCustomerId(customerId);
     if (!merchantForUser) {
       return null;
     }
@@ -101,7 +100,7 @@ export class MerchantService implements MerchantServiceInterface {
       where: { id: merchantForUser.id },
       data: merchant,
     });
-    this.logger.debug(`Updated merchant for user ${customerAuthId}`);
+    this.logger.debug(`Updated merchant for user ${customerId}`);
     return updated;
   }
 }

@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  CustomerServiceInterface,
-  ReqWithUser,
-} from '@ticketpond-backend-nx/types';
+import { CustomerServiceInterface } from '@ticketpond-backend-nx/types';
 import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 import { CustomerMock } from './__mocks__/entities/customer.mock';
@@ -79,7 +76,7 @@ it('should update customer by auth id', async () => {
     customer: UpdateCustomerMock,
   });
   expect(result).toEqual(CreateServiceResponse.success(CustomerMock));
-  expect(CustomerServiceMock.updateCustomerByAuthId).toHaveBeenCalledWith(
+  expect(CustomerServiceMock.updateCustomerById).toHaveBeenCalledWith(
     authId,
     UpdateCustomerMock,
   );

@@ -35,7 +35,7 @@ export class CustomerController {
   async getMe(@Req() req: ReqWithUser): Promise<CustomerDto> {
     return responseFrom(
       this.kafkaService.send<ServiceResponse<CustomerDto>>(
-        CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
+        CustomerMessagePattern.GET_CUSTOMER,
         req.user.sub,
       ),
     );

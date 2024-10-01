@@ -77,15 +77,15 @@ export class CustomerService implements CustomerServiceInterface {
     return updatedCustomer;
   }
 
-  async updateCustomerByAuthId(
-    authId: string,
+  async updateCustomerById(
+    customerId: string,
     customer: UpdateCustomerDto,
   ): Promise<CustomerDto> {
     const updatedCustomer = await this.prismaService.customer.update({
-      where: { authId },
+      where: { id: customerId },
       data: customer,
     });
-    this.logger.debug(`Updated customer with authId ${authId}`);
+    this.logger.debug(`Updated customer with id ${customerId}`);
     return updatedCustomer;
   }
 

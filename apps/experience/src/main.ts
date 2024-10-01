@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { getSaslOrNull } from '@ticketpond-backend-nx/utils';
 
 import { ConfigService } from './config.service';
 import { ExperienceModule } from './experience.module';
@@ -15,11 +16,10 @@ async function bootstrap() {
         client: {
           clientId: 'experience',
           brokers: [config.get('kafkaBroker')],
-          sasl: {
-            mechanism: 'plain',
-            username: config.get('kafkaUsername'),
-            password: config.get('kafkaPassword'),
-          },
+          sasl: getSaslOrNull(
+            config.get('kafkaUsername'),
+            config.get('kafkaPassword'),
+          ),
         },
         consumer: {
           groupId: 'experience',

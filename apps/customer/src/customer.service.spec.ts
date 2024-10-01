@@ -83,7 +83,7 @@ it('should update customer by id', async () => {
 
 it('should update customer by internal id', async () => {
   PrismaMock.customer.update.mockResolvedValue(CustomerMock);
-  const customer = await service.updateCustomerByAuthId(
+  const customer = await service.updateCustomerById(
     'test-customer-auth-id',
     CustomerMock,
   );

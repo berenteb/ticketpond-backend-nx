@@ -9,5 +9,5 @@ export const CustomerServiceMock: CustomerServiceInterface = {
   getCustomerByAuthId: jest.fn().mockResolvedValue(CustomerMock),
   getCustomers: jest.fn().mockResolvedValue([CustomerMock]),
   updateCustomer: jest.fn().mockResolvedValue(CustomerMock),
-  updateCustomerByAuthId: jest.fn().mockResolvedValue(CustomerMock),
+  updateCustomerById: jest.fn().mockResolvedValue(CustomerMock),
 };

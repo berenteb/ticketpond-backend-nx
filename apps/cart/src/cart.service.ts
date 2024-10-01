@@ -21,14 +21,16 @@ export class CartService implements CartServiceInterface {
     private readonly kafkaService: ClientKafka,
   ) {}
 
-  async createCartForCustomer(authId: string): Promise<CartDto> {
+  async createCartForCustomer(customerId: string): Promise<CartDto> {
     const cart = await this.prismaService.cart.create({
-      data: { customer: { connect: { authId } } },
+      data: { customer: { connect: { id: customerId } } },
       include: {
         items: { include: { ticket: { include: { experience: true } } } },
       },
     });
-    this.logger.debug(`Created cart for customer ${authId} with id ${cart.id}`);
+    this.logger.debug(
+      `Created cart for customer ${customerId} with id ${cart.id}`,
+    );
     return cart;
   }
 
@@ -46,20 +48,20 @@ export class CartService implements CartServiceInterface {
     return cart;
   }
 
-  async getCartForCustomer(authId: string): Promise<CartDto> {
+  async getCartForCustomer(customerId: string): Promise<CartDto> {
     const cart = await this.prismaService.cart.findFirst({
-      where: { customer: { authId } },
+      where: { customer: { id: customerId } },
       include: {
         items: { include: { ticket: { include: { experience: true } } } },
       },
     });
     if (cart) {
-      this.logger.debug(`Found cart for customer ${authId}`);
+      this.logger.debug(`Found cart for customer ${customerId}`);
       return cart;
     } else {
-      const created = await this.createCartForCustomer(authId);
+      const created = await this.createCartForCustomer(customerId);
       this.logger.debug(
-        `Created cart for customer ${authId} with id ${created.id}`,
+        `Created cart for customer ${customerId} with id ${created.id}`,
       );
       return created;
     }
@@ -89,11 +91,11 @@ export class CartService implements CartServiceInterface {
   }
 
   async removeItemFromCartForCustomer(
-    customerAuthId: string,
+    customerId: string,
     ticketId: string,
     quantity: number,
   ): Promise<CartDto> {
-    const cart = await this.getCartForCustomer(customerAuthId);
+    const cart = await this.getCartForCustomer(customerId);
     return this.removeItemFromCart(cart.id, ticketId, quantity);
   }
 
@@ -146,12 +148,12 @@ export class CartService implements CartServiceInterface {
     this.logger.debug(`Deleted cart ${cartId}`);
   }
 
-  async deleteCartForCustomer(authId: string): Promise<void> {
+  async deleteCartForCustomer(customerId: string): Promise<void> {
     await this.prismaService.cart.deleteMany({
       where: {
-        customer: { authId },
+        customer: { id: customerId },
       },
     });
-    this.logger.debug(`Deleted cart for customer ${authId}`);
+    this.logger.debug(`Deleted cart for customer ${customerId}`);
   }
 }

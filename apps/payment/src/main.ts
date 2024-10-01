@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { getSaslOrNull } from '@ticketpond-backend-nx/utils';
 
 import { ConfigService } from './config.service';
 import { PaymentModule } from './payment.module';
@@ -15,11 +16,10 @@ async function bootstrap() {
         client: {
           clientId: 'payment',
           brokers: [config.get('kafkaBroker')],
-          sasl: {
-            mechanism: 'scram-sha-256',
-            username: config.get('kafkaUsername'),
-            password: config.get('kafkaPassword'),
-          },
+          sasl: getSaslOrNull(
+            config.get('kafkaUsername'),
+            config.get('kafkaPassword'),
+          ),
         },
         consumer: {
           groupId: 'payment',

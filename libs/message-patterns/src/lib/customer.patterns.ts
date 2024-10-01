@@ -4,6 +4,6 @@ export enum CustomerMessagePattern {
   GET_CUSTOMER_BY_AUTH_ID = 'getCustomerByAuthId',
   CREATE_CUSTOMER = 'createCustomer',
   UPDATE_CUSTOMER = 'updateCustomer',
-  UPDATE_CUSTOMER_BY_AUTH_ID = 'updateCustomerByAuthId',
+  UPDATE_CUSTOMER_BY_USER_ID = 'updateCustomerByUserId',
   DELETE_CUSTOMER = 'deleteCustomer',
 }

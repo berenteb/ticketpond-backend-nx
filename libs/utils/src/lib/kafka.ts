@@ -4,6 +4,7 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
+import { SASLOptions } from '@nestjs/microservices/external/kafka.interface';
 import { ServiceResponse } from '@ticketpond-backend-nx/types';
 import { firstValueFrom, Observable } from 'rxjs';
 
@@ -12,8 +13,8 @@ import { handleServiceResponse } from './service-response';
 export function configureKafkaClient(
   broker: string,
   clientId: string,
-  username: string,
-  password: string,
+  username?: string,
+  password?: string,
   groupId?: string,
 ) {
   const serviceOptions: ClientOptions = {
@@ -22,11 +23,7 @@ export function configureKafkaClient(
       client: {
         clientId,
         brokers: [broker],
-        sasl: {
-          mechanism: 'plain',
-          username,
-          password,
-        },
+        sasl: getSaslOrNull(username, password),
       },
       consumer: {
         groupId: groupId || clientId,
@@ -46,4 +43,17 @@ export async function responseFrom<T>(
     throw new InternalServerErrorException(response.error.message);
   }
   return response.data;
+}
+
+export function getSaslOrNull(
+  username?: string,
+  password?: string,
+): SASLOptions | undefined {
+  return username && password
+    ? {
+        mechanism: 'plain',
+        username,
+        password,
+      }
+    : undefined;
 }

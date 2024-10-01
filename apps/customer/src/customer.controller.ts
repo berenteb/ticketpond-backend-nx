@@ -16,9 +16,9 @@ export class CustomerController {
 
   @MessagePattern(CustomerMessagePattern.GET_CUSTOMER)
   async getCustomer(
-    @Payload() id: string,
+    @Payload() customerId: string,
   ): Promise<ServiceResponse<CustomerDto>> {
-    const customer = await this.customerService.getCustomerById(id);
+    const customer = await this.customerService.getCustomerById(customerId);
     if (!customer) {
       return CreateServiceResponse.error('Customer not found', 404);
     }
@@ -54,10 +54,17 @@ export class CustomerController {
 
   @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER)
   async updateCustomer(
-    @Payload() { id, customer }: { id: string; customer: UpdateCustomerDto },
+    @Payload()
+    {
+      customerId,
+      customer,
+    }: {
+      customerId: string;
+      customer: UpdateCustomerDto;
+    },
   ): Promise<ServiceResponse<CustomerDto>> {
     const updatedCustomer = await this.customerService.updateCustomer(
-      id,
+      customerId,
       customer,
     );
     if (!updatedCustomer) {
@@ -66,13 +73,19 @@ export class CustomerController {
     return CreateServiceResponse.success(updatedCustomer);
   }
 
-  @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER_BY_AUTH_ID)
+  @MessagePattern(CustomerMessagePattern.UPDATE_CUSTOMER_BY_USER_ID)
   async updateCustomerByAuthId(
     @Payload()
-    { authId, customer }: { authId: string; customer: UpdateCustomerDto },
+    {
+      customerId,
+      customer,
+    }: {
+      customerId: string;
+      customer: UpdateCustomerDto;
+    },
   ): Promise<ServiceResponse<CustomerDto>> {
-    const updatedCustomer = await this.customerService.updateCustomerByAuthId(
-      authId,
+    const updatedCustomer = await this.customerService.updateCustomerById(
+      customerId,
       customer,
     );
     if (!updatedCustomer) {
@@ -82,7 +95,7 @@ export class CustomerController {
   }
 
   @EventPattern(CustomerMessagePattern.DELETE_CUSTOMER)
-  async deleteCustomer(@Payload() id: string): Promise<void> {
-    await this.customerService.deleteCustomer(id);
+  async deleteCustomer(@Payload() customerId: string): Promise<void> {
+    await this.customerService.deleteCustomer(customerId);
   }
 }

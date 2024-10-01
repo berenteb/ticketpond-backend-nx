@@ -29,11 +29,11 @@ export class OrderController {
 
   @MessagePattern(OrderPatterns.GET_ORDER_FOR_CUSTOMER)
   async getOrderForCustomer(
-    @Payload() data: { id: string; customerAuthId: string },
+    @Payload() data: { id: string; customerId: string },
   ): Promise<ServiceResponse<DeepOrderDto>> {
     const order = await this.orderService.getOrderByIdForCustomer(
       data.id,
-      data.customerAuthId,
+      data.customerId,
     );
     if (!order) {
       return CreateServiceResponse.error('Order not found', 404);
@@ -49,9 +49,9 @@ export class OrderController {
 
   @MessagePattern(OrderPatterns.LIST_ORDERS_FOR_CUSTOMER)
   async getOrdersForCustomer(
-    @Payload() customerAuthId: string,
+    @Payload() customerId: string,
   ): Promise<ServiceResponse<OrderDto[]>> {
-    const orders = await this.orderService.getOrdersForCustomer(customerAuthId);
+    const orders = await this.orderService.getOrdersForCustomer(customerId);
     return CreateServiceResponse.success(orders);
   }
 

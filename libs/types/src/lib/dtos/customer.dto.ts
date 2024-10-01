@@ -11,7 +11,9 @@ import {
 import { WithoutId } from '../common.types';
 import { PhoneRegex, PhoneRegexMessage } from '../regex';
 
-export class CreateCustomerDto implements Omit<WithoutId<Customer>, 'authId'> {
+export class CreateCustomerDto
+  implements Omit<WithoutId<Customer>, 'authId' | 'isAdmin'>
+{
   @ApiProperty({ example: 'John' })
   @IsString()
   @IsNotEmpty()
@@ -95,4 +97,7 @@ export class CustomerDto implements Customer {
 
   @ApiProperty({ example: '+1234567890' })
   phone: string;
+
+  @ApiProperty({ example: false })
+  isAdmin: boolean;
 }

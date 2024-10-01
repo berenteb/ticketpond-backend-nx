@@ -32,11 +32,11 @@ export class MerchantController {
   }
 
   @MessagePattern(MerchantPattern.GET_MERCHANT_BY_USER_ID)
-  async getMerchantByUserId(
-    @Payload() userId: string,
+  async getMerchantByCustomerId(
+    @Payload() customerId: string,
   ): Promise<ServiceResponse<MerchantDto>> {
     const merchant =
-      await this.merchantService.getMerchantByCustomerAuthId(userId);
+      await this.merchantService.getMerchantByCustomerId(customerId);
     if (!merchant) {
       return CreateServiceResponse.error('Merchant not found', 404);
     }
@@ -53,11 +53,11 @@ export class MerchantController {
 
   @EventPattern(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT)
   async assignCustomerToMerchant(
-    @Payload() data: { merchantId: string; customerAuthId: string },
+    @Payload() data: { merchantId: string; customerId: string },
   ): Promise<void> {
     await this.merchantService.assignCustomerToMerchant(
       data.merchantId,
-      data.customerAuthId,
+      data.customerId,
     );
   }
 
@@ -77,11 +77,11 @@ export class MerchantController {
 
   @MessagePattern(MerchantPattern.UPDATE_MERCHANT_BY_USER_ID)
   async updateMerchantByUserId(
-    @Payload() data: { userId: string; merchant: UpdateMerchantDto },
+    @Payload() data: { customerId: string; merchant: UpdateMerchantDto },
   ): Promise<ServiceResponse<MerchantDto>> {
     const updatedMerchant =
-      await this.merchantService.updateMerchantByCustomerAuthId(
-        data.userId,
+      await this.merchantService.updateMerchantByCustomerId(
+        data.customerId,
         data.merchant,
       );
     if (!updatedMerchant) {

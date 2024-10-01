@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(GatewayModule, { rawBody: true });
 
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors();
+  app.enableCors({ credentials: true, origin: config.get('frontendUrl') });
 
   const swaggerConfig = new DocumentBuilder()
     .addBearerAuth()

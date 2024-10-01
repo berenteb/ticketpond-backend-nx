@@ -16,7 +16,7 @@ export abstract class CustomerServiceInterface {
     customer: UpdateCustomerDto,
   ): Promise<CustomerDto>;
 
-  abstract updateCustomerByAuthId(
+  abstract updateCustomerById(
     authId: string,
     customer: UpdateCustomerDto,
   ): Promise<CustomerDto>;

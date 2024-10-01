@@ -58,7 +58,7 @@ export class MerchantController {
     );
     this.kafkaService.emit(MerchantPattern.ASSIGN_CUSTOMER_TO_MERCHANT, {
       merchantId: createdMerchant.id,
-      customerAuthId: userId,
+      customerId: userId,
     });
 
     return createdMerchant;

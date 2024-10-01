@@ -47,13 +47,13 @@ export class OrderService implements OrderServiceInterface {
 
   async getOrderByIdForCustomer(
     id: string,
-    customerAuthId: string,
+    customerId: string,
   ): Promise<DeepOrderDto> {
     const order = await this.prisma.order.findFirst({
       where: {
         id,
         customer: {
-          authId: customerAuthId,
+          id: customerId,
         },
       },
       include: {
@@ -78,17 +78,17 @@ export class OrderService implements OrderServiceInterface {
     return orders;
   }
 
-  async getOrdersForCustomer(customerAuthId: string): Promise<OrderDto[]> {
+  async getOrdersForCustomer(customerId: string): Promise<OrderDto[]> {
     const order = await this.prisma.order.findMany({
       where: {
         customer: {
-          authId: customerAuthId,
+          id: customerId,
         },
       },
       include: { items: true },
     });
     this.logger.debug(
-      `Found ${order.length} orders for customer with id ${customerAuthId}`,
+      `Found ${order.length} orders for customer with id ${customerId}`,
     );
     return order;
   }

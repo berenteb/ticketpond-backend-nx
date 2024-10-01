@@ -1,7 +1,6 @@
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { AuthzModule } from '@ticketpond-backend-nx/authz';
 import {
   AssetPatterns,
   CartPatterns,
@@ -21,6 +20,7 @@ import path from 'path';
 
 import { AssetController } from './asset/asset.controller';
 import { AssetService } from './asset/asset.service';
+import { AuthModule } from './auth/auth.module';
 import { CartController } from './cart/cart.controller';
 import { ConfigService } from './config.service';
 import { CustomerController } from './customer/customer.controller';
@@ -44,7 +44,7 @@ import { createClientKafka } from './utils/create-client-kafka';
 @Module({
   imports: [
     NestjsFormDataModule,
-    AuthzModule.forRoot([
+    AuthModule.forRoot([
       createClientKafka(ServiceNames.KAFKA_SERVICE, 'gateway-auth'),
       ConfigService,
     ]),
@@ -94,7 +94,7 @@ export class GatewayModule implements OnModuleInit {
 
   async onModuleInit() {
     this.kafkaService.subscribeToResponseOf(
-      CustomerMessagePattern.GET_CUSTOMER_BY_AUTH_ID,
+      CustomerMessagePattern.GET_CUSTOMER_BY_USER_ID,
     );
     this.kafkaService.subscribeToResponseOf(
       CustomerMessagePattern.CREATE_CUSTOMER,
@@ -112,13 +112,13 @@ export class GatewayModule implements OnModuleInit {
       CustomerMessagePattern.DELETE_CUSTOMER,
     );
     this.kafkaService.subscribeToResponseOf(AssetPatterns.UPLOAD_FILE);
-    this.kafkaService.subscribeToResponseOf(CartPatterns.GET_CART_BY_AUTH_ID);
-    this.kafkaService.subscribeToResponseOf(CartPatterns.CHECKOUT_BY_AUTH_ID);
+    this.kafkaService.subscribeToResponseOf(CartPatterns.GET_CART_BY_USER_ID);
+    this.kafkaService.subscribeToResponseOf(CartPatterns.CHECKOUT_BY_USER_ID);
     this.kafkaService.subscribeToResponseOf(
-      CartPatterns.ADD_ITEM_TO_CART_BY_AUTH_ID,
+      CartPatterns.ADD_ITEM_TO_CART_BY_USER_ID,
     );
     this.kafkaService.subscribeToResponseOf(
-      CartPatterns.REMOVE_ITEM_FROM_CART_BY_AUTH_ID,
+      CartPatterns.REMOVE_ITEM_FROM_CART_BY_USER_ID,
     );
     this.kafkaService.subscribeToResponseOf(
       ExperiencePatterns.LIST_EXPERIENCES,
