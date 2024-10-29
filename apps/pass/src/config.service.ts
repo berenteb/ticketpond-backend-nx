@@ -4,6 +4,7 @@ dotenv.config();
 
 export class ConfigService {
   private readonly envConfig: {
+    port: number;
     kafkaBroker: string;
     kafkaUsername?: string;
     kafkaPassword?: string;
@@ -15,6 +16,7 @@ export class ConfigService {
 
   constructor() {
     this.envConfig = {
+      port: env.get('PORT').required().asPortNumber(),
       kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
       kafkaUsername: env.get('KAFKA_USERNAME').asString(),
       kafkaPassword: env.get('KAFKA_PASSWORD').asString(),

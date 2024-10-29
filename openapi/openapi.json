@@ -1,0 +1,2669 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ticketpond - cart",
+    "description": "",
+    "version": "0.1",
+    "contact": {}
+  },
+  "servers": [],
+  "paths": {
+    "/cart/health": {
+      "get": {
+        "operationId": "HealthController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "operationId": "CartController_getCartForCustomer",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cart"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/cart/checkout": {
+      "post": {
+        "operationId": "CartController_checkoutForCustomer",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cart"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/cart/add": {
+      "post": {
+        "operationId": "CartController_addItemToCartForCustomer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cart"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/cart/remove": {
+      "post": {
+        "operationId": "CartController_removeItemFromCartForCustomer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveFromCartDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cart"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/customer/health": {
+      "get": {
+        "operationId": "HealthController_health1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/customer/admin": {
+      "get": {
+        "operationId": "CustomerAdminController_listCustomers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customer-Admin"
+        ]
+      }
+    },
+    "/customer/admin/{id}": {
+      "get": {
+        "operationId": "CustomerAdminController_getCustomerById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customer-Admin"
+        ]
+      },
+      "patch": {
+        "operationId": "CustomerAdminController_updateCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customer-Admin"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomerAdminController_deleteCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer-Admin"
+        ]
+      }
+    },
+    "/customer/me": {
+      "get": {
+        "operationId": "CustomerController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customer"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/customer/permissions": {
+      "get": {
+        "operationId": "CustomerController_getPermissions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customer"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/experience/health": {
+      "get": {
+        "operationId": "HealthController_health2",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/experience/merchant": {
+      "get": {
+        "operationId": "ExperienceMerchantController_getExperiences",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExperienceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      },
+      "post": {
+        "operationId": "ExperienceMerchantController_createExperience",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExperienceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperienceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      }
+    },
+    "/experience/merchant/{id}": {
+      "get": {
+        "operationId": "ExperienceMerchantController_getExperienceById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepExperienceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      },
+      "patch": {
+        "operationId": "ExperienceMerchantController_updateExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExperienceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperienceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      },
+      "delete": {
+        "operationId": "ExperienceMerchantController_deleteExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      }
+    },
+    "/experience/merchant/{id}/validate": {
+      "post": {
+        "operationId": "ExperienceMerchantController_validateExperiencePass",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidationRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Merchant"
+        ]
+      }
+    },
+    "/experience/admin": {
+      "get": {
+        "operationId": "ExperienceAdminController_getExperiences",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExperienceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Admin"
+        ]
+      }
+    },
+    "/experience/admin/{id}": {
+      "get": {
+        "operationId": "ExperienceAdminController_getExperienceById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperienceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Admin"
+        ]
+      },
+      "patch": {
+        "operationId": "ExperienceAdminController_updateExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExperienceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperienceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience-Admin"
+        ]
+      },
+      "delete": {
+        "operationId": "ExperienceAdminController_deleteExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Experience-Admin"
+        ]
+      }
+    },
+    "/experience": {
+      "get": {
+        "operationId": "ExperienceController_getExperiences",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExperienceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Experience"
+        ]
+      }
+    },
+    "/experience/{id}": {
+      "get": {
+        "operationId": "ExperienceController_getExperienceById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepExperienceDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Experience"
+        ]
+      }
+    },
+    "/merchant/health": {
+      "get": {
+        "operationId": "HealthController_health3",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/merchant/admin": {
+      "get": {
+        "operationId": "MerchantAdminController_getMerchants",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MerchantDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant-Admin"
+        ]
+      },
+      "post": {
+        "operationId": "MerchantAdminController_createMerchant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant-Admin"
+        ]
+      }
+    },
+    "/merchant/admin/{id}": {
+      "get": {
+        "operationId": "MerchantAdminController_getMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant-Admin"
+        ]
+      },
+      "patch": {
+        "operationId": "MerchantAdminController_updateMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant-Admin"
+        ]
+      },
+      "delete": {
+        "operationId": "MerchantAdminController_deleteMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Merchant-Admin"
+        ]
+      }
+    },
+    "/merchant/me": {
+      "get": {
+        "operationId": "MerchantSelfController_getMerchantByCustomerId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Merchant-Self"
+        ]
+      },
+      "patch": {
+        "operationId": "MerchantSelfController_updateMerchantById",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant-Self"
+        ]
+      }
+    },
+    "/merchant/{id}": {
+      "get": {
+        "operationId": "MerchantController_getMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant"
+        ]
+      }
+    },
+    "/merchant/register": {
+      "post": {
+        "operationId": "MerchantController_registerMerchant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Merchant"
+        ]
+      }
+    },
+    "/notification/health": {
+      "get": {
+        "operationId": "HealthController_health4",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/pass/health": {
+      "get": {
+        "operationId": "HealthController_health5",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/payment/health": {
+      "get": {
+        "operationId": "HealthController_health6",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/payment/intent/{id}": {
+      "post": {
+        "operationId": "PaymentController_createPaymentIntent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Payment"
+        ]
+      }
+    },
+    "/payment/webhook": {
+      "post": {
+        "operationId": "PaymentController_handleWebhook",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Payment"
+        ]
+      }
+    },
+    "/ticket/health": {
+      "get": {
+        "operationId": "HealthController_health7",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/ticket/admin": {
+      "get": {
+        "operationId": "TicketAdminController_getTickets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeepTicketDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Admin"
+        ]
+      }
+    },
+    "/ticket/admin/{id}": {
+      "get": {
+        "operationId": "TicketAdminController_getTicketById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepTicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Admin"
+        ]
+      },
+      "patch": {
+        "operationId": "TicketAdminController_updateTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTicketDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Admin"
+        ]
+      },
+      "delete": {
+        "operationId": "TicketAdminController_deleteTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Ticket-Admin"
+        ]
+      }
+    },
+    "/ticket/admin/experience/{id}": {
+      "get": {
+        "operationId": "TicketAdminController_getTicketsForExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Admin"
+        ]
+      }
+    },
+    "/ticket/merchant": {
+      "get": {
+        "operationId": "TicketMerchantController_getTickets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeepTicketDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      },
+      "post": {
+        "operationId": "TicketMerchantController_createTicket",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTicketDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      }
+    },
+    "/ticket/merchant/{id}": {
+      "get": {
+        "operationId": "TicketMerchantController_getTicketById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepTicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      },
+      "patch": {
+        "operationId": "TicketMerchantController_updateTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTicketDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      },
+      "delete": {
+        "operationId": "TicketMerchantController_deleteTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      }
+    },
+    "/ticket/merchant/experience/{id}": {
+      "get": {
+        "operationId": "TicketMerchantController_getTicketsForExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket-Merchant"
+        ]
+      }
+    },
+    "/ticket/{id}": {
+      "get": {
+        "operationId": "TicketController_getMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepTicketDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket"
+        ]
+      }
+    },
+    "/ticket/experience/{id}": {
+      "get": {
+        "operationId": "TicketController_getTicketsForExperience",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ticket"
+        ]
+      }
+    },
+    "/order/health": {
+      "get": {
+        "operationId": "HealthController_health8",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/order/admin": {
+      "get": {
+        "operationId": "OrderAdminController_getOrders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderWithCustomerDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      }
+    },
+    "/order/admin/{id}": {
+      "get": {
+        "operationId": "OrderAdminController_getOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepOrderWithCustomerDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      },
+      "delete": {
+        "operationId": "OrderAdminController_deleteOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      }
+    },
+    "/order/admin/fulfill/{id}": {
+      "post": {
+        "operationId": "OrderAdminController_fulfillOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      }
+    },
+    "/order/admin/cancel/{id}": {
+      "post": {
+        "operationId": "OrderAdminController_cancelOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      }
+    },
+    "/order/admin/fail/{id}": {
+      "post": {
+        "operationId": "OrderAdminController_failOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Admin"
+        ]
+      }
+    },
+    "/order/merchant": {
+      "get": {
+        "operationId": "OrderMerchantController_getOrders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderWithCustomerDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Order-Merchant"
+        ]
+      }
+    },
+    "/order/merchant/{id}": {
+      "get": {
+        "operationId": "OrderMerchantController_getOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepOrderWithCustomerDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order-Merchant"
+        ]
+      }
+    },
+    "/order": {
+      "get": {
+        "operationId": "OrderController_getOrdersByUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      }
+    },
+    "/order/{id}": {
+      "get": {
+        "operationId": "OrderController_getOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepOrderDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_health9",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/asset/upload": {
+      "post": {
+        "operationId": "AssetController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "asset"
+        ]
+      }
+    },
+    "/auth/login": {
+      "get": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirects to the AuthSch login page."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/callback": {
+      "get": {
+        "operationId": "AuthController_oauthRedirect",
+        "parameters": [
+          {
+            "name": "code",
+            "required": true,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to the frontend and sets cookie with JWT."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirects to the frontend and clears the JWT cookie."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExperienceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "merchantId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Summer Festival"
+          },
+          "description": {
+            "type": "string",
+            "example": "A festival for the summer"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-10T00:00:00.000Z"
+          },
+          "bannerImage": {
+            "type": "string",
+            "example": "https://www.example.com/image.png"
+          }
+        },
+        "required": [
+          "id",
+          "merchantId",
+          "name",
+          "description",
+          "startDate",
+          "endDate",
+          "bannerImage"
+        ]
+      },
+      "DeepTicketDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "One day ticket"
+          },
+          "description": {
+            "type": "string",
+            "example": "This ticket is valid for one day"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-02T00:00:00.000Z"
+          },
+          "experienceId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "experience": {
+            "$ref": "#/components/schemas/ExperienceDto"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "price",
+          "validFrom",
+          "validTo",
+          "experienceId",
+          "experience"
+        ]
+      },
+      "CartItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "cartId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "ticketId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/DeepTicketDto"
+          }
+        },
+        "required": [
+          "id",
+          "cartId",
+          "ticketId",
+          "ticket"
+        ]
+      },
+      "CartDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "items"
+        ]
+      },
+      "AddToCartDto": {
+        "type": "object",
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "required": [
+          "ticketId",
+          "quantity"
+        ]
+      },
+      "RemoveFromCartDto": {
+        "type": "object",
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "required": [
+          "ticketId",
+          "quantity"
+        ]
+      },
+      "CustomerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "authId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY 10030"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "authId",
+          "firstName",
+          "lastName",
+          "email",
+          "address",
+          "phone",
+          "isAdmin"
+        ]
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY 10030"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "MerchantDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "ABC Organizer Inc"
+          },
+          "description": {
+            "type": "string",
+            "example": "We organize events"
+          },
+          "email": {
+            "type": "string",
+            "example": "hello@abcorganizer.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY 10030"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "email",
+          "address",
+          "phone"
+        ]
+      },
+      "TicketDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "One day ticket"
+          },
+          "description": {
+            "type": "string",
+            "example": "This ticket is valid for one day"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-02T00:00:00.000Z"
+          },
+          "experienceId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "price",
+          "validFrom",
+          "validTo",
+          "experienceId"
+        ]
+      },
+      "DeepExperienceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "merchantId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Summer Festival"
+          },
+          "description": {
+            "type": "string",
+            "example": "A festival for the summer"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-10T00:00:00.000Z"
+          },
+          "bannerImage": {
+            "type": "string",
+            "example": "https://www.example.com/image.png"
+          },
+          "merchant": {
+            "$ref": "#/components/schemas/MerchantDto"
+          },
+          "tickets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "merchantId",
+          "name",
+          "description",
+          "startDate",
+          "endDate",
+          "bannerImage",
+          "merchant",
+          "tickets"
+        ]
+      },
+      "CreateExperienceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Summer Festival"
+          },
+          "description": {
+            "type": "string",
+            "example": "A festival for the summer"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-10T00:00:00.000Z"
+          },
+          "bannerImage": {
+            "type": "string",
+            "example": "https://www.example.com/image.png"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "startDate",
+          "endDate",
+          "bannerImage"
+        ]
+      },
+      "UpdateExperienceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Summer Festival"
+          },
+          "description": {
+            "type": "string",
+            "example": "A festival for the summer"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-10T00:00:00.000Z"
+          },
+          "bannerImage": {
+            "type": "string",
+            "example": "https://www.example.com/image.png"
+          }
+        }
+      },
+      "ValidationRequestDto": {
+        "type": "object",
+        "properties": {
+          "ticketSerialNumber": {
+            "type": "string",
+            "example": "1234567890"
+          }
+        },
+        "required": [
+          "ticketSerialNumber"
+        ]
+      },
+      "DeepOrderItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "TP-123456"
+          },
+          "ticketId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/DeepTicketDto"
+          }
+        },
+        "required": [
+          "id",
+          "orderId",
+          "price",
+          "serialNumber",
+          "ticketId",
+          "ticket"
+        ]
+      },
+      "ValidationResponseDto": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "example": true
+          },
+          "orderItem": {
+            "$ref": "#/components/schemas/DeepOrderItemDto"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "message": {
+            "type": "string",
+            "example": "VALID"
+          }
+        },
+        "required": [
+          "isValid",
+          "orderItem",
+          "customer",
+          "message"
+        ]
+      },
+      "CreateMerchantDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ABC Organizer Inc"
+          },
+          "description": {
+            "type": "string",
+            "example": "We organize events"
+          },
+          "email": {
+            "type": "string",
+            "example": "hello@abcorganizer.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY 10030"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "email",
+          "address",
+          "phone"
+        ]
+      },
+      "UpdateMerchantDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ABC Organizer Inc"
+          },
+          "description": {
+            "type": "string",
+            "example": "We organize events"
+          },
+          "email": {
+            "type": "string",
+            "example": "hello@abcorganizer.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY 10030"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "DeepOrderWithCustomerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2021-06-01T00:00:00.000Z"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeepOrderItemDto"
+            }
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "UNPAID"
+          },
+          "orderStatus": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "2023.01.01.123456"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "createdAt",
+          "items",
+          "paymentStatus",
+          "orderStatus",
+          "serialNumber",
+          "customer"
+        ]
+      },
+      "DeepOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2021-06-01T00:00:00.000Z"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeepOrderItemDto"
+            }
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "UNPAID"
+          },
+          "orderStatus": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "2023.01.01.123456"
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "createdAt",
+          "items",
+          "paymentStatus",
+          "orderStatus",
+          "serialNumber"
+        ]
+      },
+      "PaymentDto": {
+        "type": "object",
+        "properties": {
+          "clientSecret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientSecret"
+        ]
+      },
+      "UpdateTicketDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "One day ticket"
+          },
+          "description": {
+            "type": "string",
+            "example": "This ticket is valid for one day"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-02T00:00:00.000Z"
+          }
+        }
+      },
+      "CreateTicketDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "One day ticket"
+          },
+          "description": {
+            "type": "string",
+            "example": "This ticket is valid for one day"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-06-02T00:00:00.000Z"
+          },
+          "experienceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "price",
+          "validFrom",
+          "validTo",
+          "experienceId"
+        ]
+      },
+      "OrderItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "price": {
+            "type": "number",
+            "example": 123
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "TP-123456"
+          },
+          "ticketId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        },
+        "required": [
+          "id",
+          "orderId",
+          "price",
+          "serialNumber",
+          "ticketId"
+        ]
+      },
+      "OrderWithCustomerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2021-06-01T00:00:00.000Z"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemDto"
+            }
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "UNPAID"
+          },
+          "orderStatus": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "2023.01.01.123456"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "createdAt",
+          "items",
+          "paymentStatus",
+          "orderStatus",
+          "serialNumber",
+          "customer"
+        ]
+      },
+      "OrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2021-06-01T00:00:00.000Z"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemDto"
+            }
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "UNPAID"
+          },
+          "orderStatus": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "serialNumber": {
+            "type": "string",
+            "example": "2023.01.01.123456"
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "createdAt",
+          "items",
+          "paymentStatus",
+          "orderStatus",
+          "serialNumber"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "jwt"
+      }
+    }
+  }
+}

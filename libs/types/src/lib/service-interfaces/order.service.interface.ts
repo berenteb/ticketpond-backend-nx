@@ -5,9 +5,8 @@ import {
   OrderDto,
   OrderWithCustomerDto,
 } from '../dtos';
-import { IsOwnProperty } from './common.interface';
 
-export abstract class OrderServiceInterface implements IsOwnProperty {
+export abstract class OrderServiceInterface {
   abstract getOrders(): Promise<OrderWithCustomerDto[]>;
   abstract getOrderByIdWithCustomer(
     id: string,
@@ -21,7 +20,6 @@ export abstract class OrderServiceInterface implements IsOwnProperty {
   ): Promise<OrderWithCustomerDto[]>;
   abstract getOrdersForCustomer(customerAuthId: string): Promise<OrderDto[]>;
   abstract getOrderById(id: string): Promise<DeepOrderDto>;
-  abstract isOwnProperty(itemId: string, ownerId: string): Promise<boolean>;
   abstract isConnectedToMerchant(
     itemId: string,
     merchantId: string,

@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Experience, OrderStatus } from '@prisma/client';
 import { PrismaService } from '@ticketpond-backend-nx/prisma';
 import {
   CreateExperienceDto,
   DeepExperienceDto,
+  ExperienceDto,
   ExperienceServiceInterface,
   UpdateExperienceDto,
   ValidationResponseDto,
@@ -15,6 +16,29 @@ export class ExperienceService implements ExperienceServiceInterface {
   private readonly logger = new Logger(ExperienceService.name);
 
   constructor(private readonly prismaService: PrismaService) {}
+
+  async deleteExperienceForMerchant(
+    id: string,
+    merchantId: string,
+  ): Promise<void> {
+    await this.prismaService.experience.delete({
+      where: { id, merchantId },
+    });
+  }
+
+  async updateExperienceForMerchant(
+    id: string,
+    experience: UpdateExperienceDto,
+    merchantId: string,
+  ): Promise<ExperienceDto> {
+    const updatedExperience = await this.prismaService.experience.update({
+      where: { id, merchantId },
+      data: experience,
+    });
+
+    this.logger.debug(`Updated experience with id ${id}`);
+    return updatedExperience;
+  }
 
   async createExperience(
     experience: CreateExperienceDto,
@@ -72,16 +96,10 @@ export class ExperienceService implements ExperienceServiceInterface {
     this.logger.debug(`Deleted experience with id ${id}`);
   }
 
-  async isOwnProperty(itemId: string, ownerId: string): Promise<boolean> {
-    const experience = await this.prismaService.experience.findUnique({
-      where: { id: itemId, merchantId: ownerId },
-    });
-    return !!experience;
-  }
-
   async validateExperiencePass(
     ticketSerialNumber: string,
     experienceId: string,
+    merchantId: string,
   ): Promise<ValidationResponseDto> {
     const orderItem = await this.prismaService.orderItem.findUnique({
       where: { serialNumber: ticketSerialNumber },
@@ -93,7 +111,10 @@ export class ExperienceService implements ExperienceServiceInterface {
     if (!orderItem) {
       return { isValid: false, message: ValidationResponseMessage.NOT_FOUND };
     }
-    if (orderItem.ticket.experience.id !== experienceId) {
+    if (
+      orderItem.ticket.experience.id !== experienceId ||
+      orderItem.ticket.experience.merchantId !== merchantId
+    ) {
       return { isValid: false, message: ValidationResponseMessage.INVALID };
     }
     if (orderItem.order.orderStatus !== OrderStatus.PAID) {

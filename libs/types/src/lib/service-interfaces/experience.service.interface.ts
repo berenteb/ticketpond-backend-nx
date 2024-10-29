@@ -5,9 +5,8 @@ import {
   UpdateExperienceDto,
   ValidationResponseDto,
 } from '../dtos';
-import { IsOwnProperty } from './common.interface';
 
-export abstract class ExperienceServiceInterface implements IsOwnProperty {
+export abstract class ExperienceServiceInterface {
   abstract getExperiences(): Promise<ExperienceDto[]>;
   abstract getExperiencesByMerchantId(id: string): Promise<ExperienceDto[]>;
 
@@ -16,17 +15,28 @@ export abstract class ExperienceServiceInterface implements IsOwnProperty {
   abstract validateExperiencePass(
     ticketSerialNumber: string,
     experienceId: string,
+    merchantId: string,
   ): Promise<ValidationResponseDto>;
 
   abstract createExperience(
     experience: CreateExperienceDto,
     merchantId: string,
   ): Promise<ExperienceDto>;
-  abstract isOwnProperty(itemId: string, ownerId: string): Promise<boolean>;
 
   abstract updateExperience(
     id: string,
     experience: UpdateExperienceDto,
   ): Promise<ExperienceDto>;
+
+  abstract updateExperienceForMerchant(
+    id: string,
+    experience: UpdateExperienceDto,
+    merchantId: string,
+  ): Promise<ExperienceDto>;
+
   abstract deleteExperience(id: string): Promise<void>;
+  abstract deleteExperienceForMerchant(
+    id: string,
+    merchantId: string,
+  ): Promise<void>;
 }

@@ -16,7 +16,7 @@
     "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
-      "@ticketpond-backend-nx/authz": ["libs/authz/src/index.ts"],
+      "@ticketpond-backend-nx/auth": ["libs/auth/src/index.ts"],
       "@ticketpond-backend-nx/message-patterns": [
         "libs/message-patterns/src/index.ts"
       ],

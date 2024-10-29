@@ -7,6 +7,7 @@ export class ConfigService {
     kafkaBroker: string;
     kafkaUsername?: string;
     kafkaPassword?: string;
+    backendUrl?: string;
     email: {
       host: string;
       port: number;
@@ -27,6 +28,7 @@ export class ConfigService {
       kafkaBroker: env.get('KAFKA_BROKER').required().asString(),
       kafkaUsername: env.get('KAFKA_USERNAME').asString(),
       kafkaPassword: env.get('KAFKA_PASSWORD').asString(),
+      backendUrl: env.get('BACKEND_URL').asString(),
       email: {
         host: env.get('EMAIL_HOST').required().asString(),
         port: env.get('EMAIL_PORT').required().asIntPositive(),

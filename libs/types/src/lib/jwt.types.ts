@@ -3,6 +3,7 @@ export type JwtUser = {
   lastName: string;
   email: string;
   sub: string;
+  merchantId?: string;
   permissions: PermissionLevel[];
 };
 

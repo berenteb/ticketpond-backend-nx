@@ -1,30 +1,68 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
-import { PaymentPatterns } from '@ticketpond-backend-nx/message-patterns';
+import {
+  Controller,
+  Inject,
+  NotFoundException,
+  Param,
+  Post,
+  RawBodyRequest,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+import { ApiCookieAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { JwtGuard } from '@ticketpond-backend-nx/auth';
+import { OrderPatterns } from '@ticketpond-backend-nx/message-patterns';
 import {
   OrderDto,
   PaymentDto,
   PaymentServiceInterface,
+  type ReqWithUser,
+  ServiceNames,
   ServiceResponse,
 } from '@ticketpond-backend-nx/types';
-import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 
+@ApiTags('Payment')
 @Controller()
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentServiceInterface) {}
+  constructor(
+    private readonly paymentService: PaymentServiceInterface,
+    @Inject(ServiceNames.KAFKA_SERVICE)
+    private readonly kafkaService: ClientKafka,
+  ) {}
 
-  @MessagePattern(PaymentPatterns.CREATE_PAYMENT_INTENT)
+  @UseGuards(JwtGuard)
+  @Post('intent/:id')
+  @ApiOkResponse({ type: PaymentDto })
+  @ApiCookieAuth('jwt')
   async createPaymentIntent(
-    @Payload() data: OrderDto,
-  ): Promise<ServiceResponse<PaymentDto>> {
-    const intent = await this.paymentService.createIntent(data);
-    return CreateServiceResponse.success(intent);
+    @Param('id') id: string,
+    @Req() req: ReqWithUser,
+  ): Promise<PaymentDto> {
+    const order = await this.getOrderForCustomer(id, req.user.sub);
+    if (!order) {
+      throw new NotFoundException();
+    }
+    return this.paymentService.createIntent(order);
   }
 
-  @EventPattern(PaymentPatterns.HANDLE_WEBHOOK)
-  async handleWebhook(
-    @Payload() data: { signature: string; body: string },
-  ): Promise<void> {
-    await this.paymentService.handleWebhook(data.signature, data.body);
+  @Post('webhook')
+  async handleWebhook(@Req() req: RawBodyRequest<Request>): Promise<void> {
+    return this.paymentService.handleWebhook(
+      req.headers['stripe-signature'],
+      req.rawBody.toString(),
+    );
+  }
+
+  private getOrderForCustomer(id: string, customerAuthId: string) {
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderDto>>(
+        OrderPatterns.GET_ORDER_FOR_CUSTOMER,
+        {
+          id,
+          customerAuthId,
+        },
+      ),
+    );
   }
 }

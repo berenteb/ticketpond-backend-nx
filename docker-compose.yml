@@ -65,12 +65,12 @@ services:
       - database
       - kafka
   gateway:
-    image: ticketpond-gateway:latest
+    image: ticketpond-authentication:latest
     restart: unless-stopped
     ports:
       - '3001:3001'
     environment:
-      HOST: gateway
+      HOST: authentication
       PORT: 3001
       KAFKA_BROKER: ${KAFKA_BROKER}
       FRONTEND_URL: ${FRONTEND_URL}

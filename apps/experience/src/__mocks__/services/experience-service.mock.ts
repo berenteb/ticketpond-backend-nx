@@ -8,7 +8,8 @@ export const ExperienceServiceMock: ExperienceServiceInterface = {
   getExperienceById: jest.fn().mockResolvedValue(ExperienceMock),
   getExperiences: jest.fn().mockResolvedValue([ExperienceMock]),
   getExperiencesByMerchantId: jest.fn().mockResolvedValue([ExperienceMock]),
-  isOwnProperty: jest.fn().mockResolvedValue(true),
   updateExperience: jest.fn().mockResolvedValue(ExperienceMock),
   validateExperiencePass: jest.fn().mockResolvedValue({ isValid: true }),
+  updateExperienceForMerchant: jest.fn().mockResolvedValue(ExperienceMock),
+  deleteExperienceForMerchant: jest.fn().mockResolvedValue(undefined),
 };

@@ -1,0 +1,55 @@
+{
+  "name": "asset",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/asset/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/asset/jest.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/asset",
+        "main": "apps/asset/src/main.ts",
+        "tsConfig": "apps/asset/tsconfig.json",
+        "webpackConfig": "apps/asset/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "asset:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "asset:build:development"
+        },
+        "production": {
+          "buildTarget": "asset:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/asset/Dockerfile . -t ticketpond-asset"
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "inputFile": "./openapi/openapi-cart.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-customer.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-experience.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-merchant.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-notification.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-pass.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-payment.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-ticket.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-order.json"
+    },
+    {
+      "inputFile": "./openapi/openapi-gateway.json"
+    }
+  ],
+  "output": "./openapi/openapi.json"
+}

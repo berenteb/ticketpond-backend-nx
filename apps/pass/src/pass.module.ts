@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PassServiceInterface } from '@ticketpond-backend-nx/types';
+import { HealthController } from '@ticketpond-backend-nx/utils';
 
 import { AppleService } from './apple.service';
 import { ConfigService } from './config.service';
@@ -9,7 +10,7 @@ import { PassService } from './pass.service';
 
 @Module({
   imports: [],
-  controllers: [PassController],
+  controllers: [HealthController, PassController],
   providers: [
     {
       provide: PassServiceInterface,

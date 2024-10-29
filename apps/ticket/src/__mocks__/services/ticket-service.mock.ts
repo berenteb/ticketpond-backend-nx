@@ -10,6 +10,9 @@ export const TicketServiceMock: TicketServiceInterface = {
   getTicketsForExperience: jest.fn().mockResolvedValue([TicketMock]),
   getTicketsForMerchant: jest.fn().mockResolvedValue([TicketMock]),
   updateTicket: jest.fn().mockResolvedValue(TicketMock),
-  isOwnProperty: jest.fn().mockResolvedValue(true),
-  isOwnExperience: jest.fn().mockResolvedValue(true),
+  getTicketByIdForMerchant: jest.fn().mockResolvedValue(TicketMock),
+  getTicketsForMerchantExperience: jest.fn().mockResolvedValue([TicketMock]),
+  createTicketForMerchant: jest.fn().mockResolvedValue(TicketMock),
+  updateTicketForMerchant: jest.fn().mockResolvedValue(TicketMock),
+  deleteTicketForMerchant: jest.fn(),
 };

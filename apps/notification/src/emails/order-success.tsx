@@ -66,8 +66,8 @@ export default function OrderSuccess({
 }
 
 OrderSuccess.PreviewProps = {
-  walletBaseUrl: 'http://localhost:3001/cdn/passes/apple',
-  qrCodeBaseUrl: 'http://localhost:3001/cdn/passes/image',
+  walletBaseUrl: 'http://localhost/asset/passes/apple',
+  qrCodeBaseUrl: 'http://localhost/asset/passes/image',
   order: {
     items: [
       {

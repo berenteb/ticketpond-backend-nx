@@ -1,4 +1,3 @@
-import { InternalServerErrorException } from '@nestjs/common';
 import {
   ClientOptions,
   ClientProxyFactory,
@@ -38,11 +37,7 @@ export async function responseFrom<T>(
   source: Observable<ServiceResponse<T>>,
 ): Promise<T> {
   const response = await firstValueFrom(source);
-  if ('error' in response) {
-    handleServiceResponse(response);
-    throw new InternalServerErrorException(response.error.message);
-  }
-  return response.data;
+  return handleServiceResponse(response);
 }
 
 export function getSaslOrNull(

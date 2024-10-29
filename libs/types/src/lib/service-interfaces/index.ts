@@ -1,6 +1,5 @@
 export * from './asset.service.interface';
 export * from './cart.service.interface';
-export * from './common.interface';
 export * from './customer.service.interface';
 export * from './experience.service.interface';
 export * from './merchant.service.interface';

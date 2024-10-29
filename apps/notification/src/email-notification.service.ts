@@ -39,8 +39,8 @@ export class EmailNotificationService implements NotificationServiceInterface {
     const html = render(
       OrderSuccess({
         order: order,
-        qrCodeBaseUrl: 'http://localhost:3001/cdn/passes/image',
-        walletBaseUrl: 'http://localhost:3001/cdn/passes/apple',
+        qrCodeBaseUrl: `${this.configService.get('backendUrl')}/asset/passes/image`,
+        walletBaseUrl: `${this.configService.get('backendUrl')}/asset/passes/apple`,
       }),
     );
     this.sendMail(order.customer.email, 'Sikeres vásárlás 🎉', html);

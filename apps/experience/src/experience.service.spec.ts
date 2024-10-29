@@ -76,16 +76,6 @@ it('should delete an experience', async () => {
   });
 });
 
-it('should check if an experience is owned by a merchant', async () => {
-  PrismaMock.experience.findUnique.mockResolvedValue(ExperienceMock);
-  const isOwn = await service.isOwnProperty('1', '1');
-
-  expect(isOwn).toBe(true);
-  expect(PrismaMock.experience.findUnique).toHaveBeenCalledWith({
-    where: { id: '1', merchantId: '1' },
-  });
-});
-
 it('should validate experience pass', async () => {
   const MockOrderItem = {
     ticket: {
@@ -99,6 +89,7 @@ it('should validate experience pass', async () => {
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
@@ -126,6 +117,7 @@ it('should return not found validation response when validating experience pass'
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
@@ -145,6 +137,7 @@ it('should return invalid validation response when validating experience pass', 
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-wrong-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
@@ -164,6 +157,7 @@ it('should return unpaid validation response when validating experience pass', a
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
@@ -197,6 +191,7 @@ it('should return too early validation response when validating experience pass'
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
@@ -231,6 +226,7 @@ it('should return too late validation response when validating experience pass',
   const validationResponse = await service.validateExperiencePass(
     'test-serial-number',
     'test-experience-id',
+    'test-merchant-id',
   );
   expect(PrismaMock.orderItem.findUnique).toHaveBeenCalledWith({
     where: { serialNumber: 'test-serial-number' },
