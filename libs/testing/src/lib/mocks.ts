@@ -1,3 +1,5 @@
+import { ReqWithUser } from '@ticketpond-backend-nx/types';
+
 export const ConfigServiceMock = {
   get: jest.fn(),
 };
@@ -30,3 +32,14 @@ export const PrismaMock = {
   orderItem: createDelegateMock(),
   ticket: createDelegateMock(),
 };
+
+export const ReqWithUserMock = {
+  user: {
+    firstName: 'test-first-name',
+    lastName: 'test-last-name',
+    email: 'test-email',
+    sub: 'test-sub',
+    merchantId: 'test-merchant-id',
+    permissions: [],
+  },
+} as unknown as ReqWithUser;

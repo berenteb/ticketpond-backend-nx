@@ -88,7 +88,7 @@ it('should update customer by internal id', async () => {
     CustomerMock,
   );
   expect(PrismaMock.customer.update).toHaveBeenCalledWith({
-    where: { authId: 'test-customer-auth-id' },
+    where: { id: 'test-customer-auth-id' },
     data: CustomerMock,
   });
   expect(customer).toEqual(CustomerMock);

@@ -71,7 +71,7 @@ it('should return order by id with items for customer', async () => {
   const order = await service.getOrderByIdForCustomer('1', '1');
   expect(order).toEqual(OrderMock);
   expect(PrismaMock.order.findFirst).toHaveBeenCalledWith({
-    where: { id: '1', customer: { authId: '1' } },
+    where: { id: '1', customer: { id: '1' } },
     include: {
       items: { include: { ticket: { include: { experience: true } } } },
     },
@@ -100,7 +100,7 @@ it('should return orders for customer', async () => {
   const orders = await service.getOrdersForCustomer('1');
   expect(orders).toEqual([OrderMock]);
   expect(PrismaMock.order.findMany).toHaveBeenCalledWith({
-    where: { customer: { authId: '1' } },
+    where: { customer: { id: '1' } },
     include: { items: true },
   });
 });

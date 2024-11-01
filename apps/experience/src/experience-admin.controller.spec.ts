@@ -3,9 +3,9 @@ import { ExperienceServiceInterface } from '@ticketpond-backend-nx/types';
 
 import { ExperienceMock } from './__mocks__/entities/experience.mock';
 import { ExperienceServiceMock } from './__mocks__/services/experience-service.mock';
-import { ExperienceController } from './experience.controller';
+import { ExperienceAdminController } from './experience-admin.controller';
 
-let controller: ExperienceController;
+let controller: ExperienceAdminController;
 
 beforeEach(async () => {
   jest.clearAllMocks();
@@ -13,13 +13,13 @@ beforeEach(async () => {
     providers: [
       { provide: ExperienceServiceInterface, useValue: ExperienceServiceMock },
     ],
-    controllers: [ExperienceController],
+    controllers: [ExperienceAdminController],
   }).compile();
 
-  controller = module.get<ExperienceController>(ExperienceController);
+  controller = module.get<ExperienceAdminController>(ExperienceAdminController);
 });
 
-it('should get all experiences', async () => {
+it('should get experiences', async () => {
   const result = await controller.getExperiences();
   expect(result).toEqual([ExperienceMock]);
   expect(ExperienceServiceMock.getExperiences).toHaveBeenCalledTimes(1);
@@ -28,5 +28,16 @@ it('should get all experiences', async () => {
 it('should get experience by id', async () => {
   const result = await controller.getExperienceById('1');
   expect(result).toEqual(ExperienceMock);
-  expect(ExperienceServiceMock.getExperienceById).toHaveBeenCalledTimes(1);
+  expect(ExperienceServiceMock.getExperienceById).toHaveBeenCalledWith('1');
+});
+
+it('should update experience', async () => {
+  const result = await controller.updateExperience('1', {} as any);
+  expect(result).toEqual(ExperienceMock);
+  expect(ExperienceServiceMock.updateExperience).toHaveBeenCalledWith('1', {});
+});
+
+it('should delete experience', async () => {
+  await controller.deleteExperience('1');
+  expect(ExperienceServiceMock.deleteExperience).toHaveBeenCalledWith('1');
 });

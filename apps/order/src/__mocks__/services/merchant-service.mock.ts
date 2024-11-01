@@ -15,5 +15,4 @@ export const OrderServiceMock: OrderServiceInterface = {
   getOrdersForCustomer: jest.fn().mockResolvedValue([OrderMock]),
   getOrdersForMerchant: jest.fn().mockResolvedValue([OrderMock]),
   isConnectedToMerchant: jest.fn().mockResolvedValue(true),
-  isOwnProperty: jest.fn().mockResolvedValue(true),
 };

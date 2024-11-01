@@ -8,6 +8,7 @@ import { ConfigService } from './config.service';
 import { MerchantController } from './merchant.controller';
 import { MerchantService } from './merchant.service';
 import { MerchantAdminController } from './merchant-admin.controller';
+import { MerchantInnerController } from './merchant-inner.controller';
 import { MerchantSelfController } from './merchant-self.controller';
 
 @Module({
@@ -17,6 +18,7 @@ import { MerchantSelfController } from './merchant-self.controller';
     MerchantAdminController,
     MerchantSelfController,
     MerchantController,
+    MerchantInnerController,
   ],
   providers: [
     ConfigService,

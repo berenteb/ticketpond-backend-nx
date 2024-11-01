@@ -9,19 +9,14 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '@ticketpond-backend-nx/auth';
-import { MerchantPattern } from '@ticketpond-backend-nx/message-patterns';
 import {
   CreateMerchantDto,
   MerchantDto,
   MerchantServiceInterface,
   type ReqWithUser,
-  ServiceResponse,
-  UpdateMerchantDto,
 } from '@ticketpond-backend-nx/types';
-import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
 
 @ApiTags('Merchant')
 @Controller()
@@ -53,57 +48,5 @@ export class MerchantController {
       userId,
     );
     return createdMerchant;
-  }
-
-  @MessagePattern(MerchantPattern.LIST_MERCHANTS)
-  async listMerchants(): Promise<ServiceResponse<MerchantDto[]>> {
-    const merchants = await this.merchantService.getMerchants();
-    return CreateServiceResponse.success(merchants);
-  }
-
-  @MessagePattern(MerchantPattern.GET_MERCHANT_BY_USER_ID)
-  async getMerchantByCustomerId(
-    @Payload() customerId: string,
-  ): Promise<ServiceResponse<MerchantDto>> {
-    const merchant =
-      await this.merchantService.getMerchantByCustomerId(customerId);
-    if (!merchant) {
-      return CreateServiceResponse.error('Merchant not found', 404);
-    }
-    return CreateServiceResponse.success(merchant);
-  }
-
-  @MessagePattern(MerchantPattern.UPDATE_MERCHANT)
-  async updateMerchant(
-    @Payload() data: { id: string; merchant: UpdateMerchantDto },
-  ): Promise<ServiceResponse<MerchantDto>> {
-    const updatedMerchant = await this.merchantService.updateMerchant(
-      data.id,
-      data.merchant,
-    );
-    if (!updatedMerchant) {
-      return CreateServiceResponse.error('Merchant not found', 404);
-    }
-    return CreateServiceResponse.success(updatedMerchant);
-  }
-
-  @MessagePattern(MerchantPattern.UPDATE_MERCHANT_BY_USER_ID)
-  async updateMerchantByUserId(
-    @Payload() data: { customerId: string; merchant: UpdateMerchantDto },
-  ): Promise<ServiceResponse<MerchantDto>> {
-    const updatedMerchant =
-      await this.merchantService.updateMerchantByCustomerId(
-        data.customerId,
-        data.merchant,
-      );
-    if (!updatedMerchant) {
-      return CreateServiceResponse.error('Merchant not found', 404);
-    }
-    return CreateServiceResponse.success(updatedMerchant);
-  }
-
-  @EventPattern(MerchantPattern.DELETE_MERCHANT)
-  async deleteMerchant(@Payload() id: string): Promise<void> {
-    await this.merchantService.deleteMerchant(id);
   }
 }

@@ -4,9 +4,9 @@ import { MerchantServiceInterface } from '@ticketpond-backend-nx/types';
 
 import { MerchantMock } from './__mocks__/entities/merchantMock';
 import { MerchantServiceMock } from './__mocks__/services/merchant-service.mock';
-import { MerchantController } from './merchant.controller';
+import { MerchantSelfController } from './merchant-self.controller';
 
-let controller: MerchantController;
+let controller: MerchantSelfController;
 
 beforeEach(async () => {
   jest.clearAllMocks();
@@ -14,23 +14,28 @@ beforeEach(async () => {
     providers: [
       { provide: MerchantServiceInterface, useValue: MerchantServiceMock },
     ],
-    controllers: [MerchantController],
+    controllers: [MerchantSelfController],
   }).compile();
 
-  controller = module.get<MerchantController>(MerchantController);
+  controller = module.get<MerchantSelfController>(MerchantSelfController);
 });
 
-it('should get merchant by id', async () => {
-  const merchant = await controller.getMerchant('1');
+it('should get merchant by user id', async () => {
+  const merchant = await controller.getMerchantByCustomerId(ReqWithUserMock);
   expect(merchant).toEqual(MerchantMock);
-  expect(MerchantServiceMock.getMerchantById).toHaveBeenCalledWith('1');
+  expect(MerchantServiceMock.getMerchantById).toHaveBeenCalledWith(
+    ReqWithUserMock.user.merchantId,
+  );
 });
 
-it('should create merchant', async () => {
-  const merchant = await controller.registerMerchant(
+it('should update merchant', async () => {
+  const merchant = await controller.updateMerchantById(
     MerchantMock,
     ReqWithUserMock,
   );
   expect(merchant).toEqual(MerchantMock);
-  expect(MerchantServiceMock.createMerchant).toHaveBeenCalledWith(MerchantMock);
+  expect(MerchantServiceMock.updateMerchant).toHaveBeenCalledWith(
+    ReqWithUserMock.user.merchantId,
+    MerchantMock,
+  );
 });

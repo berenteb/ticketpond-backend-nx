@@ -1,9 +1,7 @@
+import { RawBodyRequest } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  OrderDto,
-  PaymentServiceInterface,
-} from '@ticketpond-backend-nx/types';
-import { CreateServiceResponse } from '@ticketpond-backend-nx/utils';
+import { ReqWithUserMock } from '@ticketpond-backend-nx/testing';
+import { PaymentServiceInterface } from '@ticketpond-backend-nx/types';
 
 import { PaymentServiceMock } from './__mocks__/payment-service.mock';
 import { PaymentController } from './payment.controller';
@@ -23,19 +21,16 @@ beforeEach(async () => {
 });
 
 it('should create payment intent', async () => {
-  const paymentIntent = await controller.createPaymentIntent({} as OrderDto);
-
-  expect(paymentIntent).toEqual(
-    CreateServiceResponse.success({ clientSecret: '123456' }),
-  );
+  const response = await controller.createPaymentIntent('id', ReqWithUserMock);
+  expect(response).toEqual({ clientSecret: '123456' });
 });
 
 it('should handle webhook', async () => {
   await expect(
     controller.handleWebhook({
-      signature: 'signature',
-      body: 'body',
-    }),
+      headers: { 'stripe-signature': 'signature' },
+      rawBody: Buffer.from('body'),
+    } as unknown as RawBodyRequest<Request>),
   ).resolves.not.toThrow();
   expect(PaymentServiceMock.handleWebhook).toHaveBeenCalledWith(
     'signature',

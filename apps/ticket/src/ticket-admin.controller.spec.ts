@@ -3,9 +3,9 @@ import { TicketServiceInterface } from '@ticketpond-backend-nx/types';
 
 import { TicketMock } from './__mocks__/entities/ticket.mock';
 import { TicketServiceMock } from './__mocks__/services/ticket-service.mock';
-import { TicketController } from './ticket.controller';
+import { TicketAdminController } from './ticket-admin.controller';
 
-let controller: TicketController;
+let controller: TicketAdminController;
 
 beforeEach(async () => {
   jest.clearAllMocks();
@@ -13,10 +13,16 @@ beforeEach(async () => {
     providers: [
       { provide: TicketServiceInterface, useValue: TicketServiceMock },
     ],
-    controllers: [TicketController],
+    controllers: [TicketAdminController],
   }).compile();
 
-  controller = module.get<TicketController>(TicketController);
+  controller = module.get<TicketAdminController>(TicketAdminController);
+});
+
+it('should get tickets', async () => {
+  const tickets = await controller.getTickets();
+  expect(tickets).toEqual([TicketMock]);
+  expect(TicketServiceMock.getTickets).toHaveBeenCalled();
 });
 
 it('should get ticket by id', async () => {
@@ -28,5 +34,14 @@ it('should get ticket by id', async () => {
 it('should get tickets for experience', async () => {
   const tickets = await controller.getTicketsForExperience('1');
   expect(tickets).toEqual([TicketMock]);
-  expect(TicketServiceMock.getTicketsForExperience).toHaveBeenCalledWith('1');
+});
+
+it('should update ticket', async () => {
+  const ticket = await controller.updateTicket('1', TicketMock);
+  expect(ticket).toEqual(TicketMock);
+});
+
+it('should delete ticket', async () => {
+  await controller.deleteTicket('1');
+  expect(TicketServiceMock.deleteTicket).toHaveBeenCalledWith('1');
 });

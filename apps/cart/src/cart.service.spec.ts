@@ -55,7 +55,7 @@ it('should create cart with customer id', async () => {
   expect(PrismaMock.cart.create).toHaveBeenCalledWith({
     data: {
       customer: {
-        connect: { authId: 'test-customer-id' },
+        connect: { id: 'test-customer-id' },
       },
     },
     include: {
@@ -72,7 +72,7 @@ it('should return cart for customer', async () => {
   expect(PrismaMock.cart.findFirst).toHaveBeenCalledWith({
     where: {
       customer: {
-        authId: 'test-customer-id',
+        id: 'test-customer-id',
       },
     },
     include: {
@@ -91,7 +91,7 @@ it('should create a cart if cart not found for customer', async () => {
     data: {
       customer: {
         connect: {
-          authId: 'test-customer-id',
+          id: 'test-customer-id',
         },
       },
     },
@@ -112,7 +112,7 @@ it('should delete cart', async () => {
 it('should delete cart for customer', async () => {
   await service.deleteCartForCustomer('test-customer-id');
   expect(PrismaMock.cart.deleteMany).toHaveBeenCalledWith({
-    where: { customer: { authId: 'test-customer-id' } },
+    where: { customer: { id: 'test-customer-id' } },
   });
 });
 

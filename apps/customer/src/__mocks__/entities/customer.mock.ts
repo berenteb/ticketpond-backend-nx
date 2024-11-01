@@ -1,6 +1,7 @@
 import { Customer } from '@prisma/client';
 
 export const CustomerMock: Customer = {
+  isAdmin: false,
   address: 'test-customer-address',
   email: 'test-customer-email',
   firstName: 'test-customer-first-name',

@@ -13,7 +13,7 @@ export class TicketController {
 
   @Get(':id')
   @ApiOkResponse({ type: DeepTicketDto })
-  async getMerchant(@Param('id') id: string): Promise<DeepTicketDto> {
+  async getTicketById(@Param('id') id: string): Promise<DeepTicketDto> {
     const ticket = await this.ticketService.getTicketById(id);
     if (!ticket) {
       throw new NotFoundException('Ticket not found');

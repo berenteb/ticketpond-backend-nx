@@ -91,28 +91,3 @@ it('should get tickets for merchant', async () => {
   });
   expect(tickets).toEqual([TicketMock]);
 });
-
-it('should check if ticket is owned by merchant', async () => {
-  PrismaMock.ticket.findUnique.mockResolvedValue(TicketMock);
-  const isOwned = await service.isOwnProperty(TicketMock.id, 'merchantId');
-
-  expect(PrismaMock.ticket.findUnique).toHaveBeenCalledWith({
-    where: { id: TicketMock.id, experience: { merchantId: 'merchantId' } },
-  });
-  expect(isOwned).toBe(true);
-});
-
-it('should check if experience is owned by merchant', async () => {
-  PrismaMock.experience.findUnique.mockResolvedValue({
-    merchantId: 'merchantId',
-  });
-  const isOwned = await service.isOwnExperience(
-    TicketMock.experienceId,
-    'merchantId',
-  );
-
-  expect(PrismaMock.experience.findUnique).toHaveBeenCalledWith({
-    where: { id: TicketMock.experienceId, merchantId: 'merchantId' },
-  });
-  expect(isOwned).toBe(true);
-});

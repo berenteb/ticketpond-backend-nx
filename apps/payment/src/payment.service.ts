@@ -11,7 +11,9 @@ import {
   PaymentDto,
   PaymentServiceInterface,
   ServiceNames,
+  ServiceResponse,
 } from '@ticketpond-backend-nx/types';
+import { responseFrom } from '@ticketpond-backend-nx/utils';
 import Stripe from 'stripe';
 
 import { ConfigService } from './config.service';
@@ -73,5 +75,20 @@ export class PaymentService implements PaymentServiceInterface {
         break;
     }
     return;
+  }
+
+  async getOrderForCustomer(
+    id: string,
+    customerAuthId: string,
+  ): Promise<OrderDto> {
+    return responseFrom(
+      this.kafkaService.send<ServiceResponse<OrderDto>>(
+        OrderPatterns.GET_ORDER_FOR_CUSTOMER,
+        {
+          id,
+          customerAuthId,
+        },
+      ),
+    );
   }
 }

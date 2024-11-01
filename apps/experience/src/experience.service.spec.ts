@@ -79,7 +79,7 @@ it('should delete an experience', async () => {
 it('should validate experience pass', async () => {
   const MockOrderItem = {
     ticket: {
-      experience: { id: 'test-experience-id' },
+      experience: { id: 'test-experience-id', merchantId: 'test-merchant-id' },
       validTo: '2100-01-01T00:00:00.000Z',
       validFrom: '2000-01-01T00:00:00.000Z',
     },
@@ -103,7 +103,10 @@ it('should validate experience pass', async () => {
     message: 'VALID',
     orderItem: {
       ticket: {
-        experience: { id: 'test-experience-id' },
+        experience: {
+          id: 'test-experience-id',
+          merchantId: 'test-merchant-id',
+        },
         validTo: '2100-01-01T00:00:00.000Z',
         validFrom: '2000-01-01T00:00:00.000Z',
       },
@@ -151,7 +154,9 @@ it('should return invalid validation response when validating experience pass', 
 
 it('should return unpaid validation response when validating experience pass', async () => {
   PrismaMock.orderItem.findUnique.mockResolvedValue({
-    ticket: { experience: { id: 'test-experience-id' } },
+    ticket: {
+      experience: { id: 'test-experience-id', merchantId: 'test-merchant-id' },
+    },
     order: { customer: { id: 'test-customer-id' }, orderStatus: 'CREATED' },
   });
   const validationResponse = await service.validateExperiencePass(
@@ -170,7 +175,12 @@ it('should return unpaid validation response when validating experience pass', a
     isValid: false,
     message: 'UNPAID',
     orderItem: {
-      ticket: { experience: { id: 'test-experience-id' } },
+      ticket: {
+        experience: {
+          id: 'test-experience-id',
+          merchantId: 'test-merchant-id',
+        },
+      },
       order: { customer: { id: 'test-customer-id' }, orderStatus: 'CREATED' },
     },
     customer: { id: 'test-customer-id' },
@@ -180,7 +190,7 @@ it('should return unpaid validation response when validating experience pass', a
 it('should return too early validation response when validating experience pass', async () => {
   const MockOrderItem = {
     ticket: {
-      experience: { id: 'test-experience-id' },
+      experience: { id: 'test-experience-id', merchantId: 'test-merchant-id' },
       validFrom: '2100-01-01T00:00:00.000Z',
       validTo: '2100-01-01T00:00:00.000Z',
     },
@@ -205,7 +215,10 @@ it('should return too early validation response when validating experience pass'
     message: 'TOO_EARLY',
     orderItem: {
       ticket: {
-        experience: { id: 'test-experience-id' },
+        experience: {
+          id: 'test-experience-id',
+          merchantId: 'test-merchant-id',
+        },
         validFrom: '2100-01-01T00:00:00.000Z',
         validTo: '2100-01-01T00:00:00.000Z',
       },
@@ -217,7 +230,7 @@ it('should return too early validation response when validating experience pass'
 it('should return too late validation response when validating experience pass', async () => {
   PrismaMock.orderItem.findUnique.mockResolvedValue({
     ticket: {
-      experience: { id: 'test-experience-id' },
+      experience: { id: 'test-experience-id', merchantId: 'test-merchant-id' },
       validFrom: '2000-01-01T00:00:00.000Z',
       validTo: '2000-01-01T00:00:00.000Z',
     },
@@ -240,7 +253,10 @@ it('should return too late validation response when validating experience pass',
     message: 'TOO_LATE',
     orderItem: {
       ticket: {
-        experience: { id: 'test-experience-id' },
+        experience: {
+          id: 'test-experience-id',
+          merchantId: 'test-merchant-id',
+        },
         validFrom: '2000-01-01T00:00:00.000Z',
         validTo: '2000-01-01T00:00:00.000Z',
       },
