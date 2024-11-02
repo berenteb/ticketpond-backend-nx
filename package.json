@@ -17,7 +17,8 @@
     "lint": "nx run-many --target=lint --all",
     "stripe-webhook": "stripe listen --forward-to localhost/payment/webhook --latest",
     "stripe-login": "stripe login",
-    "openapi-merge": "openapi-merge-cli --config ./openapi-merge.json"
+    "openapi-merge": "openapi-merge-cli --config ./openapi-merge.json",
+    "loadtest": "tsc loadtest.ts && k6 run loadtest.js --out json=loadtest.json"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.2",
@@ -32,7 +33,7 @@
     "@react-email/components": "0.0.17",
     "@types/passport-local": "^1.0.38",
     "@types/qrcode": "^1.5.5",
-    "axios": "^1.6.0",
+    "axios": "1.7.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
@@ -72,6 +73,7 @@
     "@swc/core": "~1.4.2",
     "@swc/helpers": "~0.5.6",
     "@types/jest": "^29.5.12",
+    "@types/k6": "^0.54.1",
     "@types/node": "~20.11.24",
     "@types/nodemailer": "^6.4.15",
     "@types/passport-auth0": "^1.0.9",
