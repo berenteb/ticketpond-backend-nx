@@ -14,6 +14,7 @@ import {
   ServiceNames,
   ServiceResponse,
 } from '@ticketpond-backend-nx/types';
+import { AuthenticationServiceInterface } from '@ticketpond-backend-nx/types';
 import { responseFrom } from '@ticketpond-backend-nx/utils';
 import { Profile } from 'passport-auth0';
 import { firstValueFrom } from 'rxjs';
@@ -21,7 +22,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthenticationService implements AuthenticationServiceInterface {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,

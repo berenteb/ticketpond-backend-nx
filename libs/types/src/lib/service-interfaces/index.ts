@@ -1,4 +1,5 @@
 export * from './asset.service.interface';
+export * from './authentication.service.interface';
 export * from './cart.service.interface';
 export * from './customer.service.interface';
 export * from './experience.service.interface';
